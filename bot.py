@@ -4,11 +4,13 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv  # load module for usage of a .env file (pip install python-dotenv)
 import os  # import module for directory management
+from discord.utils import get
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')  # get our discord bot token from .env
 bot = commands.Bot(command_prefix='%')
+
 
 # print a message if the bot is online
 @bot.event
@@ -26,10 +28,29 @@ async def test(ctx):
 
 
 # command to test if the bot is running
-@bot.command(name='tour giver', help='test if the bot is working')
-async def test(ctx):
-    response = 'Don\'t worry, I\'m working!'
-    await ctx.send(response)
+@bot.command(name='role', help='test if the bot is working')
+# @commands.has_any_role('members')
+async def roles(ctx, *args):
+    role = ''
+    for i in args:
+        role += i + ' '
+    role = role[:-1]
+    if role == 'tour giver':
+        member = ctx.message.author
+        role = get(member.guild.roles, name=role)
+        try:
+            await member.add_roles(role)
+            response = 'You have been successfully given the tour giver role! Congratulations.'
+            await ctx.send(response)
+
+        except discord.errors.Forbidden:
+            response = '```css\n[Missing permissions]\n```'
+            print(response)
+            await ctx.send(response)
+
+    else:
+        response = "I'm sorry but i'm afraid that role doesn't exist"
+        await ctx.send(response)
 
 
 bot.run(TOKEN)
