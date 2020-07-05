@@ -6,7 +6,7 @@ from discord.ext import commands
 from dotenv import load_dotenv  # load module for usage of a .env file (pip install python-dotenv)
 import os  # import module for directory management
 from discord.utils import get
-from data import coordinate_channel, application_channel, vote_emotes
+from data import coordinate_channel, application_channel, vote_emotes, discord_letters
 from coordinates import *
 
 # discord token is stored in a .env file in the same directory as the bot
@@ -30,7 +30,6 @@ async def on_message(message):
         return
 
     if message.channel.id == coordinate_channel:
-        message_format = message.content.split()
 
         await message.delete()  # delete the message that was just sent
         """
@@ -128,6 +127,44 @@ async def stop_lazy(ctx, mention="jerk"):
     response = "Stop Lazy {}".format(mention)
     await ctx.send(response)
     await ctx.send(file=discord.File('stop_lazy.png'))
+
+
+# command to test if the bot is running
+@bot.command(name="yes_no_vote", help="command to tell someone to stop lazy")
+@commands.has_role("members")
+async def yes_no_vote(ctx, *args):
+    await ctx.message.delete()
+    string_votes = " ".join(args)
+    print(string_votes)
+    poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n' + string_votes)
+    for e in vote_emotes:
+        await poll_message.add_reaction(bot.get_emoji(e))
+
+
+# command to test if the bot is running
+@bot.command(name="multiple_vote", help="command to tell someone to stop lazy")
+@commands.has_role("members")
+async def multiple_vote(ctx, *args):
+    # /multiple_vote option 1 & option 2 & option 3
+    await ctx.message.delete()
+    print(args)
+    poll_list = []
+    vote = ""
+    for i in args:
+        if "&" not in i:
+            vote += i + " "
+        else:
+            vote += i[:-1]
+            poll_list.append(vote)
+            vote = ""
+
+    poll_list.append(vote)
+    poll = ""
+    for pos, option in enumerate(poll_list):
+        poll += discord_letters[pos] + " " + option + "\n"
+    poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n' + poll[:-1])
+    for n in range(len(poll_list)):
+        await poll_message.add_reaction(discord_letters[n])
 
 
 bot.run(TOKEN)
