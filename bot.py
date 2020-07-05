@@ -6,7 +6,7 @@ from discord.ext import commands
 from dotenv import load_dotenv  # load module for usage of a .env file (pip install python-dotenv)
 import os  # import module for directory management
 from discord.utils import get
-from data import coordinate_channel, application_channel, vote_emotes, discord_letters
+from data import coordinate_channel, application_channel, vote_emotes, role_list
 from coordinates import *
 from utils import *
 
@@ -83,9 +83,48 @@ async def on_message(message):
 @bot.command(name="test", help="test if the bot is working")
 @commands.has_role("members")
 async def test(ctx):
-    response = "Don\"t worry, I\"m working!"
+    response = "Don't worry, I'm working!"
     await ctx.send(response)
 
+
+"""# command to test if the bot is running
+@bot.command(name="add_role", help="Give yourself the \"tour giver\" role")
+@commands.has_role("members")
+async def role_add(ctx, action, *args):
+    # check if you have provided a role, if not tell the user to do so
+    if args == ():
+        response = "You have not specified a role"
+        await ctx.send(response)
+        return
+
+    # combine the *args tuple into a string role
+    role = " ".join(args)
+
+    # give the tour giver role if the user asks for this
+    if role in role_list:
+        member = ctx.message.author  # the author of the message, part of the discord.Member class
+        role = get(member.guild.roles, name=role)  # the role needed to add
+
+        if role in member.roles:
+            response = "I'm sorry but you already have this role"
+            await ctx.send(response)
+            return
+
+        # if the user doesn't have the right perms, throw an exception
+        try:
+            await member.add_roles(role)
+            response = "You have been successfully given the tour giver role! Congratulations."
+            await ctx.send(response)
+
+        except discord.errors.Forbidden:
+            response = "Missing permissions"
+            await ctx.send(response)
+
+    # if the role is not a role one can add, throw an exception
+    else:
+        response = "I'm sorry but i'm afraid that role doesn't exist"
+        await ctx.send(response)
+"""
 
 # command to test if the bot is running
 @bot.command(name="add_role", help="Give yourself the \"tour giver\" role")
@@ -101,9 +140,14 @@ async def role_add(ctx, *args):
     role = " ".join(args)
 
     # give the tour giver role if the user asks for this
-    if role == "tour giver":
+    if role in role_list:
         member = ctx.message.author  # the author of the message, part of the discord.Member class
         role = get(member.guild.roles, name=role)  # the role needed to add
+
+        if role in member.roles:
+            response = "I'm sorry but you already have this role"
+            await ctx.send(response)
+            return
 
         # if the user doesn't have the right perms, throw an exception
         try:
@@ -134,9 +178,14 @@ async def role_remove(ctx, *args):
     role = " ".join(args)
 
     # give the tour giver role if the user asks for this
-    if role == "tour giver":
+    if role in role_list:
         member = ctx.message.author  # the author of the message, part of the discord.Member class
         role = get(member.guild.roles, name=role)  # the role needed to add
+
+        if role not  in member.roles:
+            response = "I'm sorry but you don't have this role."
+            await ctx.send(response)
+            return
 
         # if the user doesn't have the right perms, throw an exception
         try:
