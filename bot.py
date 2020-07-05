@@ -87,49 +87,10 @@ async def test(ctx):
     await ctx.send(response)
 
 
-"""# command to test if the bot is running
-@bot.command(name="add_role", help="Give yourself the \"tour giver\" role")
-@commands.has_role("members")
-async def role_add(ctx, action, *args):
-    # check if you have provided a role, if not tell the user to do so
-    if args == ():
-        response = "You have not specified a role"
-        await ctx.send(response)
-        return
-
-    # combine the *args tuple into a string role
-    role = " ".join(args)
-
-    # give the tour giver role if the user asks for this
-    if role in role_list:
-        member = ctx.message.author  # the author of the message, part of the discord.Member class
-        role = get(member.guild.roles, name=role)  # the role needed to add
-
-        if role in member.roles:
-            response = "I'm sorry but you already have this role"
-            await ctx.send(response)
-            return
-
-        # if the user doesn't have the right perms, throw an exception
-        try:
-            await member.add_roles(role)
-            response = "You have been successfully given the tour giver role! Congratulations."
-            await ctx.send(response)
-
-        except discord.errors.Forbidden:
-            response = "Missing permissions"
-            await ctx.send(response)
-
-    # if the role is not a role one can add, throw an exception
-    else:
-        response = "I'm sorry but i'm afraid that role doesn't exist"
-        await ctx.send(response)
-"""
-
 # command to test if the bot is running
-@bot.command(name="add_role", help="Give yourself the \"tour giver\" role")
+@bot.command(name="role", help="Give yourself the \"tour giver\" role")
 @commands.has_role("members")
-async def role_add(ctx, *args):
+async def role(ctx, action, *args):
     # check if you have provided a role, if not tell the user to do so
     if args == ():
         response = "You have not specified a role"
@@ -137,65 +98,39 @@ async def role_add(ctx, *args):
         return
 
     # combine the *args tuple into a string role
-    role = " ".join(args)
+    role_arg = " ".join(args)
 
     # give the tour giver role if the user asks for this
-    if role in role_list:
+    if role_arg in role_list:
         member = ctx.message.author  # the author of the message, part of the discord.Member class
-        role = get(member.guild.roles, name=role)  # the role needed to add
+        guild_role = get(member.guild.roles, name=role_arg)  # the role needed to add
 
-        if role in member.roles:
+        if action == "add" and guild_role in member.roles:
             response = "I'm sorry but you already have this role"
             await ctx.send(response)
             return
-
-        # if the user doesn't have the right perms, throw an exception
-        try:
-            await member.add_roles(role)
-            response = "You have been successfully given the tour giver role! Congratulations."
-            await ctx.send(response)
-
-        except discord.errors.Forbidden:
-            response = "Missing permissions"
-            await ctx.send(response)
-
-    # if the role is not a role one can add, throw an exception
-    else:
-        response = "I'm sorry but i'm afraid that role doesn't exist"
-        await ctx.send(response)
-
-
-@bot.command(name="remove_role", help="Give yourself the \"tour giver\" role")
-@commands.has_role("members")
-async def role_remove(ctx, *args):
-    # check if you have provided a role, if not tell the user to do so
-    if args == ():
-        response = "You have not specified a role"
-        await ctx.send(response)
-        return
-
-    # combine the *args tuple into a string role
-    role = " ".join(args)
-
-    # give the tour giver role if the user asks for this
-    if role in role_list:
-        member = ctx.message.author  # the author of the message, part of the discord.Member class
-        role = get(member.guild.roles, name=role)  # the role needed to add
-
-        if role not  in member.roles:
+        elif action == "remove" and guild_role not in member.roles:
             response = "I'm sorry but you don't have this role."
             await ctx.send(response)
             return
 
         # if the user doesn't have the right perms, throw an exception
         try:
-            await member.remove_roles(role)
-            response = "The role has successfully been removed, congratulations"
+            if action == "add":
+                await member.add_roles(guild_role)
+                response = "You have been successfully given the tour giver role! Congratulations."
+            elif action == "remove":
+                await member.remove_roles(guild_role)
+                response = "The role has successfully been removed, congratulations"
             await ctx.send(response)
 
         except discord.errors.Forbidden:
             response = "Missing permissions"
             await ctx.send(response)
+
+    elif role in get_server_roles(ctx):
+        response = "I'm sorry but i'm afraid you can't add that role to yourself"
+        await ctx.send(response)
 
     # if the role is not a role one can add, throw an exception
     else:

@@ -26,3 +26,9 @@ def convert_multiple_vote(args):
     for pos, option in enumerate(poll_list):
         poll += discord_letters[pos] + " " + option + "\n"
     return poll, poll_list, introduction
+
+
+def get_server_roles(ctx):
+    roles = ctx.guild.roles
+    role_list = [i.name for i in roles]
+    return role_list
