@@ -7,6 +7,7 @@ from dotenv import load_dotenv  # load module for usage of a .env file (pip inst
 import os  # import module for directory management
 from discord.utils import get
 from data import coordinate_channel, application_channel, vote_emotes
+from coordinates import *
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -38,45 +39,43 @@ async def on_message(message):
         We also check if the message contains a ':' in the right spot, and checks that the coordinates are
         actual numbers.
         """
-        if (message_format[0].startswith("ow_") or message_format[0].startswith("n_")) and message_format[0][-1] == ":"\
-                and message_format[1].isnumeric and message_format[2].isnumeric and message_format[3].isnumeric:
-            # get the message history of the channel, with a limit of 1 (i.e. 1 message) starting from last.
-            # flatten so we get a list
-            channel_history = await message.channel.history(limit=1, oldest_first=True).flatten()
-
-            # if there is no message in the channel yet, we want to send a new one
-            if not channel_history:
-                await message.channel.send(message.content)
+        if check_format(message):
+            channel_history = await message.channel.history(limit=10).flatten()
 
             # if del is at the end of the message we want to delete that coordinate from the list
-            elif message.content[-3:] == "del":
+            if message.content[-3:] == "del":
                 coordinate = message.content.strip(" del")
-                # we take the message and create a list from the string with \n as separator
-                coordinates = channel_history[0].content.split(sep='\n')
 
                 # we also want to know if the coordinate is actually in the list, if tell that to the sender
-                if coordinate not in coordinates:
+                if not in_message(coordinate, channel_history):
                     await message.channel.send("This coordinate doesn't exist in the list.", delete_after=5)
 
                 else:
                     # remove the coordinate from the list, get the message to edit and join the list back to a string
-                    coordinates.remove(coordinate)
-                    coordinate_message = channel_history[0]
-                    await coordinate_message.edit(content="\n".join(coordinates))
+                    msg, edits = delete(coordinate, channel_history)
+                    await msg.edit(content=edits)
+
+            elif create_new_message(channel_history):
+                if in_message(message.content, channel_history):
+                    await message.channel.send("This coordinate is already in the list", delete_after=5)
+                else:
+                    await message.channel.send(message.content)
 
             else:
-                # add the new message to the old message
-                coordinate_message = channel_history[0]
-                coordinate_list = coordinate_message.content
-                await coordinate_message.edit(content=coordinate_list + "\n" + message.content)
+                if in_message(message.content, channel_history):
+                    await message.channel.send("This coordinate is already in the list", delete_after=5)
+                else:
+                    # add the new message to the old message
+                    coordinate_message = channel_history[0]
+                    coordinate_list = coordinate_message.content
+                    await coordinate_message.edit(content=coordinate_list + "\n" + message.content)
         else:
             await message.channel.send("Wrong format, please use the correct format", delete_after=5)
 
     # if a new message is sent in the application forms channel, the bot will automatically add reactions
     if message.channel.id == application_channel:
-        for emote in vote_emotes:
-            await message.add_reaction(emote)
-
+        for e in vote_emotes:
+            await message.add_reaction(bot.get_emoji(e))
     await bot.process_commands(message)  # makes sure other commands will also be processed
 
 
