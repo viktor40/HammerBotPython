@@ -8,6 +8,7 @@ import os  # import module for directory management
 from discord.utils import get
 from data import coordinate_channel, application_channel, vote_emotes, discord_letters
 from coordinates import *
+from voting import *
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -135,7 +136,6 @@ async def stop_lazy(ctx, mention="jerk"):
 async def yes_no_vote(ctx, *args):
     await ctx.message.delete()
     string_votes = " ".join(args)
-    print(string_votes)
     poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n' + string_votes)
     for e in vote_emotes:
         await poll_message.add_reaction(bot.get_emoji(e))
@@ -145,23 +145,8 @@ async def yes_no_vote(ctx, *args):
 @bot.command(name="multiple_vote", help="command to tell someone to stop lazy")
 @commands.has_role("members")
 async def multiple_vote(ctx, *args):
-    # /multiple_vote option 1 & option 2 & option 3
     await ctx.message.delete()
-    print(args)
-    poll_list = []
-    vote = ""
-    for i in args:
-        if "&" not in i:
-            vote += i + " "
-        else:
-            vote += i[:-1]
-            poll_list.append(vote)
-            vote = ""
-
-    poll_list.append(vote)
-    poll = ""
-    for pos, option in enumerate(poll_list):
-        poll += discord_letters[pos] + " " + option + "\n"
+    poll, poll_list = convert_multiple_vote(args)
     poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n' + poll[:-1])
     for n in range(len(poll_list)):
         await poll_message.add_reaction(discord_letters[n])
