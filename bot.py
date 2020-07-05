@@ -119,17 +119,19 @@ async def role(ctx, action, *args):
             if action == "add":
                 await member.add_roles(guild_role)
                 response = "You have been successfully given the tour giver role! Congratulations."
+                await ctx.send(response)
+
             elif action == "remove":
                 await member.remove_roles(guild_role)
                 response = "The role has successfully been removed, congratulations"
-            await ctx.send(response)
+                await ctx.send(response)
 
         except discord.errors.Forbidden:
             response = "Missing permissions"
             await ctx.send(response)
 
-    elif role in get_server_roles(ctx):
-        response = "I'm sorry but i'm afraid you can't add that role to yourself"
+    elif role_arg in get_server_roles(ctx):
+        response = "I'm sorry but i'm afraid you can't add/remove that role to yourself using the bot."
         await ctx.send(response)
 
     # if the role is not a role one can add, throw an exception
