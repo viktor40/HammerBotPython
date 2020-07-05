@@ -7,7 +7,7 @@ import os  # import module for directory management
 from discord.utils import get
 
 # discord token is stored in a .env file in the same directory as the bot
-load_dotenv()  # load the .env file containing id"s that have to be kept secret for security
+load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv("DISCORD_TOKEN")  # get our discord bot token from .env
 bot = commands.Bot(command_prefix="/")
 
@@ -45,7 +45,7 @@ async def roles(ctx, *args):
         member = ctx.message.author  # the author of the message, part of the discord.Member class
         role = get(member.guild.roles, name=role)  # the role needed to add
 
-        # if the user doesn"t have the right perms, throw an exception
+        # if the user doesn't have the right perms, throw an exception
         try:
             await member.add_roles(role)
             response = "You have been successfully given the tour giver role! Congratulations."
