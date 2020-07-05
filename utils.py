@@ -1,5 +1,5 @@
 # HammerBotPython
-# voting.py
+# utils.py
 
 from data import discord_letters
 
