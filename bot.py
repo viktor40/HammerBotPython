@@ -60,7 +60,7 @@ async def roles(ctx, *args):
 
     # if the role is not a role one can add, throw an exception
     else:
-        response = "I"m sorry but i"m afraid that role doesn"t exist"
+        response = "I'm sorry but i'm afraid that role doesn't exist"
         await ctx.send(response)
 
 
