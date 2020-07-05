@@ -81,6 +81,7 @@ async def on_message(message):
 
 # command to test if the bot is running
 @bot.command(name="test", help="test if the bot is working")
+@commands.has_role("members")
 async def test(ctx):
     response = "Don\"t worry, I\"m working!"
     await ctx.send(response)
@@ -88,7 +89,7 @@ async def test(ctx):
 
 # command to test if the bot is running
 @bot.command(name="role", help="Give yourself the \"tour giver\" role")
-# @commands.has_any_role("members") # only allows members to use the role
+@commands.has_role("members")
 async def roles(ctx, *args):
     # check if you have provided a role, if not tell the user to do so
     if args == ():
@@ -118,6 +119,15 @@ async def roles(ctx, *args):
     else:
         response = "I'm sorry but i'm afraid that role doesn't exist"
         await ctx.send(response)
+
+
+# command to test if the bot is running
+@bot.command(name="stop_lazy", help="command to tell someone to stop lazy")
+@commands.has_role("members")
+async def stop_lazy(ctx, mention="jerk"):
+    response = "Stop Lazy {}".format(mention)
+    await ctx.send(response)
+    await ctx.send(file=discord.File('stop_lazy.png'))
 
 
 bot.run(TOKEN)
