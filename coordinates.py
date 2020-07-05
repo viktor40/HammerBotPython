@@ -14,7 +14,7 @@ def edit(message, channel_history):
 
 
 def create_new_message(channel_history):
-    character_limit = 5
+    character_limit = 2000
     return not channel_history or len(channel_history[0].content) >= character_limit
 
 
