@@ -11,7 +11,7 @@ def convert_multiple_vote(args):
     for i in args:
         if "|" in i:
             vote += i[:-1]
-            introduction = vote
+            introduction = f'**Description:** ' + vote + f'\n'
             vote = ""
         elif "&" not in i:
             vote += i + " "

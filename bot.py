@@ -148,8 +148,7 @@ async def multiple_vote(ctx, *args):
     await ctx.message.delete()
     poll, poll_list, introduction = convert_multiple_vote(args)
     print(introduction)
-    poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n'
-                                  f'**Description:** {introduction}\n' + poll[:-1])
+    poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n{introduction}' + poll[:-1])
     for n in range(len(poll_list)):
         await poll_message.add_reaction(discord_letters[n])
 
