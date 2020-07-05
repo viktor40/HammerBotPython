@@ -38,10 +38,7 @@ async def roles(ctx, *args):
         return
 
     # combine the *args tuple into a string role
-    role = ""
-    for i in args:
-        role += i + " "
-    role = role[:-1]
+    role = " ".join(args)
 
     # give the tour giver role if the user asks for this
     if role == "tour giver":
