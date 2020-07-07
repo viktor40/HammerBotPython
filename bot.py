@@ -161,15 +161,25 @@ async def stop_lazy(ctx, mention="jerk"):
 
 
 # command to test if the bot is running
-@bot.command(name="vote", help="command to tell someone to stop lazy")
+@bot.command(name="vote", help="command to vote")
 @commands.has_role("members")
-async def vote(ctx, vote_type, *args):
+async def vote(ctx, vote_type="", *args):
     await ctx.message.delete()
+
+    if not args:
+        response = "I'm sorry but you haven't specified anything to vote on."
+        await ctx.send(response, delete_after=5)
+
+    if not vote_type or vote_type not in ("yes_no", "multiple"):
+        response = "I'm sorry but you haven't specified a correct vote type."
+        await ctx.send(response, delete_after=5)
+
     if vote_type == "yes_no":
         string_votes = " ".join(args)
         poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n' + string_votes)
         for e in vote_emotes:
             await poll_message.add_reaction(bot.get_emoji(e))
+
     elif vote_type == "multiple":
         poll, poll_list, introduction = format_conversion(args, "poll")
         poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n{introduction}' + poll[:-1])
@@ -177,46 +187,19 @@ async def vote(ctx, vote_type, *args):
             await poll_message.add_reaction(discord_letters[n])
 
 
-# command to test if the bot is running
-@bot.command(name="yes_no_vote", help="command to tell someone to stop lazy")
-@commands.has_role("members")
-async def yes_no_vote(ctx, *args):
-    await ctx.message.delete()
-    string_votes = " ".join(args)
-    poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n' + string_votes)
-    for e in vote_emotes:
-        await poll_message.add_reaction(bot.get_emoji(e))
-
-
-# command to test if the bot is running
-@bot.command(name="multiple_vote", help="command to tell someone to stop lazy")
-@commands.has_role("members")
-async def multiple_vote(ctx, *args):
-    await ctx.message.delete()
-    poll, poll_list, introduction = format_conversion(args, "poll")
-    print(introduction)
-    poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n{introduction}' + poll[:-1])
-    for n in range(len(poll_list)):
-        await poll_message.add_reaction(discord_letters[n])
-
-
 # /bulletin add project description | {first bulletin} & {second bulletin} & {third bulletin}
 @bot.command(name="bulletin")
 @commands.has_role("members")
 async def bulletin(ctx, action, *args):
     await ctx.message.delete()
-    if action == "create":
-        formatted, project, value_list = format_conversion(args, "bulletin")
-        embed = discord.Embed(
-            color=0xe74c3c,
-            title=project,
-            description=formatted
-        )
-        # embed.add_field(name="", value=formatted)
-        await ctx.send(embed=embed)
+    channel_history = await ctx.channel.history(limit=50).flatten()
+    exists_already = False
+    for message in channel_history:
+        if message.embeds:
+            if message.embeds[0].title in " ".join(args):
+                exists_already = True
 
     if action == "delete":
-        channel_history = await ctx.channel.history(limit=50).flatten()
         project = " ".join(args)
         for message in channel_history:
             if message.embeds:
@@ -224,9 +207,38 @@ async def bulletin(ctx, action, *args):
                     await message.delete()
                     return
 
+    formatted, project, value_list = format_conversion(args, "bulletin")
+    if not project:
+        response = "I'm sorry but you didn't specify a project"
+        await ctx.send(response, delete_after=5)
+        return
+
+    if not value_list:
+        response = "I'm sorry but you didn't specify any tasks"
+        await ctx.send(response, delete_after=5)
+        return
+
+    if action == "create":
+        if exists_already:
+            response = "I'm sorry but this board already exists"
+            await ctx.send(response, delete_after=5)
+            return
+
+        embed = discord.Embed(
+            color=0xe74c3c,
+            title=project,
+            description=formatted
+        )
+        # embed.add_field(name="", value=formatted)
+        await ctx.send(embed=embed)
+        return
+
+    if not exists_already:
+        response = "I'm sorry but this board doesn't exist"
+        await ctx.send(response, delete_after=5)
+        return
+
     if action == "add":
-        channel_history = await ctx.channel.history(limit=50).flatten()
-        formatted, project, value_list = format_conversion(args, "bulletin")
         if project[:-1] == " ":
             project = project[:-1]
         for message in channel_history:
@@ -241,8 +253,6 @@ async def bulletin(ctx, action, *args):
                     return
 
     if action == "remove":
-        channel_history = await ctx.channel.history(limit=50).flatten()
-        formatted, project, value_list = format_conversion(args, "bulletin")
         for message in channel_history:
             if message.embeds:
                 if message.embeds[0].title == project:
