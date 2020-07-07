@@ -4,28 +4,34 @@
 from data import discord_letters
 
 
-def convert_multiple_vote(args):
-    poll_list = []
-    introduction = ""
-    vote = ""
+def format_conversion(args, command):
+    value_list = []
+    description = ""
+    value = ""
     for i in args:
         if "|" in i:
-            vote += i[:-1]
-            introduction = f'**Description:** ' + vote + f'\n'
-            vote = ""
+            value += i[:-1]
+            print(value)
+            description = value[:-1]
+            value = ""
         elif "&" not in i:
-            vote += i + " "
+            value += i + " "
         else:
-            vote += i[:-1]
-            poll_list.append(vote)
-            vote = ""
+            value += i
+            print(value)
+            value_list.append(value[:-1])
+            value = ""
 
-    poll_list.append(vote)
-    poll = ""
-    print(introduction)
-    for pos, option in enumerate(poll_list):
-        poll += discord_letters[pos] + " " + option + "\n"
-    return poll, poll_list, introduction
+    value_list.append(value[:-1])
+    formatted = ""
+    if command == "poll":
+        for pos, option in enumerate(value_list):
+            formatted += discord_letters[pos] + " " + option + "\n"
+        return formatted, value_list, f'**Description:** ' + description + f'\n'
+    elif command == "bulletin":
+        for pos, option in enumerate(value_list):
+            formatted += "- " + option + "\n"
+        return formatted, description, value_list
 
 
 def get_server_roles(ctx):

@@ -72,6 +72,13 @@ async def on_message(message):
         else:
             await message.channel.send("Wrong format, please use the correct format", delete_after=5)
 
+
+@bot.event
+async def on_message(message):
+    # check if the bot is online and not responding to itself
+    if message.author == bot.user:
+        return
+
     # if a new message is sent in the application forms channel, the bot will automatically add reactions
     if message.channel.id == application_channel:
         for e in vote_emotes:
@@ -91,6 +98,10 @@ async def test(ctx):
 @bot.command(name="role", help="Give yourself the \"tour giver\" role")
 @commands.has_role("members")
 async def role(ctx, action, *args):
+    if action == "list":
+        await ctx.send(role_list)
+        return
+
     # check if you have provided a role, if not tell the user to do so
     if args == ():
         response = "You have not specified a role"
@@ -150,6 +161,23 @@ async def stop_lazy(ctx, mention="jerk"):
 
 
 # command to test if the bot is running
+@bot.command(name="vote", help="command to tell someone to stop lazy")
+@commands.has_role("members")
+async def vote(ctx, vote_type, *args):
+    await ctx.message.delete()
+    if vote_type == "yes_no":
+        string_votes = " ".join(args)
+        poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n' + string_votes)
+        for e in vote_emotes:
+            await poll_message.add_reaction(bot.get_emoji(e))
+    elif vote_type == "multiple":
+        poll, poll_list, introduction = format_conversion(args, "poll")
+        poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n{introduction}' + poll[:-1])
+        for n in range(len(poll_list)):
+            await poll_message.add_reaction(discord_letters[n])
+
+
+# command to test if the bot is running
 @bot.command(name="yes_no_vote", help="command to tell someone to stop lazy")
 @commands.has_role("members")
 async def yes_no_vote(ctx, *args):
@@ -165,11 +193,74 @@ async def yes_no_vote(ctx, *args):
 @commands.has_role("members")
 async def multiple_vote(ctx, *args):
     await ctx.message.delete()
-    poll, poll_list, introduction = convert_multiple_vote(args)
+    poll, poll_list, introduction = format_conversion(args, "poll")
     print(introduction)
     poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n{introduction}' + poll[:-1])
     for n in range(len(poll_list)):
         await poll_message.add_reaction(discord_letters[n])
 
+
+# /bulletin add project description | {first bulletin} & {second bulletin} & {third bulletin}
+@bot.command(name="bulletin")
+@commands.has_role("members")
+async def bulletin(ctx, action, *args):
+    await ctx.message.delete()
+    if action == "create":
+        formatted, project, value_list = format_conversion(args, "bulletin")
+        embed = discord.Embed(
+            color=0xe74c3c,
+            title=project,
+            description=formatted
+        )
+        # embed.add_field(name="", value=formatted)
+        await ctx.send(embed=embed)
+
+    if action == "delete":
+        channel_history = await ctx.channel.history(limit=50).flatten()
+        project = " ".join(args)
+        for message in channel_history:
+            if message.embeds:
+                if message.embeds[0].title == project:
+                    await message.delete()
+                    return
+
+    if action == "add":
+        channel_history = await ctx.channel.history(limit=50).flatten()
+        formatted, project, value_list = format_conversion(args, "bulletin")
+        if project[:-1] == " ":
+            project = project[:-1]
+        for message in channel_history:
+            if message.embeds:
+                if message.embeds[0].title == project:
+                    edited_embed = discord.Embed(
+                        color=0xe74c3c,
+                        title=message.embeds[0].title,
+                        description=message.embeds[0].description + "\n" + formatted
+                    )
+                    await message.edit(embed=edited_embed)
+                    return
+
+    if action == "remove":
+        channel_history = await ctx.channel.history(limit=50).flatten()
+        formatted, project, value_list = format_conversion(args, "bulletin")
+        for message in channel_history:
+            if message.embeds:
+                if message.embeds[0].title == project:
+                    bulletin_list = message.embeds[0].description.split("\n")
+                    for i in value_list:
+                        for j in bulletin_list:
+                            if i in j:
+                                bulletin_list.remove(j)
+                    if bulletin_list:
+                        edited_embed = discord.Embed(
+                            color=0xe74c3c,
+                            title=message.embeds[0].title,
+                            description="\n".join(bulletin_list)
+                        )
+                        await message.edit(embed=edited_embed)
+                        return
+                    else:
+                        await message.delete()
+                        return
 
 bot.run(TOKEN)
