@@ -9,6 +9,7 @@ from discord.utils import get
 from data import coordinate_channel, application_channel, vote_emotes, role_list
 from coordinates import *
 from utils import *
+from bulletin import *
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -192,22 +193,19 @@ async def vote(ctx, vote_type="", *args):
 @commands.has_role("members")
 async def bulletin(ctx, action, *args):
     await ctx.message.delete()
+    if ctx.channel.id != coordinate_channel:
+        response = "Sorry, wrong channel buddy"
+        await ctx.send(response, delete_after=5)
+        return
+
     channel_history = await ctx.channel.history(limit=50).flatten()
-    exists_already = False
-    for message in channel_history:
-        if message.embeds:
-            if message.embeds[0].title in " ".join(args):
-                exists_already = True
+    exists_already = exists(args, channel_history)
 
     if action == "delete":
-        project = " ".join(args)
-        for message in channel_history:
-            if message.embeds:
-                if message.embeds[0].title == project:
-                    await message.delete()
-                    return
+        await delete_bulletin(args, channel_history).delete()
 
     formatted, project, value_list = format_conversion(args, "bulletin")
+
     if not project:
         response = "I'm sorry but you didn't specify a project"
         await ctx.send(response, delete_after=5)
@@ -229,7 +227,6 @@ async def bulletin(ctx, action, *args):
             title=project,
             description=formatted
         )
-        # embed.add_field(name="", value=formatted)
         await ctx.send(embed=embed)
         return
 
@@ -239,38 +236,22 @@ async def bulletin(ctx, action, *args):
         return
 
     if action == "add":
-        if project[:-1] == " ":
-            project = project[:-1]
-        for message in channel_history:
-            if message.embeds:
-                if message.embeds[0].title == project:
-                    edited_embed = discord.Embed(
-                        color=0xe74c3c,
-                        title=message.embeds[0].title,
-                        description=message.embeds[0].description + "\n" + formatted
-                    )
-                    await message.edit(embed=edited_embed)
-                    return
+        message, embed = add_bulletin(project, formatted, channel_history)
+        await message.edit(embed)
+        return
 
     if action == "remove":
-        for message in channel_history:
-            if message.embeds:
-                if message.embeds[0].title == project:
-                    bulletin_list = message.embeds[0].description.split("\n")
-                    for i in value_list:
-                        for j in bulletin_list:
-                            if i in j:
-                                bulletin_list.remove(j)
-                    if bulletin_list:
-                        edited_embed = discord.Embed(
-                            color=0xe74c3c,
-                            title=message.embeds[0].title,
-                            description="\n".join(bulletin_list)
-                        )
-                        await message.edit(embed=edited_embed)
-                        return
-                    else:
-                        await message.delete()
-                        return
+        bulletin_list, message = delete_bulletin(project, value_list, channel_history)
+        if bulletin_list:
+            edited_embed = discord.Embed(
+                color=0xe74c3c,
+                title=message.embeds[0].title,
+                description="\n".join(bulletin_list))
+            await message.edit(embed=edited_embed)
+            return
+
+        else:
+            await message.delete()
+            return
 
 bot.run(TOKEN)
