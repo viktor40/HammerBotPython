@@ -8,7 +8,6 @@ import os  # import module for directory management
 import datetime
 import re
 from discord.utils import get
-from jira import JIRA
 from data import coordinate_channel, application_channel, vote_emotes, role_list, hammer_guild
 from coordinates import *
 from utils import *
