@@ -40,7 +40,7 @@ async def mc_bug(message, issues):
             issue = jira.issue(issueid[0])
 
             embed = discord.Embed(
-                color=0xA7D9FC,
+                color=discord.Colour.orange(),
                 title=str.upper(issueid[0]),
                 description=f"**{issue.fields.summary}**",
                 url=f"https://bugs.mojang.com/browse/{issueid[0]}",
