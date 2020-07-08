@@ -161,6 +161,15 @@ async def stop_lazy(ctx, mention="jerk"):
     await ctx.send(file=discord.File('stop_lazy.png'))
 
 
+@bot.command(name="CMP", help="command to get the CMP IP in your DM's")
+@commands.has_any_role("CMP access", "members")
+async def CMP(ctx, mention="jerk"):
+    CMP_IP = os.getenv("CMP_IP")
+    response = "Check your DM's"
+    await ctx.author.send(CMP_IP)
+    await ctx.send(response)
+
+
 # command to test if the bot is running
 @bot.command(name="vote", help="command to vote")
 @commands.has_role("members")

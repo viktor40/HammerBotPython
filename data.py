@@ -10,7 +10,7 @@ downvote_emote = 689946011854307381
 votent_emote = 701747772461678612
 vote_emotes = [upvote_emote, downvote_emote, votent_emote]
 
-role_list = ["tour giver"]
+role_list = ["tour giver", "voten'tn't"]
 
 hammer_bot_id = 724012480661028907
 
