@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv  # load module for usage of a .env file (pip install python-dotenv)
 import os  # import module for directory management
+import datetime
 from discord.utils import get
 from data import coordinate_channel, application_channel, vote_emotes, role_list
 from coordinates import *
@@ -186,13 +187,26 @@ async def vote(ctx, vote_type="", *args):
 
     if vote_type == "yes_no":
         string_votes = " ".join(args)
-        poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n' + string_votes)
+        embed = discord.Embed(
+            color=0xe74c3c,
+            title=string_votes,
+        )
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())))
+        poll_message = await ctx.send(embed=embed)
         for e in vote_emotes:
             await poll_message.add_reaction(bot.get_emoji(e))
 
     elif vote_type == "multiple":
         poll, poll_list, introduction = format_conversion(args, "poll")
-        poll_message = await ctx.send(f'{ctx.author.mention} made the following poll:\n{introduction}' + poll[:-1])
+        embed = discord.Embed(
+            color=0xe74c3c,
+            title=introduction,
+            description=poll[:-1]
+        )
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())))
+        poll_message = await ctx.send(embed=embed)
         for n in range(len(poll_list)):
             await poll_message.add_reaction(discord_letters[n])
 
@@ -262,5 +276,14 @@ async def bulletin(ctx, action, *args):
         else:
             await message.delete()
             return
+
+
+# /bulletin add project description | {first bulletin} & {second bulletin} & {third bulletin}
+@bot.command(name="todo")
+@commands.has_role("members")
+async def bulletin(ctx, action="", *args):
+    await ctx.message.delete()
+    pinned_messages = await ctx.channel.pins()
+    print(pinned_messages)
 
 bot.run(TOKEN)

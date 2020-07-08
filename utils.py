@@ -11,14 +11,12 @@ def format_conversion(args, command):
     for i in args:
         if "|" in i:
             value += i[:-1]
-            print(value)
             description = value[:-1]
             value = ""
         elif "&" not in i:
             value += i + " "
         else:
             value += i
-            print(value)
             value_list.append(value[:-1])
             value = ""
 
@@ -27,7 +25,7 @@ def format_conversion(args, command):
     if command == "poll":
         for pos, option in enumerate(value_list):
             formatted += discord_letters[pos] + " " + option + "\n"
-        return formatted, value_list, f'**Description:** ' + description + f'\n'
+        return formatted, value_list, description
     elif command == "bulletin":
         for pos, option in enumerate(value_list):
             formatted += "- " + option + "\n"
