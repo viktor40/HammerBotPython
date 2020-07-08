@@ -79,6 +79,7 @@ async def on_message(message):
                     await coordinate_message.edit(content=coordinate_list + "\n" + message.content)
         else:
             await message.channel.send("Wrong format, please use the correct format", delete_after=5)
+        await bot.process_commands(message)  # makes sure other commands will also be processed
 
 
 @bot.event
@@ -103,6 +104,8 @@ async def on_message(message):
     issues = re.findall(regex, message.content)
     if issues:
         await mc_bug(message, issues)
+
+    await bot.process_commands(message)  # makes sure other commands will also be processed
 
 
 @bot.event
@@ -256,132 +259,27 @@ async def vote(ctx, vote_type="", *args):
 @commands.has_role("members")
 async def bulletin(ctx, action, *args):
     await ctx.message.delete()
-    if ctx.channel.id != coordinate_channel:
+    """if ctx.channel.id != coordinate_channel:
         response = "Sorry, wrong channel buddy"
         await ctx.send(response, delete_after=5)
-        return
-
-    channel_history = await ctx.channel.history(limit=50).flatten()
-    exists_already = exists(args, channel_history)
-
-    if action == "delete":
-        await delete_bulletin(args, channel_history).delete()
-        return
-
-    formatted, project, value_list = format_conversion(args, "bulletin")
-
-    if not project:
-        response = "I'm sorry but you didn't specify a project"
-        await ctx.send(response, delete_after=5)
-        return
-
-    if not value_list:
-        response = "I'm sorry but you didn't specify any tasks"
-        await ctx.send(response, delete_after=5)
-        return
-
-    if action == "create":
-        if exists_already:
-            response = "I'm sorry but this board already exists"
-            await ctx.send(response, delete_after=5)
-            return
-
-        embed = discord.Embed(
-            color=0xe74c3c,
-            title=project,
-            description=formatted
-        )
-        await ctx.send(embed=embed)
-        return
-
-    if not exists_already:
-        response = "I'm sorry but this board doesn't exist"
-        await ctx.send(response, delete_after=5)
-        return
-
-    if action == "add":
-        message, embed = add_bulletin(project, formatted, channel_history)
-        await message.edit(embed=embed)
-        return
-
-    if action == "remove":
-        bulletin_list, message = remove_bulletin(project, value_list, channel_history)
-        if bulletin_list:
-            edited_embed = discord.Embed(
-                color=0xe74c3c,
-                title=message.embeds[0].title,
-                description="\n".join(bulletin_list))
-            await message.edit(embed=edited_embed)
-            return
-
-        else:
-            await message.delete()
-            return
+        return"""
+    await task_list(ctx=ctx, action=action, args=args, use="todo")
 
 
-# /bulletin add project description | {first bulletin} & {second bulletin} & {third bulletin}
 @bot.command(name="todo")
 @commands.has_role("members")
 async def todo(ctx, action, *args):
     await ctx.message.delete()
-    pins = await ctx.channel.pins()
-    exists_already = exists(args, pins)
+    await task_list(ctx=ctx, action=action, args=args, use="todo")
 
-    if action == "delete":
-        await delete_bulletin(args, pins).delete()
-        return
 
-    formatted, project, value_list = format_conversion(args, "bulletin")
-
-    if not project:
-        response = "I'm sorry but you didn't specify a title"
-        await ctx.send(response, delete_after=5)
-        return
-
-    if not value_list:
-        response = "I'm sorry but you didn't specify any todos"
-        await ctx.send(response, delete_after=5)
-        return
-
-    if action == "create":
-        if exists_already:
-            response = "I'm sorry but this todo already exists"
-            await ctx.send(response, delete_after=5)
-            return
-
-        embed = discord.Embed(
-            color=0xe74c3c,
-            title=project,
-            description=formatted
-        )
-        todo = await ctx.send(embed=embed)
-        await todo.pin()
-        return
-
-    if not exists_already:
-        response = "I'm sorry but this todo doesn't exist"
-        await ctx.send(response, delete_after=5)
-        return
-
-    if action == "add":
-        message, edit_embed = add_bulletin(project, formatted, pins)
-        print(edit_embed.title)
-        await message.edit(embed=edit_embed)
-        return
-
-    if action == "remove":
-        bulletin_list, message = remove_bulletin(project, value_list, pins)
-        if bulletin_list:
-            edited_embed = discord.Embed(
-                color=0xe74c3c,
-                title=message.embeds[0].title,
-                description="\n".join(bulletin_list))
-            await message.edit(embed=edited_embed)
-            return
-
-        else:
-            await message.delete()
-            return
+@bot.command(name="mass_delete")
+@commands.has_role("admin")
+async def mass_delete(ctx, number_of_messages):
+    await ctx.message.delete()
+    channel_history = await ctx.channel.history(limit=number_of_messages).flatten()
+    for message in channel_history:
+        await message.delete
 
 
 bot.run(TOKEN)
