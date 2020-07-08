@@ -7,7 +7,7 @@ from dotenv import load_dotenv  # load module for usage of a .env file (pip inst
 import os  # import module for directory management
 import datetime
 from discord.utils import get
-from data import coordinate_channel, application_channel, vote_emotes, role_list
+from data import coordinate_channel, application_channel, vote_emotes, role_list, long_text
 from coordinates import *
 from utils import *
 from bulletin import *
@@ -94,6 +94,20 @@ async def on_message(message):
 async def test(ctx):
     response = "Don't worry, I'm working!"
     await ctx.send(response)
+
+
+@bot.command(name="testing")
+@commands.has_role("members")
+async def testing(ctx):
+
+    embed = discord.Embed(
+        color=0xe74c3c,
+        title="This is a test. How many characters can an Embed have?",
+        description=long_text
+    )
+    embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+    embed.set_footer(text="The embed description is {} characters long".format(len(long_text)))
+    await ctx.send(embed=embed)
 
 
 # command to test if the bot is running
@@ -192,7 +206,7 @@ async def vote(ctx, vote_type="", *args):
             title=string_votes,
         )
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-        embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())))
+        embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())[:-7]))
         poll_message = await ctx.send(embed=embed)
         for e in vote_emotes:
             await poll_message.add_reaction(bot.get_emoji(e))
@@ -205,7 +219,7 @@ async def vote(ctx, vote_type="", *args):
             description=poll[:-1]
         )
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-        embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())))
+        embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())[:-7]))
         poll_message = await ctx.send(embed=embed)
         for n in range(len(poll_list)):
             await poll_message.add_reaction(discord_letters[n])
@@ -226,6 +240,7 @@ async def bulletin(ctx, action, *args):
 
     if action == "delete":
         await delete_bulletin(args, channel_history).delete()
+        return
 
     formatted, project, value_list = format_conversion(args, "bulletin")
 
@@ -260,11 +275,11 @@ async def bulletin(ctx, action, *args):
 
     if action == "add":
         message, embed = add_bulletin(project, formatted, channel_history)
-        await message.edit(embed)
+        await message.edit(embed=embed)
         return
 
     if action == "remove":
-        bulletin_list, message = delete_bulletin(project, value_list, channel_history)
+        bulletin_list, message = remove_bulletin(project, value_list, channel_history)
         if bulletin_list:
             edited_embed = discord.Embed(
                 color=0xe74c3c,
@@ -281,9 +296,66 @@ async def bulletin(ctx, action, *args):
 # /bulletin add project description | {first bulletin} & {second bulletin} & {third bulletin}
 @bot.command(name="todo")
 @commands.has_role("members")
-async def bulletin(ctx, action="", *args):
+async def todo(ctx, action, *args):
     await ctx.message.delete()
-    pinned_messages = await ctx.channel.pins()
-    print(pinned_messages)
+    pins = await ctx.channel.pins()
+    exists_already = exists(args, pins)
+
+    if action == "delete":
+        await delete_bulletin(args, pins).delete()
+        return
+
+    formatted, project, value_list = format_conversion(args, "bulletin")
+
+    if not project:
+        response = "I'm sorry but you didn't specify a title"
+        await ctx.send(response, delete_after=5)
+        return
+
+    if not value_list:
+        response = "I'm sorry but you didn't specify any todos"
+        await ctx.send(response, delete_after=5)
+        return
+
+    if action == "create":
+        if exists_already:
+            response = "I'm sorry but this todo already exists"
+            await ctx.send(response, delete_after=5)
+            return
+
+        embed = discord.Embed(
+            color=0xe74c3c,
+            title=project,
+            description=formatted
+        )
+        todo = await ctx.send(embed=embed)
+        await todo.pin()
+        return
+
+    if not exists_already:
+        response = "I'm sorry but this todo doesn't exist"
+        await ctx.send(response, delete_after=5)
+        return
+
+    if action == "add":
+        message, edit_embed = add_bulletin(project, formatted, pins)
+        print(edit_embed.title)
+        await message.edit(embed=edit_embed)
+        return
+
+    if action == "remove":
+        bulletin_list, message = remove_bulletin(project, value_list, pins)
+        if bulletin_list:
+            edited_embed = discord.Embed(
+                color=0xe74c3c,
+                title=message.embeds[0].title,
+                description="\n".join(bulletin_list))
+            await message.edit(embed=edited_embed)
+            return
+
+        else:
+            await message.delete()
+            return
+
 
 bot.run(TOKEN)
