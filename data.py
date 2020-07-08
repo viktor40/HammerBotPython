@@ -5,6 +5,8 @@ coordinate_channel = 690080048375529481
 application_channel = 647293235248496644
 bulletin_board_channel = 724371678393663569
 
+hammer_guild = 645464470633840651
+
 upvote_emote = 689945780844494848
 downvote_emote = 689946011854307381
 votent_emote = 701747772461678612

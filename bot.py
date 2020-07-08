@@ -7,7 +7,7 @@ from dotenv import load_dotenv  # load module for usage of a .env file (pip inst
 import os  # import module for directory management
 import datetime
 from discord.utils import get
-from data import coordinate_channel, application_channel, vote_emotes, role_list, long_text
+from data import coordinate_channel, application_channel, vote_emotes, role_list, hammer_guild
 from coordinates import *
 from utils import *
 from bulletin import *
@@ -17,12 +17,15 @@ load_dotenv()  # load the .env file containing id's that have to be kept secret 
 TOKEN = os.getenv("DISCORD_TOKEN")  # get our discord bot token from .env
 bot = commands.Bot(command_prefix="/")
 
+latest_new_person = ""
+
 
 # print a message if the bot is online
 @bot.event
 async def on_ready():
     print("bot connected")
     # change status to playing mc
+    global latest_new_person
     await bot.change_presence(activity=discord.Game("Technical Minecraft on HammerSMP"))
 
 
@@ -86,6 +89,20 @@ async def on_message(message):
         for e in vote_emotes:
             await message.add_reaction(bot.get_emoji(e))
     await bot.process_commands(message)  # makes sure other commands will also be processed
+
+
+@bot.event
+async def on_member_join(member):
+    global latest_new_person
+    latest_new_person = member
+
+
+@bot.event
+async def on_member_remove(member):
+    global latest_new_person
+    if latest_new_person == member:
+        response = "Sadly, this person left us."
+        await bot.get_guild(hammer_guild).system_channel.send(response)
 
 
 # command to test if the bot is running
