@@ -6,7 +6,9 @@ from discord.ext import commands
 from dotenv import load_dotenv  # load module for usage of a .env file (pip install python-dotenv)
 import os  # import module for directory management
 import datetime
+import re
 from discord.utils import get
+from jira import JIRA
 from data import coordinate_channel, application_channel, vote_emotes, role_list, hammer_guild
 from coordinates import *
 from utils import *
@@ -15,9 +17,45 @@ from bulletin import *
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv("DISCORD_TOKEN")  # get our discord bot token from .env
+mojira_username = os.getenv("mojira_username")
+mojira_password = os.getenv("mojira_password")
+
 bot = commands.Bot(command_prefix="/")
 
 latest_new_person = ""
+
+regex = re.compile(
+    "((mc|mcapi|mcce|mcds|mcl|mcpe|realms|sc|web)-[0-9]+)", re.IGNORECASE
+)
+
+
+async def mc_bug(message, issues):
+    jira = JIRA(
+        server="https://bugs.mojang.com",
+        basic_auth=(mojira_username, mojira_password),
+    )
+
+    for issueid in issues:
+        try:
+            issue = jira.issue(issueid[0])
+
+            embed = discord.Embed(
+                color=0xA7D9FC,
+                title=str.upper(issueid[0]),
+                description=f"**{issue.fields.summary}**",
+                url=f"https://bugs.mojang.com/browse/{issueid[0]}",
+            )
+            embed.add_field(name="Status", value=issue.fields.status)
+            embed.add_field(name="Resolution", value=issue.fields.resolution)
+
+            embed.set_footer(text=f"created: {issue.fields.created[:10]}")
+
+            await message.channel.send(embed=embed)
+        except:
+            try:
+                await message.channel.send(f"{issueid[0]} does not exist")
+            except:
+                await message.channel.send(f"fuck off {message.author.mention}")
 
 
 # print a message if the bot is online
@@ -92,6 +130,17 @@ async def on_message(message):
 
 
 @bot.event
+async def on_message(message):
+    # check if the bot is online and not responding to itself
+    if message.author == bot.user:
+        return
+
+    issues = re.findall(regex, message.content)
+    if issues:
+        await mc_bug(message, issues)
+
+
+@bot.event
 async def on_member_join(member):
     global latest_new_person
     latest_new_person = member
@@ -101,7 +150,7 @@ async def on_member_join(member):
 async def on_member_remove(member):
     global latest_new_person
     if latest_new_person == member:
-        response = "Sadly, this person left us."
+        response = "Sadly, **{}** left us already.".format(member.name)
         await bot.get_guild(hammer_guild).system_channel.send(response)
 
 
@@ -116,14 +165,9 @@ async def test(ctx):
 @bot.command(name="testing")
 @commands.has_role("members")
 async def testing(ctx):
-
-    embed = discord.Embed(
-        color=0xe74c3c,
-        title="This is a test. How many characters can an Embed have?",
-        description="some text"
-    )
-    embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-    await ctx.send(embed=embed)
+    await ctx.message.delete()
+    response = ""
+    await ctx.send(response)
 
 
 # command to test if the bot is running
@@ -187,6 +231,7 @@ async def role(ctx, action, *args):
 @bot.command(name="stop_lazy", help="command to tell someone to stop lazy")
 @commands.has_role("members")
 async def stop_lazy(ctx, mention="jerk"):
+    await ctx.message.delete()
     response = "Stop Lazy {}".format(mention)
     await ctx.send(response)
     await ctx.send(file=discord.File('stop_lazy.png'))
