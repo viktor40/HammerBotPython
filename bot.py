@@ -277,9 +277,9 @@ async def todo(ctx, action, *args):
 @commands.has_role("admin")
 async def mass_delete(ctx, number_of_messages):
     await ctx.message.delete()
-    channel_history = await ctx.channel.history(limit=number_of_messages).flatten()
+    channel_history = await ctx.channel.history(limit=int(number_of_messages)).flatten()
     for message in channel_history:
-        await message.delete
+        await message.delete()
 
 
 bot.run(TOKEN)
