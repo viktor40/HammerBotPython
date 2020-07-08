@@ -103,10 +103,9 @@ async def testing(ctx):
     embed = discord.Embed(
         color=0xe74c3c,
         title="This is a test. How many characters can an Embed have?",
-        description=long_text
+        description="some text"
     )
     embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-    embed.set_footer(text="The embed description is {} characters long".format(len(long_text)))
     await ctx.send(embed=embed)
 
 
