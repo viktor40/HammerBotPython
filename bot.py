@@ -13,49 +13,15 @@ from data import coordinate_channel, application_channel, vote_emotes, role_list
 from coordinates import *
 from utils import *
 from bulletin import *
+from bug import mc_bug, regex
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv("DISCORD_TOKEN")  # get our discord bot token from .env
-mojira_username = os.getenv("mojira_username")
-mojira_password = os.getenv("mojira_password")
 
 bot = commands.Bot(command_prefix="/")
 
 latest_new_person = ""
-
-regex = re.compile(
-    "((mc|mcapi|mcce|mcds|mcl|mcpe|realms|sc|web)-[0-9]+)", re.IGNORECASE
-)
-
-
-async def mc_bug(message, issues):
-    jira = JIRA(
-        server="https://bugs.mojang.com",
-        basic_auth=(mojira_username, mojira_password),
-    )
-
-    for issueid in issues:
-        try:
-            issue = jira.issue(issueid[0])
-
-            embed = discord.Embed(
-                color=discord.Colour.orange(),
-                title=str.upper(issueid[0]),
-                description=f"**{issue.fields.summary}**",
-                url=f"https://bugs.mojang.com/browse/{issueid[0]}",
-            )
-            embed.add_field(name="Status", value=issue.fields.status)
-            embed.add_field(name="Resolution", value=issue.fields.resolution)
-
-            embed.set_footer(text=f"created: {issue.fields.created[:10]}")
-
-            await message.channel.send(embed=embed)
-        except:
-            try:
-                await message.channel.send(f"{issueid[0]} does not exist")
-            except:
-                await message.channel.send(f"fuck off {message.author.mention}")
 
 
 # print a message if the bot is online
