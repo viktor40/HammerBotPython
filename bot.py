@@ -229,7 +229,7 @@ async def vote(ctx, vote_type="", *args):
         response = "I'm sorry but you haven't specified a correct vote type."
         await ctx.send(response, delete_after=5)
 
-    vote_role = bot.get_user(vote_role_id)
+    vote_role = bot.get_guild(hammer_guild).get_role(role_ids[vote_role_id])
 
     if vote_type == "yes_no":
         string_votes = " ".join(args)
