@@ -8,10 +8,11 @@ import os  # import module for directory management
 import datetime
 import re
 from discord.utils import get
-from data import coordinate_channel, application_channel, vote_emotes, role_list, hammer_guild
+from data import coordinate_channel, application_channel, vote_emotes, role_list, hammer_guild, role_ids, \
+    vote_role_id
 from coordinates import *
 from utils import *
-from bulletin import *
+from task import task_list
 from bug import mc_bug, regex
 
 # discord token is stored in a .env file in the same directory as the bot
@@ -147,7 +148,7 @@ async def role(ctx, action, *args):
         return
 
     # check if you have provided a role, if not tell the user to do so
-    if args == ():
+    if not args:
         response = "You have not specified a role"
         await ctx.send(response)
         return
@@ -156,9 +157,9 @@ async def role(ctx, action, *args):
     role_arg = " ".join(args)
 
     # give the tour giver role if the user asks for this
-    if role_arg in role_list:
+    if role_arg in role_ids:
         member = ctx.message.author  # the author of the message, part of the discord.Member class
-        guild_role = get(member.guild.roles, name=role_arg)  # the role needed to add
+        guild_role = bot.get_guild(hammer_guild).get_role(role_ids[role_arg])  # the role needed to add
 
         if action == "add" and guild_role in member.roles:
             response = "I'm sorry but you already have this role"
@@ -228,11 +229,14 @@ async def vote(ctx, vote_type="", *args):
         response = "I'm sorry but you haven't specified a correct vote type."
         await ctx.send(response, delete_after=5)
 
+    vote_role = bot.get_user(vote_role_id)
+
     if vote_type == "yes_no":
         string_votes = " ".join(args)
         embed = discord.Embed(
             color=0xe74c3c,
             title=string_votes,
+            description=vote_role.mention
         )
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
         embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())[:-7]))
@@ -245,7 +249,7 @@ async def vote(ctx, vote_type="", *args):
         embed = discord.Embed(
             color=0xe74c3c,
             title=introduction,
-            description=poll[:-1]
+            description=poll[:-1] + " " + vote_role.mention
         )
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
         embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())[:-7]))
@@ -277,6 +281,9 @@ async def todo(ctx, action, *args):
 @commands.has_role("admin")
 async def mass_delete(ctx, number_of_messages):
     await ctx.message.delete()
+    if number_of_messages > 200:
+        response = "You want to delete too many messages at once, I'm sorry."
+        await ctx.send(response)
     channel_history = await ctx.channel.history(limit=int(number_of_messages)).flatten()
     for message in channel_history:
         await message.delete()

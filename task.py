@@ -1,5 +1,5 @@
 # HammerBotPython
-# bulletin.py
+# task.py
 
 import discord
 from utils import format_conversion
@@ -16,7 +16,7 @@ def exists(args, channel_history):
     return exists_already
 
 
-def delete_bulletin(args, channel_history):
+def delete_task(args, channel_history):
     project = " ".join(args)
     for message in channel_history:
         if message.embeds:
@@ -24,7 +24,7 @@ def delete_bulletin(args, channel_history):
                 return message
 
 
-def add_bulletin(project, formatted, channel_history):
+def add_task(project, formatted, channel_history):
     if project[:-1] == " ":
         project = project[:-1]
     for message in channel_history:
@@ -38,7 +38,7 @@ def add_bulletin(project, formatted, channel_history):
                 return message, edited_embed
 
 
-def remove_bulletin(project, value_list, channel_history):
+def remove_task(project, value_list, channel_history):
     for message in channel_history:
         if message.embeds:
             if message.embeds[0].title == project:
@@ -66,7 +66,7 @@ async def task_list(ctx, action, use, args="",):
     exists_already = exists(args, channel_history)
 
     if action == "delete":
-        await delete_bulletin(args, channel_history).delete()
+        await delete_task(args, channel_history).delete()
         return
 
     formatted, project, value_list = format_conversion(args, "bulletin")
@@ -104,12 +104,12 @@ async def task_list(ctx, action, use, args="",):
         return
 
     if action == "add":
-        message, embed = add_bulletin(project, formatted, channel_history)
+        message, embed = add_task(project, formatted, channel_history)
         await message.edit(embed=embed)
         return
 
     if action == "remove":
-        bulletin_list, message = remove_bulletin(project, value_list, channel_history)
+        bulletin_list, message = remove_task(project, value_list, channel_history)
         if bulletin_list:
             edited_embed = discord.Embed(
                 color=0xe74c3c,
