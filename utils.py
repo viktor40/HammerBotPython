@@ -1,6 +1,7 @@
 # HammerBotPython
 # utils.py
 
+import discord
 from data import discord_letters
 
 

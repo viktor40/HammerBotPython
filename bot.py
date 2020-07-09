@@ -8,6 +8,7 @@ import os  # import module for directory management
 import datetime
 import re
 from discord.utils import get
+from Embeds import RichEmbed
 from data import coordinate_channel, application_channel, vote_emotes, role_list, hammer_guild, role_ids, \
     vote_role_id
 from coordinates import *
@@ -135,8 +136,11 @@ async def test(ctx):
 @commands.has_role("members")
 async def testing(ctx):
     await ctx.message.delete()
-    response = ""
-    await ctx.send(response)
+    test_embed = RichEmbed(title="blab",
+                           description="test",
+                           author="viktor40 uwuwu",
+                           color=discord.Color.blurple())
+    await ctx.send(embed=test_embed.get_embed())
 
 
 # command to test if the bot is running
@@ -234,7 +238,7 @@ async def vote(ctx, vote_type="", *args):
     if vote_type == "yes_no":
         string_votes = " ".join(args)
         embed = discord.Embed(
-            color=0xe74c3c,
+            colour=0xe74c3c,
             title=string_votes,
             description=vote_role.mention
         )
