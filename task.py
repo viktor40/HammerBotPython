@@ -50,6 +50,20 @@ def remove_task(project, value_list, channel_history):
                 return bulletin_list, message
 
 
+def rename_task(project, new_title, channel_history):
+    if project[:-1] == " ":
+        project = project[:-1]
+    for message in channel_history:
+        if message.embeds:
+            if message.embeds[0].title == project:
+                edited_embed = discord.Embed(
+                    color=0xe74c3c,
+                    title=new_title,
+                    description=message.embeds[0].description
+                )
+                return message, edited_embed
+
+
 async def task_list(ctx, action, use, args="",):
     if use == "bulletin":
         channel_history = await ctx.channel.history(limit=50).flatten()
@@ -105,6 +119,12 @@ async def task_list(ctx, action, use, args="",):
 
     if action == "add":
         message, embed = add_task(project, formatted, channel_history)
+        await message.edit(embed=embed)
+        return
+
+    if action == "rename":
+        title = " ".join(args).split("|")[1]
+        message, embed = rename_task(project, title, channel_history)
         await message.edit(embed=embed)
         return
 
