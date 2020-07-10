@@ -136,10 +136,8 @@ async def test(ctx):
 @commands.has_role("members")
 async def testing(ctx):
     await ctx.message.delete()
-    test_embed = RichEmbed(title="blab",
-                           description="test",
-                           author="viktor40 uwuwu",
-                           color=discord.Color.blurple())
+    test_embed = RichEmbed(title="discord.Colour.purple()",
+                           color=discord.Colour.purple())
     await ctx.send(embed=test_embed.get_embed())
 
 

@@ -1,6 +1,8 @@
 # HammerBotPython
 # data.py
 
+import discord
+
 coordinate_channel = 690080048375529481
 application_channel = 647293235248496644
 bulletin_board_channel = 724371678393663569
@@ -50,3 +52,9 @@ discord_letters = [
     "\N{REGIONAL INDICATOR SYMBOL LETTER Z}"
 ]
 
+bug_colour_mappings = {"Open": discord.Color.red(),
+                       "In Progress": discord.Colour.orange(),
+                       "Resolved": discord.Colour.green(),
+                       "Reopened": discord.Colour.blue(),
+                       "Postponed": discord.Colour.purple(),
+                       "Closed": discord.Colour.dark_grey()}

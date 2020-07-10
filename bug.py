@@ -6,6 +6,7 @@ import re
 from jira import JIRA
 from dotenv import load_dotenv  # load module for usage of a .env file (pip install python-dotenv)
 import os  # import module for directory management
+from data import bug_colour_mappings
 
 regex = re.compile(
     "((mc|mcapi|mcce|mcds|mcl|mcpe|realms|sc|web)-[0-9]+)", re.IGNORECASE
@@ -25,10 +26,11 @@ async def mc_bug(message, issues):
     for issueid in issues:
         try:
             issue = jira.issue(issueid[0])
+            status = issue.fields.status
             embed = discord.Embed(
-                color=discord.Colour.orange(),
+                color=bug_colour_mappings[str(status)],
                 title="**{}**: {}".format(str.upper(issueid[0]), issue.fields.summary),
-                description="**Status:** {} | **Resolution:** {} | **Votes:** {}".format(issue.fields.status,
+                description="**Status:** {} | **Resolution:** {} | **Votes:** {}".format(status,
                                                                                          issue.fields.resolution,
                                                                                          issue.fields.votes),
                 url=f"https://bugs.mojang.com/browse/{issueid[0]}",

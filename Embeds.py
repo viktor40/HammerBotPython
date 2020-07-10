@@ -66,14 +66,10 @@ class TaskEmbed(RichEmbed):
         return embed
 
     def __add__(self, other):
-        if self.project[:-1] == " ":
-            project = self.project[:-1]
-        for message in self.channel_history:
+        if other.project[:-1] == " ":
+            other.project = other.project[:-1]
+        for message in other.channel_history:
             if message.embeds:
-                if message.embeds[0].title == project:
-                    edited_embed = discord.Embed(
-                        color=0xe74c3c,
-                        title=message.embeds[0].title,
-                        description=message.embeds[0].description + "\n" + formatted
-                    )
-                    return message, edited_embed
+                if message.embeds[0].title == other.project:
+                    self.title += "\n" + other.formatted
+                    return message,
