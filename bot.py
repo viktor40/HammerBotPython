@@ -135,10 +135,7 @@ async def test(ctx):
 @bot.command(name="testing")
 @commands.has_role("members")
 async def testing(ctx):
-    await ctx.message.delete()
-    test_embed = RichEmbed(title="discord.Colour.purple()",
-                           color=discord.Colour.purple())
-    await ctx.send(embed=test_embed.get_embed())
+    print(ctx.guild.categories)
 
 
 # command to test if the bot is running
@@ -269,7 +266,7 @@ async def bulletin(ctx, action, *args):
         response = "Sorry, wrong channel buddy"
         await ctx.send(response, delete_after=5)
         return"""
-    await task_list(ctx=ctx, action=action, args=args, use="todo")
+    await task_list(ctx=ctx, action=action, args=args, use="bulletin")
 
 
 @bot.command(name="todo")
