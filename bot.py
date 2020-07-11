@@ -14,7 +14,7 @@ from data import coordinate_channel, application_channel, vote_emotes, role_list
 from coordinates import *
 from utils import *
 from task import task_list
-from bug import mc_bug, regex
+from bug import mc_bug, regex_normal
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -102,11 +102,7 @@ async def on_message(message):
     # check if the bot is online and not responding to itself
     if message.author == bot.user:
         return
-
-    issues = re.findall(regex, message.content)
-    if issues:
-        await mc_bug(message, issues)
-
+    await mc_bug(message)
     await bot.process_commands(message)  # makes sure other commands will also be processed
 
 
