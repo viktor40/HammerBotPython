@@ -36,7 +36,7 @@ async def mc_bug(message):
                     title="**{}**: {}".format(str.upper(issueid[0]), issue.fields.summary),
                     url=f"https://bugs.mojang.com/browse/{issueid[0]}")
                 embed.set_author(name=issue.fields.creator,
-                                 icon_url=getattr(issue.fields.reporter.avatarUrls, "16x16"),
+                                 icon_url=getattr(issue.fields.reporter.avatarUrls, "48x48"),
                                  url="https://bugs.mojang.com/secure/ViewProfile.jspa?name={}".format(issue.fields.reporter.name))
                 date_time = issue.fields.created.split("T")
                 embed.set_footer(text="created on {} at {}".format(date_time[0], date_time[1][:-9]))
