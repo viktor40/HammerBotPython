@@ -27,7 +27,7 @@ Possible actions are `add` and `remove` and roles can be configured.
 The bot contains a command that will handle voting. This will be done within an embed. The embed has the thing to vote on as a title and shows the person who created the vote, together with his discord profile picture as the author.
 Voting emotes will also be added by the bot so people just have to click on them
 
-The command has the following syntax:
+The command has the following syntax 
 ```
 /buletin <vote_type> <*args>
 ```
@@ -40,13 +40,13 @@ The different options will be displayed in a nice fashion in the order that the 
 Create a `yes_no` vote:
 `/vote yes_no <something to vote on>`
 
-Create a `multiple` vote:
-`/vote multiple <something to vote on> | <option 1>, <option 2> ... <option 26>`
+Create a `mutliplt` vote:
+`/vote yes_no <something to vote on> | <option 1>, <option 2> ... <option 26>`
 
 ### Bulletin
 This command will create a bulletin for a specific task in the bulletin channel where all members can add or remove bulletins.
 
-The command has the following syntax:
+The command has the following syntax 
 ```
 /buletin <action> <*args>
 ```
@@ -70,7 +70,7 @@ Delete a board
 ### todo
 This command will create a todo list for a specific project in the project channel. All members can add or remove bulletins, and the todo list will be pinned by the bot.
 
-The command has the following syntax:
+The command has the following syntax 
 ```
 /todo <action> <*args>
 ```
@@ -93,7 +93,7 @@ Delete a board
 ### Mass Delete
 This command will delete the latest messages in a channel. This can be used for moderating. You need to provide the number of messages you want to delete.
 
-The command has the following syntax:
+The command has the following syntax 
 ```
 /mass_delete <number_of_messages>
 ```
