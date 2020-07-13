@@ -23,6 +23,26 @@ The command has the following syntax
 ```
 Possible actions are `add` and `remove` and roles can be configured.
 
+### Voting
+The bot contains a command that will handle voting. This will be done within an embed. The embed has the thing to vote on as a title and shows the person who created the vote, together with his discord profile picture as the author.
+Voting emotes will also be added by the bot so people just have to click on them
+
+The command has the following syntax 
+```
+/buletin <vote_type> <*args>
+```
+Possible vote types are: `yes_no` and `multiple`
+
+The `yes_no` type will create a vote where people can only vote yes, no or abstain / unsure. The `multiple` vote will give people the ability to add multiple options to the vote. The max amount of options is 26, the amount ot letters in the alphabet.
+The different options will be displayed in a nice fashion in the order that the creator listed them in.
+
+**Some examples:**
+Create a `yes_no` vote:
+`/vote yes_no <something to vote on>`
+
+Create a `mutliplt` vote:
+`/vote yes_no <something to vote on> | <option 1>, <option 2> ... <option 26>`
+
 ### Bulletin
 This command will create a bulletin for a specific task in the bulletin channel where all members can add or remove bulletins.
 
