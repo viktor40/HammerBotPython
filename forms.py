@@ -34,7 +34,12 @@ column_names = {'Tijdstempel': 'timestamp',
                 'How long have you been playing MC?': 'playing',
                 'Why would you like to join our server?': 'application_reason',
                 'How old are you?': 'age',
-                }
+                'strengths': 'strengths'}
+
 data.rename(columns=column_names, inplace=True)
 data.timestamp = pd.to_datetime(data.timestamp)
-print(data.head())
+test = data.head().iloc
+print(test)
+for i in range(len(data.head())):
+    print(test[i])
+    print(type(test[i]))
