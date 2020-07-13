@@ -40,68 +40,11 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.channel.id == coordinate_channel:
-
-        await message.delete()  # delete the message that was just sent
-        """
-        Check if the message is in the correct format.
-        The format we want is the message to start with the dimension, i.e. _n or _ow.
-        We also check if the message contains a ':' in the right spot, and checks that the coordinates are
-        actual numbers.
-        """
-        if check_format(message):
-            channel_history = await message.channel.history(limit=10).flatten()
-
-            # if del is at the end of the message we want to delete that coordinate from the list
-            if message.content[-3:] == "del":
-                coordinate = message.content.strip(" del")
-
-                # we also want to know if the coordinate is actually in the list, if tell that to the sender
-                if not in_message(coordinate, channel_history):
-                    await message.channel.send("This coordinate doesn't exist in the list.", delete_after=5)
-
-                else:
-                    # remove the coordinate from the list, get the message to edit and join the list back to a string
-                    msg, edits = delete(coordinate, channel_history)
-                    await msg.edit(content=edits)
-
-            elif create_new_message(channel_history):
-                if in_message(message.content, channel_history):
-                    await message.channel.send("This coordinate is already in the list", delete_after=5)
-                else:
-                    await message.channel.send(message.content)
-
-            else:
-                if in_message(message.content, channel_history):
-                    await message.channel.send("This coordinate is already in the list", delete_after=5)
-                else:
-                    # add the new message to the old message
-                    coordinate_message = channel_history[0]
-                    coordinate_list = coordinate_message.content
-                    await coordinate_message.edit(content=coordinate_list + "\n" + message.content)
-        else:
-            await message.channel.send("Wrong format, please use the correct format", delete_after=5)
-        await bot.process_commands(message)  # makes sure other commands will also be processed
-
-
-@bot.event
-async def on_message(message):
-    # check if the bot is online and not responding to itself
-    if message.author == bot.user:
-        return
-
     # if a new message is sent in the application forms channel, the bot will automatically add reactions
     if message.channel.id == application_channel:
         for e in vote_emotes:
             await message.add_reaction(bot.get_emoji(e))
-    await bot.process_commands(message)  # makes sure other commands will also be processed
 
-
-@bot.event
-async def on_message(message):
-    # check if the bot is online and not responding to itself
-    if message.author == bot.user:
-        return
     await mc_bug(message)
     await bot.process_commands(message)  # makes sure other commands will also be processed
 
@@ -276,6 +219,14 @@ async def todo(ctx, action, *args):
     await task_list(ctx=ctx, action=action, args=args, use="todo")
 
 
+@bot.command(name="coords")
+@commands.has_role("members")
+async def coords(ctx, action, *args):
+    await ctx.message.delete()
+    if ctx.channel.id == coordinate_channel:
+        await task_list(ctx=ctx, action=action, args=args, use="bulletin")
+
+
 @bot.command(name="mass_delete")
 @commands.has_role("admin")
 async def mass_delete(ctx, number_of_messages):
@@ -287,5 +238,48 @@ async def mass_delete(ctx, number_of_messages):
     for message in channel_history:
         await message.delete()
 
+
+"""    if message.channel.id == coordinate_channel:
+
+        await message.delete()  # delete the message that was just sent
+
+        Check if the message is in the correct format.
+        The format we want is the message to start with the dimension, i.e. _n or _ow.
+        We also check if the message contains a ':' in the right spot, and checks that the coordinates are
+        actual numbers.
+
+        if check_format(message):
+            channel_history = await message.channel.history(limit=10).flatten()
+
+            # if del is at the end of the message we want to delete that coordinate from the list
+            if message.content[-3:] == "del":
+                coordinate = message.content.strip(" del")
+
+                # we also want to know if the coordinate is actually in the list, if tell that to the sender
+                if not in_message(coordinate, channel_history):
+                    await message.channel.send("This coordinate doesn't exist in the list.", delete_after=5)
+
+                else:
+                    # remove the coordinate from the list, get the message to edit and join the list back to a string
+                    msg, edits = delete(coordinate, channel_history)
+                    await msg.edit(content=edits)
+
+            elif create_new_message(channel_history):
+                if in_message(message.content, channel_history):
+                    await message.channel.send("This coordinate is already in the list", delete_after=5)
+                else:
+                    await message.channel.send(message.content)
+
+            else:
+                if in_message(message.content, channel_history):
+                    await message.channel.send("This coordinate is already in the list", delete_after=5)
+                else:
+                    # add the new message to the old message
+                    coordinate_message = channel_history[0]
+                    coordinate_list = coordinate_message.content
+                    await coordinate_message.edit(content=coordinate_list + "\n" + message.content)
+        else:
+            await message.channel.send("Wrong format, please use the correct format", delete_after=5)
+"""
 
 bot.run(TOKEN)

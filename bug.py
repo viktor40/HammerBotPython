@@ -96,7 +96,6 @@ async def mc_bug(message):
                             valid = re.findall(regex, attach.content)
                             if valid:
                                 embed.set_image(url=attach.content)
-                                print(embed.fields)
                                 await message.channel.send(embed=embed)
                                 return
                     await message.channel.send(embed=embed)

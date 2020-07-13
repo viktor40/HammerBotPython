@@ -3,7 +3,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 import json
 
-SCOPE = ["https://spreadsheets.google.com/feeds"]
+SCOPE = ["https://www.googleapis.com/auth/drive"]
 SECRETS_FILE = "forms-key.json"
 SPREADSHEET = "application test answers"
 # Based on docs here - http://gspread.readthedocs.org/en/latest/oauth2.html
@@ -30,6 +30,7 @@ data = pd.DataFrame(sheet.get_all_records())
 # same so must name each column
 column_names = {'Tijdstempel': 'timestamp',
                 'What is your Minecraft IGN?': 'ign',
+                'What is your discord IGN (e.g. HammerBot#5115)': 'name',
                 'How long have you been playing MC?': 'playing',
                 'Why would you like to join our server?': 'application_reason',
                 'How old are you?': 'age',
