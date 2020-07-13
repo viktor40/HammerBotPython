@@ -22,7 +22,6 @@ load_dotenv()  # load the .env file containing id's that have to be kept secret 
 TOKEN = os.getenv("DISCORD_TOKEN")  # get our discord bot token from .env
 
 bot = commands.Bot(command_prefix="/")
-bot.remove_command('help')
 
 latest_new_person = ""
 
@@ -30,10 +29,10 @@ latest_new_person = ""
 # print a message if the bot is online
 @bot.event
 async def on_ready():
+    print("bot connected")
     # change status to playing mc
     global latest_new_person
     await bot.change_presence(activity=discord.Game("Technical Minecraft on HammerSMP"))
-    print("bot connected")
 
 
 @bot.event
@@ -78,17 +77,6 @@ async def test(ctx):
 async def testing(ctx):
     vote_role = ctx.guild.get_role(vote_role_id)
     print(vote_role)
-
-
-@bot.command(name="temp")
-async def help_command(ctx, command=""):
-    roles = ctx.author.roles
-    com = bot.commands
-    print(com)
-    for i in com:
-        name = i.name
-        check = i.checks[0](ctx)
-        print(name, check)
 
 
 # command to test if the bot is running
@@ -234,7 +222,7 @@ async def todo(ctx, action, *args):
 
 @bot.command(name="coords")
 @commands.has_role("members")
-async def coordinates(ctx, action, *args):
+async def coords(ctx, action, *args):
     await ctx.message.delete()
     if ctx.channel.id == coordinate_channel:
         await task_list(ctx=ctx, action=action, args=args, use="bulletin")
@@ -255,7 +243,6 @@ async def mass_delete(ctx, number_of_messages):
 @tasks.loop(seconds=5)
 async def forms():
     pass
-
 
 forms.start()
 bot.run(TOKEN)
