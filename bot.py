@@ -65,10 +65,10 @@ async def on_member_remove(member):
 
 
 # command to test if the bot is running
-@bot.command(name="test", help="test if the bot is working")
+@bot.command(name="ping", help="test if the bot is working")
 @commands.has_role("members")
-async def test(ctx):
-    response = "Don't worry, I'm working!"
+async def ping(ctx):
+    response = "HammerBot Python is online!"
     await ctx.send(response)
 
 
