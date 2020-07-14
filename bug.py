@@ -4,11 +4,12 @@
 import discord
 import re
 from jira import JIRA
+import jira
 from dotenv import load_dotenv  # load module for usage of a .env file (pip install python-dotenv)
 import os  # import module for directory management
 from data import bug_colour_mappings
 
-regex_normal = re.compile("((mc|mcapi|mcce|mcds|mcl|mcpe|realms|sc|web)-[0-9]+)", re.IGNORECASE)
+regex_normal = re.compile("((mc|mcapi|mcce|mcd|mcl|mcpe|mce|realms|web|bds)-[0-9]+)", re.IGNORECASE)
 
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 mojira_username = os.getenv("mojira_username")
@@ -16,7 +17,7 @@ mojira_password = os.getenv("mojira_password")
 
 
 async def mc_bug(message):
-    raw_issues = re.findall(regex_normal, message.content)[:3]
+    raw_issues = re.findall(regex_normal, message.content)
     issues = []
     for bug in raw_issues:
         if bug not in issues:
@@ -73,23 +74,28 @@ async def mc_bug(message):
                             label_field += label + "\n"
                         label_field = label_field[:-1]
                     embed.add_field(name="Labels", value=label_field)
-                    categories = issue.fields.customfield_11901
-                    category_field = ""
-                    if not categories:
-                        category_field = "None"
-
-                    else:
-                        for category in categories:
-                            category_field += str(category) + "\n"
+                    try:
+                        categories = issue.fields.customfield_11901
+                        category_field = ""
+                        if not categories:
+                            category_field = "None"
+                        else:
+                            for category in categories:
+                                category_field += str(category) + "\n"
+                    except AttributeError:
+                        category_field = "No categories available"
 
                     embed.add_field(name="Category", value=category_field)
                     embed.add_field(name="Assignee", value=issue.fields.assignee)
                     embed.add_field(name="Watchers", value=issue.fields.watches.raw["watchCount"])
-                    priority = issue.fields.customfield_12200
-                    if not priority:
-                        embed.add_field(name="Priority", value="None")
-                    else:
-                        embed.add_field(name="Priority", value=issue.fields.customfield_12200.value)
+                    try:
+                        priority = issue.fields.customfield_12200
+                        if not priority:
+                            embed.add_field(name="Priority", value="None")
+                        else:
+                            embed.add_field(name="Priority", value=issue.fields.customfield_12200.value)
+                    except AttributeError:
+                        embed.add_field(name="Priority", value="No priority available")
 
                     if issue.fields.attachment:
                         for attach in issue.fields.attachment:
@@ -105,7 +111,7 @@ async def mc_bug(message):
                     embed.description = "**Status:** {} | **Resolution:** {} | **Votes:** {}".format(status, issue.fields.resolution, issue.fields.votes)
                     await message.channel.send(embed=embed)
 
-            except:
+            except jira.exceptions.JIRAError:
                 try:
                     await message.channel.send(f"{issueid[0]} does not exist")
                 except:
