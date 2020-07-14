@@ -79,7 +79,6 @@ async def mc_bug(message):
                     else:
                         for category in categories:
                             category_field += str(category) + "\n"
-                        category_field = label_field[:-1]
 
                     embed.add_field(name="Category", value=category_field)
                     embed.add_field(name="Assignee", value=issue.fields.assignee)
