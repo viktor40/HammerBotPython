@@ -9,7 +9,6 @@ import os  # import module for directory management
 from data import bug_colour_mappings
 
 regex_normal = re.compile("((mc|mcapi|mcce|mcds|mcl|mcpe|realms|sc|web)-[0-9]+)", re.IGNORECASE)
-regex_extended = re.compile("((mc|mcapi|mcce|mcds|mcl|mcpe|realms|sc|web)-[0-9]+ extended)", re.IGNORECASE)
 
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 mojira_username = os.getenv("mojira_username")
@@ -18,8 +17,8 @@ mojira_password = os.getenv("mojira_password")
 
 async def mc_bug(message):
 
-    issues = re.findall(regex_normal, message.content)
-    extended = re.findall(regex_extended, message.content)
+    issues = set(re.findall(regex_normal, message.content))
+    extended = "extended" in message.content
 
     if issues:
         jira = JIRA(
