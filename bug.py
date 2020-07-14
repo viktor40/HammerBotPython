@@ -17,7 +17,7 @@ mojira_password = os.getenv("mojira_password")
 
 async def mc_bug(message):
 
-    issues = set(re.findall(regex_normal, message.content))
+    issues = set(re.findall(regex_normal, message.content)[:3])
     extended = "extended" in message.content
 
     if issues:
@@ -26,8 +26,8 @@ async def mc_bug(message):
             basic_auth=(mojira_username, mojira_password),
         )
 
-        try:
-            for issueid in issues:
+        for issueid in issues:
+            try:
                 issue = jira.issue(issueid[0])
                 status = issue.fields.status
                 embed = discord.Embed(
@@ -102,8 +102,8 @@ async def mc_bug(message):
                     embed.description = "**Status:** {} | **Resolution:** {} | **Votes:** {}".format(status, issue.fields.resolution, issue.fields.votes)
                     await message.channel.send(embed=embed)
 
-        except:
-            try:
-                await message.channel.send(f"{issueid[0]} does not exist")
             except:
-                await message.channel.send(f"fuck off {message.author.mention}")
+                try:
+                    await message.channel.send(f"{issueid[0]} does not exist")
+                except:
+                    await message.channel.send(f"fuck off {message.author.mention}")
