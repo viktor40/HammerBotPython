@@ -16,8 +16,11 @@ mojira_password = os.getenv("mojira_password")
 
 
 async def mc_bug(message):
-
-    issues = set(re.findall(regex_normal, message.content)[:3])
+    raw_issues = re.findall(regex_normal, message.content)[:3]
+    issues = []
+    for bug in raw_issues:
+        if bug not in issues:
+            issues.append(bug)
     extended = "extended" in message.content
 
     if issues:
@@ -26,7 +29,7 @@ async def mc_bug(message):
             basic_auth=(mojira_username, mojira_password),
         )
 
-        for issueid in issues:
+        for issueid in issues[:3]:
             try:
                 issue = jira.issue(issueid[0])
                 status = issue.fields.status
