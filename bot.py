@@ -16,6 +16,7 @@ from coordinates import *
 from utils import *
 from task import task_list
 from bug import mc_bug, regex_normal
+from voting import vote_handler
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -160,45 +161,7 @@ async def CMP(ctx, mention="jerk"):
 @commands.has_role("members")
 async def vote(ctx, vote_type="", *args):
     await ctx.message.delete()
-
-    if not args:
-        response = "I'm sorry but you haven't specified anything to vote on."
-        await ctx.send(response, delete_after=5)
-
-    if not vote_type or vote_type not in ("yes_no", "multiple"):
-        response = "I'm sorry but you haven't specified a correct vote type."
-        await ctx.send(response, delete_after=5)
-
-    vote_role = ctx.guild.get_role(vote_role_id)
-
-    if vote_type == "yes_no":
-        string_votes = " ".join(args)
-        embed = discord.Embed(
-            colour=0xe74c3c,
-            title=string_votes,
-        )
-        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-        embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())[:-7]))
-        poll_message = await ctx.send(embed=embed)
-        for e in vote_emotes:
-            await poll_message.add_reaction(bot.get_emoji(e))
-        ping = await ctx.send(vote_role.mention)
-        await ping.delete()
-
-    elif vote_type == "multiple":
-        poll, poll_list, introduction = format_conversion(args, "poll")
-        embed = discord.Embed(
-            color=0xe74c3c,
-            title=introduction,
-            description=poll[:-1] + " "
-        )
-        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-        embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())[:-7]))
-        poll_message = await ctx.send(embed=embed)
-        for n in range(len(poll_list)):
-            await poll_message.add_reaction(discord_letters[n])
-        ping = await ctx.send(vote_role.mention)
-        await ping.delete()
+    await vote_handler(ctx, vote_type, args, bot)
 
 
 # /bulletin add project description | {first bulletin} & {second bulletin} & {third bulletin}

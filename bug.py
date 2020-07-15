@@ -25,14 +25,14 @@ async def mc_bug(message):
     extended = "extended" in message.content
 
     if issues:
-        jira = JIRA(
+        jira_access = JIRA(
             server="https://bugs.mojang.com",
             basic_auth=(mojira_username, mojira_password),
         )
 
         for issueid in issues[:3]:
             try:
-                issue = jira.issue(issueid[0])
+                issue = jira_access.issue(issueid[0])
                 status = issue.fields.status
                 embed = discord.Embed(
                     color=bug_colour_mappings[str(status)],
