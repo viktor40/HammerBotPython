@@ -5,6 +5,7 @@ import discord
 from utils import format_conversion
 
 
+# Check if the task already exists.
 def exists(args, channel_history):
     exists_already = False
     for message in channel_history:
@@ -16,6 +17,7 @@ def exists(args, channel_history):
     return exists_already
 
 
+# Delete a task from the list.
 def delete_task(args, channel_history):
     project = " ".join(args)
     for message in channel_history:
@@ -24,6 +26,7 @@ def delete_task(args, channel_history):
                 return message
 
 
+# Add a task to the list.
 def add_task(project, formatted, channel_history):
     if project[:-1] == " ":
         project = project[:-1]
@@ -38,6 +41,7 @@ def add_task(project, formatted, channel_history):
                 return message, edited_embed
 
 
+# Remove a task from the list.
 def remove_task(project, value_list, channel_history):
     for message in channel_history:
         if message.embeds:
@@ -50,6 +54,7 @@ def remove_task(project, value_list, channel_history):
                 return bulletin_list, message
 
 
+# Rename a task.
 def rename_task(project, new_title, channel_history):
     if project[:-1] == " ":
         project = project[:-1]
@@ -64,7 +69,9 @@ def rename_task(project, new_title, channel_history):
                 return message, edited_embed
 
 
+# Generates the task list embed.
 async def task_list(ctx, action, use, args="",):
+    # check for the correct syntax
     if use == "bulletin":
         channel_history = await ctx.channel.history(limit=50).flatten()
     elif use == "todo":
@@ -79,6 +86,7 @@ async def task_list(ctx, action, use, args="",):
 
     exists_already = exists(args, channel_history)
 
+    # Check for more syntax and perform the correct action.
     if action == "delete":
         await delete_task(args, channel_history).delete()
         return

@@ -1,5 +1,11 @@
 import discord
 
+"""
+These classes are still very much in development and will be used to easier handle all the embed handling,
+creating, editing etc by commands like done in the todo, voting, bulletin and coordinate commands. Currently this
+doesn't do anything useful yet.
+"""
+
 
 class RichEmbed:
     def __init__(self, color="", title="", description="", url="", author="", author_icon="", footer="", fields=None):

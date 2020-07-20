@@ -5,31 +5,40 @@ import discord
 import re
 from jira import JIRA
 import jira
-from dotenv import load_dotenv  # load module for usage of a .env file (pip install python-dotenv)
-import os  # import module for directory management
+from dotenv import load_dotenv
+import os
 from data import bug_colour_mappings
 
+# The regex is used to check for bugs in teh correct format.
 regex_normal = re.compile("((mc|mcapi|mcce|mcd|mcl|mcpe|mce|realms|web|bds)-[0-9]+)", re.IGNORECASE)
 
-load_dotenv()  # load the .env file containing id's that have to be kept secret for security
+# Get the login details to login to the bug tracker.
+load_dotenv()
 mojira_username = os.getenv("mojira_username")
 mojira_password = os.getenv("mojira_password")
 
 
 async def mc_bug(message):
+    # Convert the regex to usable issues.
     raw_issues = re.findall(regex_normal, message.content)
+
+    # remove any duplicates in the message
     issues = []
     for bug in raw_issues:
         if bug not in issues:
             issues.append(bug)
+
+    # Extended will show a much more verbose embed with more info about the bug.
     extended = "extended" in message.content
 
     if issues:
+        # Login to the bug tracker.
         jira_access = JIRA(
             server="https://bugs.mojang.com",
             basic_auth=(mojira_username, mojira_password),
         )
 
+        # Iterate over the first 3 non duplicate bugs in the message
         for issueid in issues[:3]:
             try:
                 issue = jira_access.issue(issueid[0])
