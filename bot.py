@@ -76,7 +76,7 @@ async def on_raw_reaction_add(payload):
 # This command will provide the users with a way of testing if the bot is online.
 @bot.command(name="ping", help="Test if the bot is working.")
 async def ping(ctx):
-    response = "HammerBot Python is online!"
+    response = "HammerBot Python is online, and has a ping of {} ms".format(str(bot.latency)[:5])
     await ctx.send(response)
 
 
