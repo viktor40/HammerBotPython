@@ -11,7 +11,7 @@ import re
 from discord.utils import get
 from Embeds import RichEmbed
 from data import coordinate_channel, application_channel, vote_emotes, role_list, hammer_guild, role_ids, \
-    vote_role_id
+    vote_channel_id
 from coordinates import *
 from utils import *
 from task import task_list
@@ -65,6 +65,12 @@ async def on_member_remove(member):
         await bot.get_guild(hammer_guild).system_channel.send(response)
 
 
+@bot.event
+async def on_raw_reaction_add(payload):
+    if payload.channel_id == vote_channel_id:
+        pass
+
+
 # command to test if the bot is running
 @bot.command(name="ping", help="test if the bot is working")
 @commands.has_role("members")
@@ -76,8 +82,7 @@ async def ping(ctx):
 @bot.command(name="testing")
 @commands.has_role("members")
 async def testing(ctx):
-    vote_role = ctx.guild.get_role(vote_role_id)
-    print(vote_role)
+    await ctx.message.add_reaction("🔒")
 
 
 # command to test if the bot is running

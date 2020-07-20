@@ -46,6 +46,7 @@ async def vote_handler(ctx, vote_type, args, bot):
         poll_message = await ctx.send(embed=embed)
         for e in vote_emotes:
             await poll_message.add_reaction(bot.get_emoji(e))
+        await ctx.message.add_reaction("🔒")
         # ping = await ctx.send(vote_role.mention)
         # await ping.delete()
 
@@ -61,6 +62,7 @@ async def vote_handler(ctx, vote_type, args, bot):
         poll_message = await ctx.send(embed=embed)
         for n in range(len(poll_list)):
             await poll_message.add_reaction(discord_letters[n])
+        await ctx.message.add_reaction("🔒")
         # ping = await ctx.send(vote_role.mention)
         # await ping.delete()
 
