@@ -3,60 +3,60 @@
 
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv  # load module for usage of a .env file (pip install python-dotenv)
+from dotenv import load_dotenv
 import os  # import module for directory management
-import datetime
 from discord.ext import tasks
-import re
-from discord.utils import get
+
 from Embeds import RichEmbed
 from data import coordinate_channel, application_channel, vote_emotes, role_list, hammer_guild, role_ids, \
     vote_channel_id
 from coordinates import *
 from utils import *
 from task import task_list
-from bug import mc_bug, regex_normal
+from bug import mc_bug
 from voting import vote_handler
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
-TOKEN = os.getenv("DISCORD_TOKEN")  # get our discord bot token from .env
+TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="/")
 
 latest_new_person = ""
 
 
-# print a message if the bot is online
+# Print a message if the bot is online and change it's status.
 @bot.event
 async def on_ready():
     print("bot connected")
-    # change status to playing mc
     global latest_new_person
     await bot.change_presence(activity=discord.Game("Technical Minecraft on HammerSMP"))
 
 
 @bot.event
 async def on_message(message):
-    # check if the bot is online and not responding to itself
+    # Make sure the bot doesn't respond to itself.
     if message.author == bot.user:
         return
 
-    # if a new message is sent in the application forms channel, the bot will automatically add reactions
+    # Ff a new message is sent in the application forms channel, the bot will automatically add reactions.
     if message.channel.id == application_channel:
         for e in vote_emotes:
             await message.add_reaction(bot.get_emoji(e))
 
     await mc_bug(message)
-    await bot.process_commands(message)  # makes sure other commands will also be processed
+    # We need this since since overriding the default provided on_message forbids any extra commands from running.
+    await bot.process_commands(message)
 
 
+# Check which user was the latest to join and store this in a global variable.0
 @bot.event
 async def on_member_join(member):
     global latest_new_person
     latest_new_person = member
 
 
+# When the newest member leaves, there is a notification in th system channel.
 @bot.event
 async def on_member_remove(member):
     global latest_new_person
@@ -65,30 +65,33 @@ async def on_member_remove(member):
         await bot.get_guild(hammer_guild).system_channel.send(response)
 
 
+# Checking for new comments being added.
+# on_raw_reaction_add is used since it is called regardless of the state of the internal message cache.
 @bot.event
 async def on_raw_reaction_add(payload):
     if payload.channel_id == vote_channel_id:
         pass
 
 
-# command to test if the bot is running
-@bot.command(name="ping", help="test if the bot is working")
-@commands.has_role("members")
+# This command will provide the users with a way of testing if the bot is online.
+@bot.command(name="ping", help="Test if the bot is working.")
 async def ping(ctx):
     response = "HammerBot Python is online!"
     await ctx.send(response)
 
 
-@bot.command(name="testing")
-@commands.has_role("members")
+# This is a command purely for testing purposes during development.
+@bot.command(name="testing", help="A command purely used for development purposes.")
+@commands.has_role("admin")
 async def testing(ctx):
     await ctx.message.add_reaction("🔒")
 
 
-# command to test if the bot is running
-@bot.command(name="role", help="Give yourself the \"tour giver\" role")
+# This command will be used so members can give themselves some roles wiht a command
+@bot.command(name="role", help="Give yourself the \"tour giver\" or \"voten't giver\" role")
 @commands.has_role("members")
 async def role(ctx, action, *args):
+    # This will send which roles a user can grant themselves.
     if action == "list":
         await ctx.send(role_list)
         return
@@ -99,10 +102,10 @@ async def role(ctx, action, *args):
         await ctx.send(response)
         return
 
-    # combine the *args tuple into a string role
+    # combine the arguments tuple into a string role
     role_arg = " ".join(args)
 
-    # give the tour giver role if the user asks for this
+    # give the role the user specified
     if role_arg in role_ids:
         member = ctx.message.author  # the author of the message, part of the discord.Member class
         guild_role = bot.get_guild(hammer_guild).get_role(role_ids[role_arg])  # the role needed to add
@@ -142,8 +145,8 @@ async def role(ctx, action, *args):
         await ctx.send(response)
 
 
-# command to test if the bot is running
-@bot.command(name="stop_lazy", help="command to tell someone to stop lazy")
+# Tell someone to stop being lazy
+@bot.command(name="stop_lazy", help="A command to tell someone to stop lazy.")
 @commands.has_role("members")
 async def stop_lazy(ctx, mention="jerk"):
     await ctx.message.delete()
@@ -152,24 +155,24 @@ async def stop_lazy(ctx, mention="jerk"):
     await ctx.send(file=discord.File('stop_lazy.png'))
 
 
-@bot.command(name="CMP", help="command to get the CMP IP in your DM's")
+@bot.command(name="CMP", help="Command to get the CMP IP in your DM's")
 @commands.has_any_role("CMP access", "members")
-async def CMP(ctx, mention="jerk"):
+async def cmp(ctx):
     CMP_IP = os.getenv("CMP_IP")
     response = "Check your DM's"
     await ctx.author.send(CMP_IP)
     await ctx.send(response)
 
 
-# command to test if the bot is running
-@bot.command(name="vote", help="command to vote")
+# Command that will handle voting, see voting.py.
+@bot.command(name="vote", help="A voting command (stop complaining about unhelpful help command pls!")
 @commands.has_role("members")
 async def vote(ctx, vote_type="", *args):
     await ctx.message.delete()
     await vote_handler(ctx, vote_type, args, bot)
 
 
-# /bulletin add project description | {first bulletin} & {second bulletin} & {third bulletin}
+# Command to create, add, remove and delete bulletins in the bulletin board.
 @bot.command(name="bulletin")
 @commands.has_role("members")
 async def bulletin(ctx, action, *args):
@@ -181,6 +184,7 @@ async def bulletin(ctx, action, *args):
     await task_list(ctx=ctx, action=action, args=args, use="bulletin")
 
 
+# Command to add a to do list to a project channel and pin it.
 @bot.command(name="todo")
 @commands.has_role("members")
 async def todo(ctx, action, *args):
@@ -188,14 +192,16 @@ async def todo(ctx, action, *args):
     await task_list(ctx=ctx, action=action, args=args, use="todo")
 
 
-@bot.command(name="coords")
+# Command to handle the coordinate list. There is one embed per dimension
+@bot.command(name="coordinates")
 @commands.has_role("members")
-async def coords(ctx, action, *args):
+async def coordinates(ctx, action, *args):
     await ctx.message.delete()
     if ctx.channel.id == coordinate_channel:
         await task_list(ctx=ctx, action=action, args=args, use="bulletin")
 
 
+# A admin only command to mass delete messages in case of a bad discord discussion.
 @bot.command(name="mass_delete")
 @commands.has_role("admin")
 async def mass_delete(ctx, number_of_messages):
@@ -211,6 +217,7 @@ async def mass_delete(ctx, number_of_messages):
 @tasks.loop(seconds=5)
 async def forms():
     pass
+
 
 forms.start()
 bot.run(TOKEN)
