@@ -214,6 +214,25 @@ async def mass_delete(ctx, number_of_messages):
         await message.delete()
 
 
+# This will handle the errors thrown when using a certain command and tell the user if they are missing permissions.
+@role.error
+@testing.error
+@ping.error
+@stop_lazy.error
+@cmp.error
+@vote.error
+@bulletin.error
+@todo.error
+@coordinates.error
+@mass_delete.error
+async def error(ctx, discord_error):
+    if isinstance(discord_error, discord.ext.commands.MissingPermissions):
+        await ctx.send("You don't have permission to do that!")
+
+    elif isinstance(discord_error, discord.ext.commands.MissingRole):
+        await ctx.send("You don't have the correct role to use that command!")
+
+
 @tasks.loop(seconds=5)
 async def forms():
     pass
