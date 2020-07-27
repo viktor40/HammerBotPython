@@ -3,11 +3,11 @@
 
 """
 All non sensitive data used in functions is stored here. Sensitive data like the bot token and server IP is stored
-in the .env file which is in the gitignore. Final is used to show that the variables are static.
+in the .env file which is in the gitignore. Final is used to show that the variables are constant.
 """
 
 import discord
-from typing import Final
+from typing_extensions import Final
 
 coordinate_channel: Final[int] = 690080048375529481
 application_channel: Final[int] = 647293235248496644
