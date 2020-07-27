@@ -1,35 +1,30 @@
 # HammerBotPython
 # bot.py
 
-import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 import os  # import module for directory management
-from discord.ext import tasks
 
-from Embeds import RichEmbed
-from data import coordinate_channel, application_channel, vote_emotes, role_list, hammer_guild, role_ids, \
-    vote_channel_id
-from coordinates import *
-from utils import *
-from task import task_list
-from bug import mc_bug
-from voting import vote_handler
+from utilities.data import *
+from utilities.utils import *
+from other.task import task_list
+from bug.bug_fetcher import mc_bug
+from other.voting import vote_handler
+from help_command.helping import permissions
+import help_command.help_data as hd
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="/")
-
-latest_new_person = ""
+bot.latest_new_person = ""
 
 
 # Print a message if the bot is online and change it's status.
 @bot.event
 async def on_ready():
     print("bot connected")
-    global latest_new_person
     await bot.change_presence(activity=discord.Game("Technical Minecraft on HammerSMP"))
 
 
@@ -52,15 +47,13 @@ async def on_message(message):
 # Check which user was the latest to join and store this in a global variable.0
 @bot.event
 async def on_member_join(member):
-    global latest_new_person
-    latest_new_person = member
+    bot.latest_new_person = member
 
 
 # When the newest member leaves, there is a notification in th system channel.
 @bot.event
 async def on_member_remove(member):
-    global latest_new_person
-    if latest_new_person == member:
+    if bot.latest_new_person == member:
         response = "Sadly, **{}** left us already.".format(member.name)
         await bot.get_guild(hammer_guild).system_channel.send(response)
 
@@ -74,21 +67,21 @@ async def on_raw_reaction_add(payload):
 
 
 # This command will provide the users with a way of testing if the bot is online.
-@bot.command(name="ping", help="Test if the bot is working.")
+@bot.command(name="ping", help=hd.ping_help, usage=hd.ping_usage)
 async def ping(ctx):
     response = "HammerBot Python is online and has a ping of {} ms.".format(str(bot.latency)[:5])
     await ctx.send(response)
 
 
 # This is a command purely for testing purposes during development.
-@bot.command(name="testing", help="A command purely used for development purposes.")
-@commands.has_role("admin")
+@bot.command(name="testing", help=hd.testing_help, usage=hd.testing_usage)
+@commands.has_role("members")
 async def testing(ctx):
-    await ctx.message.add_reaction("🔒")
+    print(permissions(ctx, bot))
 
 
 # This command will be used so members can give themselves some roles wiht a command
-@bot.command(name="role", help="Give yourself the \"tour giver\" or \"voten't giver\" role")
+@bot.command(name="role", help=hd.role_help, usage=hd.role_usage)
 @commands.has_role("members")
 async def role(ctx, action, *args):
     # This will send which roles a user can grant themselves.
@@ -146,7 +139,7 @@ async def role(ctx, action, *args):
 
 
 # Tell someone to stop being lazy
-@bot.command(name="stop_lazy", help="A command to tell someone to stop lazy.")
+@bot.command(name="stop_lazy", help=hd.stop_lazy_help, usage=hd.stop_lazy_usage)
 @commands.has_role("members")
 async def stop_lazy(ctx, mention="jerk"):
     await ctx.message.delete()
@@ -155,7 +148,7 @@ async def stop_lazy(ctx, mention="jerk"):
     await ctx.send(file=discord.File('stop_lazy.png'))
 
 
-@bot.command(name="CMP", help="Command to get the CMP IP in your DM's")
+@bot.command(name="CMP", help=hd.CMP_help, usage=hd.CMP_usage)
 @commands.has_any_role("CMP access", "members")
 async def cmp(ctx):
     CMP_IP = os.getenv("CMP_IP")
@@ -165,7 +158,7 @@ async def cmp(ctx):
 
 
 # Command that will handle voting, see voting.py.
-@bot.command(name="vote", help="A voting command (stop complaining about unhelpful help command pls!")
+@bot.command(name="vote", help=hd.vote_help, usage=hd.vote_usage)
 @commands.has_role("members")
 async def vote(ctx, vote_type="", *args):
     await ctx.message.delete()
@@ -173,7 +166,7 @@ async def vote(ctx, vote_type="", *args):
 
 
 # Command to create, add, remove and delete bulletins in the bulletin board.
-@bot.command(name="bulletin")
+@bot.command(name="bulletin", help=hd.bulletin_help, usage=hd.bulletin_usage)
 @commands.has_role("members")
 async def bulletin(ctx, action, *args):
     await ctx.message.delete()
@@ -185,7 +178,7 @@ async def bulletin(ctx, action, *args):
 
 
 # Command to add a to do list to a project channel and pin it.
-@bot.command(name="todo")
+@bot.command(name="todo", help=hd.todo_help, usage=hd.todo_usage)
 @commands.has_role("members")
 async def todo(ctx, action, *args):
     await ctx.message.delete()
@@ -193,7 +186,7 @@ async def todo(ctx, action, *args):
 
 
 # Command to handle the coordinate list. There is one embed per dimension
-@bot.command(name="coordinates")
+@bot.command(name="coordinates", help=hd.coordinates_help, usage=hd.coordinates_usage)
 @commands.has_role("members")
 async def coordinates(ctx, action, *args):
     await ctx.message.delete()
@@ -202,7 +195,7 @@ async def coordinates(ctx, action, *args):
 
 
 # A admin only command to mass delete messages in case of a bad discord discussion.
-@bot.command(name="mass_delete")
+@bot.command(name="mass_delete", help=hd.mass_delete_help, usage=hd.mass_delete_usage)
 @commands.has_role("admin")
 async def mass_delete(ctx, number_of_messages):
     await ctx.message.delete()
@@ -216,7 +209,6 @@ async def mass_delete(ctx, number_of_messages):
 
 # This will handle the errors thrown when using a certain command and tell the user if they are missing permissions.
 @role.error
-@testing.error
 @ping.error
 @stop_lazy.error
 @cmp.error
@@ -232,11 +224,16 @@ async def error(ctx, discord_error):
     elif isinstance(discord_error, discord.ext.commands.MissingRole):
         await ctx.send("You don't have the correct role to use that command!")
 
+    elif isinstance(discord_error, discord.ext.commands.CheckFailure):
+        print("check failed")
 
-@tasks.loop(seconds=5)
+    else:
+        print("unknown error: {}".format(discord_error))
+
+
+"""@other.loop(seconds=5)
 async def forms():
     pass
+forms.start()"""
 
-
-forms.start()
 bot.run(TOKEN)
