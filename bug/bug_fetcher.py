@@ -1,5 +1,5 @@
 # HammerBotPython
-# bug.py
+# bug_fetcher.py
 
 import discord
 import re
@@ -7,7 +7,7 @@ from jira import JIRA
 import jira
 from dotenv import load_dotenv
 import os
-from data import bug_colour_mappings
+from utilities.data import bug_colour_mappings
 
 # The regex is used to check for bugs in teh correct format.
 regex_normal = re.compile("((mc|mcapi|mcce|mcd|mcl|mcpe|mce|realms|web|bds)-[0-9]+)", re.IGNORECASE)
