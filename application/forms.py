@@ -4,7 +4,7 @@ import pandas as pd
 import json
 
 SCOPE = ["https://www.googleapis.com/auth/drive"]
-SECRETS_FILE = "forms-key.json"
+SECRETS_FILE = "../forms-key.json"
 SPREADSHEET = "application test answers"
 # Based on docs here - http://gspread.readthedocs.org/en/latest/oauth2.html
 # Load in the secret JSON key (must be a service account)
