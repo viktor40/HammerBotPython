@@ -17,7 +17,7 @@ def permissions(ctx, bot):
         usage = com.usage
         help_text = com.help
 
-        # try and except in case of MissingRole. MissingRole error means the person doesn't have perms to use that.
+        # try and except in case of MissingRole. MissingRole error means the person doesn't have perms to use that.q
         try:
             check = com.checks
             # check if the command actually has any checks (public commands don't for instance)
