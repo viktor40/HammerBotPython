@@ -2,7 +2,7 @@
 # task.py
 
 import discord
-from utils import format_conversion
+from utilities.utils import format_conversion
 
 
 # Check if the task already exists.
@@ -99,7 +99,7 @@ async def task_list(ctx, action, use, args="",):
         return
 
     if not value_list:
-        response = "I'm sorry but you didn't specify any tasks"
+        response = "I'm sorry but you didn't specify any other"
         await ctx.send(response, delete_after=5)
         return
 

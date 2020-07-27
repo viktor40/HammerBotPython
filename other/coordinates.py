@@ -1,9 +1,7 @@
 # HammerBotPython
 # coordinates.py
 
-import discord
-from discord.ext import commands
-from data import hammer_bot_id
+from utilities.data import hammer_bot_id
 
 
 def edit(message, channel_history):

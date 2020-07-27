@@ -1,5 +1,5 @@
-from data import vote_role_id, vote_emotes, discord_letters
-from task import format_conversion
+from utilities.data import vote_role_id, vote_emotes, discord_letters
+from other.task import format_conversion
 import datetime
 import discord
 
