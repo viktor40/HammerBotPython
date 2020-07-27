@@ -1,3 +1,6 @@
+# general syntax
+task_syntax = ""
+
 # ping command
 ping_usage = ""
 ping_help = ""
