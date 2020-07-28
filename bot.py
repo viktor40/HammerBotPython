@@ -13,12 +13,14 @@ from other.voting import vote_handler
 from help_command.helping import permissions
 from other.role import role_giver
 import help_command.help_data as hd
+from help_command.helping import helper
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="/")
+bot.remove_command('help')
 bot.latest_new_person = ""
 
 
@@ -59,7 +61,7 @@ async def on_member_remove(member):
         await bot.get_guild(hammer_guild).system_channel.send(response)
 
 
-# Checking for new comments being added.
+# Checking for new reactions being added.
 # on_raw_reaction_add is used since it is called regardless of the state of the internal message cache.
 @bot.event
 async def on_raw_reaction_add(payload):
@@ -74,11 +76,20 @@ async def ping(ctx):
     await ctx.send(response)
 
 
+@bot.command(name="help", help=hd.help_help, usage=hd.help_usage)
+@commands.has_role("members")
+async def helping(ctx, argument=""):
+    try:
+        await ctx.send(embed=helper(ctx, bot, argument))
+    except KeyError:
+        await ctx.send("Help Error: This command doesn't exist.", delete_after=10)
+
+
 # This is a command purely for testing purposes during development.
 @bot.command(name="testing", help=hd.testing_help, usage=hd.testing_usage)
 @commands.has_role("members")
-async def testing(ctx):
-    print(permissions(ctx, bot))
+async def testing(ctx, argument=""):
+    await ctx.send(embed=helper(ctx, bot, argument))
 
 
 # This command will be used so members can give themselves some roles wiht a command
@@ -120,10 +131,6 @@ async def vote(ctx, vote_type="", *args):
 @commands.has_role("members")
 async def bulletin(ctx, action, *args):
     await ctx.message.delete()
-    """if ctx.channel.id != coordinate_channel:
-        response = "Sorry, wrong channel buddy"
-        await ctx.send(response, delete_after=5)
-        return"""
     await task_list(ctx=ctx, action=action, args=args, use="bulletin")
 
 
@@ -155,6 +162,34 @@ async def mass_delete(ctx, number_of_messages):
     channel_history = await ctx.channel.history(limit=int(number_of_messages)).flatten()
     for message in channel_history:
         await message.delete()
+
+
+"""
+Registering dummy commands so it can be easily implemented to work with other functions like errors and help commands.
+These dummy commands are used in HammerBot Java
+"""
+
+
+@bot.command(name="whitelist", help=hd.whitelist_help, usage=hd.whitelist_usage)
+@commands.has_role("admin")
+async def whitelist():
+    pass
+
+
+@bot.command(name="online", help=hd.online_help, usage=hd.online_usage)
+async def online():
+    pass
+
+
+@bot.command(name="scoreboard", help=hd.scoreboard_help, usage=hd.scoreboard_usage)
+async def scoreboard():
+    pass
+
+
+@bot.command(name="uploadFile", help=hd.upload_file_help, usage=hd.upload_file_usage)
+@commands.has_role("members")
+async def upload_file():
+    pass
 
 
 # This will handle the errors thrown when using a certain command and tell the user if they are missing permissions.
