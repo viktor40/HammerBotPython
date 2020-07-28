@@ -118,8 +118,28 @@ other_usage = f"This will provide a list of other functions that the bot has tha
 other_help = f"This is a list of other functions that the bot has that are not related to commands.\n" \
              f"  - Tracking of the latest person who joined the discord and sending a message in #spam" \
              f"if they left soon after joining so people don't accidentally o/.\n\n" \
-             f"  - Other server related stuff that needs to be added to the command soon.\n\n" \
+             f"  - Minecraft bug display, see `/help bug`\n\n" \
              f"  - Other features that will come soontm"
+
+# other bot functions
+bug_usage = f"This is not a command but rather a listener to handle the display of Minecraft bugs."
+bug_help = f"{bug_usage}\n\n{syntax_pre}" \
+           f"This command will look for any instance of a bug being put in a message. " \
+           f"An escape character will be added later tm.\n\n" \
+           f"The different types of bugs are:\n" \
+           f"`mc`, `mcapi`, `mcce`, `mcd`, `mcl`, `mcpe`, `mce`, `realms`, `web`, `bds`\n\n" \
+           f"An example is: mc-69. It is not case sensitive.\n\n" \
+           f"The following is a list of what the different abbreviations mean:\n" \
+           f"-mc: Minecraft Java Edition\n" \
+           f"-mcapi: Minecraft API\n" \
+           f"-mcce: Minecraft Console Edition\n" \
+           f"-mcd: Minecraft Dungeons\n" \
+           f"-mcl: Minecraft Launcher\n" \
+           f"-mcpe: Minecraft (Bedrock Codebase)\n" \
+           f"-mce: Minecraft Earth\n" \
+           f"-realms: Minecraft Realms\n" \
+           f"-web: Mojang Web Services\n" \
+           f"-bds: Bedrock Dedicated Server\n"
 
 # HammerBot java commands:
 

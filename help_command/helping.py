@@ -1,6 +1,6 @@
 from discord.ext import commands
 import discord
-from help_command.help_data import other_usage, other_help
+from help_command.help_data import other_usage, other_help, bug_usage, bug_help
 
 
 # this command will go through all commands, fetch the name, usage and help variable given to the
@@ -32,6 +32,7 @@ def permissions(ctx, bot):
 
     # add things to help that are either from HammerBot Java or not based on commands
     command_list["other"] = (other_usage, other_help, True)
+    command_list["bug"] = (bug_usage, bug_help, True)
 
     # sort the commands in the dictionary on the keys (command names)
     sorted_key = sorted(command_list.keys(), key=lambda x: x.lower())
