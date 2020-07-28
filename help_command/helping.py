@@ -1,8 +1,6 @@
 from discord.ext import commands
-
-"""
-This will later be used for the custom help command. Currently the built in help command is used.
-"""
+import discord
+from help_command.help_data import other_usage, other_help
 
 
 # this command will go through all commands, fetch the name, usage and help variable given to the
@@ -31,12 +29,51 @@ def permissions(ctx, bot):
         except commands.MissingRole:
             permitted = False
             command_list[name] = (usage, help_text, permitted)
-    return command_list
+
+    # add things to help that are either from HammerBot Java or not based on commands
+    command_list["other"] = (other_usage, other_help, True)
+
+    # sort the commands in the dictionary on the keys (command names)
+    sorted_key = sorted(command_list.keys(), key=lambda x: x.lower())
+    return sorted_key, command_list
 
 
-def formatter():
-    pass
+def help_formatter(ctx, bot):
+    help_embed = discord.Embed(
+        color=discord.Color.orange(),
+        title="HammerBot Help",
+        description="Use `/help <command>` to get a more in depth information on a command."
+    )
+    sorted_key, command_list = permissions(ctx, bot)
+    for name in sorted_key:
+        usage, help_text, permitted = command_list[name]
+        if permitted:
+            help_embed.add_field(name=name, value=usage, inline=False)
+    return help_embed
 
 
-def helper():
-    pass
+def help_verbose(ctx, bot, argument):
+    command_list = permissions(ctx, bot)[1]
+    help_text = command_list[argument][1]
+    permitted = command_list[argument][2]
+
+    help_embed = discord.Embed(
+        color=discord.Color.orange(),
+        title="HammerBot Help on the {} command".format(argument),
+    )
+    if permitted:
+        help_embed.description = help_text
+    else:
+        help_embed.description = "You don't have perissions to use this command."
+
+    return help_embed
+
+
+def helper(ctx, bot, argument):
+    if argument:
+        help_embed = help_verbose(ctx, bot, argument)
+
+    else:
+        help_embed = help_formatter(ctx, bot)
+
+    return help_embed
