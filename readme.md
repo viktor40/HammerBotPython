@@ -29,7 +29,7 @@ Voting emotes will also be added by the bot so people just have to click on them
 
 The command has the following syntax:
 ```
-/buletin <vote_type> <*args>
+/vote <vote_type> <*args>
 ```
 Possible vote types are: `yes_no` and `multiple`
 
@@ -102,11 +102,11 @@ The command has the following syntax:
 ##### User leave notification
 This will send a message to the guilds system message channel if the latest person who joined the server left again. This will stop people from welcoming people who left the guild.
 
-##### Test
+##### ping
 Tests if the bot is working by sending a little message.
 The command has the following syntax 
 ```
-/test
+/ping
 ```
 
 ##### Stop Lazy
