@@ -130,16 +130,16 @@ bug_help = f"{bug_usage}\n\n{syntax_pre}" \
            f"`mc`, `mcapi`, `mcce`, `mcd`, `mcl`, `mcpe`, `mce`, `realms`, `web`, `bds`\n\n" \
            f"An example is: mc-69. It is not case sensitive.\n\n" \
            f"The following is a list of what the different abbreviations mean:\n" \
-           f"-mc: Minecraft Java Edition\n" \
-           f"-mcapi: Minecraft API\n" \
-           f"-mcce: Minecraft Console Edition\n" \
-           f"-mcd: Minecraft Dungeons\n" \
-           f"-mcl: Minecraft Launcher\n" \
-           f"-mcpe: Minecraft (Bedrock Codebase)\n" \
-           f"-mce: Minecraft Earth\n" \
-           f"-realms: Minecraft Realms\n" \
-           f"-web: Mojang Web Services\n" \
-           f"-bds: Bedrock Dedicated Server\n"
+           f"- mc: Minecraft Java Edition\n" \
+           f"- `mcapi`: Minecraft API\n" \
+           f"- `mcce`: Minecraft Console Edition\n" \
+           f"- `mcd`: Minecraft Dungeons\n" \
+           f"- `mcl`: Minecraft Launcher\n" \
+           f"- `mcpe`: Minecraft (Bedrock Codebase)\n" \
+           f"- `mce`: Minecraft Earth\n" \
+           f"- `realms`: Minecraft Realms\n" \
+           f"- `web`: Mojang Web Services\n" \
+           f"- `bds`: Bedrock Dedicated Server\n"
 
 # HammerBot java commands:
 
