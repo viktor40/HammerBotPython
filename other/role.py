@@ -1,3 +1,7 @@
+# HammerBotPython
+# other module
+# role.py
+
 import discord
 from utilities.data import role_list, role_ids, hammer_guild
 from utilities.utils import get_server_roles
