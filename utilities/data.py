@@ -13,6 +13,7 @@ coordinate_channel: Final[int] = 690080048375529481
 application_channel: Final[int] = 647293235248496644
 bulletin_board_channel: Final[int] = 724371678393663569
 vote_channel_id: Final[int] = 730396648995422288
+fixed_bug_channel_id: Final[int] = 737441217754955836
 
 hammer_guild: Final[int] = 645464470633840651
 
