@@ -1,3 +1,7 @@
+# HammerBotPython
+# help_command module
+# help_data.py
+
 from utilities.data import role_list
 
 # general syntax
@@ -27,7 +31,7 @@ role_help = f"{role_usage}\n\n{syntax_pre}" \
 # stop_lazy command
 stop_lazy_usage = f"This command will tell someone to stop lazy."
 stop_lazy_help = f"{stop_lazy_usage}\n\n{syntax_pre}" \
-                 f"`/stop_lazy {'{person=None}'}` where person is an option argument."
+                 f"`/stop_lazy {'{person=None}'}` where person is an optional argument."
 
 # CMP command
 CMP_usage = f"This command is able to give anyone with CMP access role the IP."
