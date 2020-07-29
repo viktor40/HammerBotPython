@@ -1,19 +1,22 @@
 # HammerBotPython
+# main
 # bot.py
 
-from discord.ext import commands
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
 import os  # import module for directory management
+import concurrent.futures as futures
+import time
 
 from utilities.data import *
-from utilities.utils import *
 from other.task import task_list
-from bug.bug_fetcher import mc_bug
+from bug.fetcher import mc_bug
 from other.voting import vote_handler
 from help_command.helping import permissions
 from other.role import role_giver
 import help_command.help_data as hd
 from help_command.helping import helper
+import bug.fixed as bug_fix
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -22,12 +25,14 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 bot = commands.Bot(command_prefix="/")
 bot.remove_command('help')
 bot.latest_new_person = ""
+bot.last_bug_loop = 0
 
 
 # Print a message if the bot is online and change it's status.
 @bot.event
 async def on_ready():
     print("bot connected")
+    channel = bot.get_channel(fixed_bug_channel_id)
     await bot.change_presence(activity=discord.Game("Technical Minecraft on HammerSMP"))
 
 
@@ -57,7 +62,7 @@ async def on_member_join(member):
 @bot.event
 async def on_member_remove(member):
     if bot.latest_new_person == member:
-        response = "Sadly, **{}** left us already.".format(member.name)
+        response = "Sadly, `{}` left us already.".format(member.name)
         await bot.get_guild(hammer_guild).system_channel.send(response)
 
 
@@ -153,7 +158,7 @@ async def coordinates(ctx, action, *args):
 
 # A admin only command to mass delete messages in case of a bad discord discussion.
 @bot.command(name="mass_delete", help=hd.mass_delete_help, usage=hd.mass_delete_usage)
-@commands.has_role("admin")
+@commands.has_role("members")
 async def mass_delete(ctx, number_of_messages):
     await ctx.message.delete()
     if number_of_messages > 200:
@@ -216,9 +221,15 @@ async def error(ctx, discord_error):
         print("unknown error: {}".format(discord_error))
 
 
-"""@other.loop(seconds=5)
-async def forms():
-    pass
-forms.start()"""
+@tasks.loop(seconds=60, reconnect=True)
+async def fixed_bug_loop():
+    try:
+        channel = bot.get_channel(fixed_bug_channel_id)
+        if channel:
+            await bug_fix.fixes_handler(bot)
+    except Exception as e:
+        print(e)
 
+
+fixed_bug_loop.start()
 bot.run(TOKEN)
