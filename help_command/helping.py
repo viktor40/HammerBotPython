@@ -43,20 +43,25 @@ def permissions(ctx, bot):
     return sorted_key, command_list
 
 
+# formatting of the help command
 def help_formatter(ctx, bot):
     help_embed = discord.Embed(
         color=discord.Color.orange(),
         title="HammerBot Help",
         description="Use `/help <command>` to get a more in depth information on a command."
     )
+
+    # get the list of all the help stuff and iterate over the sorted keys so it's in alphabetical order
     sorted_key, command_list = permissions(ctx, bot)
     for name in sorted_key:
         usage, help_text, permitted = command_list[name]
+        # this will check if the person has the right perms to use the command, if not it won't show help for it
         if permitted:
             help_embed.add_field(name=name, value=usage, inline=False)
     return help_embed
 
 
+# this function is used for the command specific help commands which you can bring up by using /help <command>
 def help_verbose(ctx, bot, argument):
     command_list = permissions(ctx, bot)[1]
     help_text = command_list[argument][1]

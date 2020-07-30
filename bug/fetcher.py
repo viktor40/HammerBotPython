@@ -19,6 +19,7 @@ mojira_username = os.getenv("mojira_username")
 mojira_password = os.getenv("mojira_password")
 
 
+# this will give a basic embed of a bug report to which someone can add or edit stuff for more specific embeds
 def limited_bug(issueid):
     jira_access = JIRA(
         server="https://bugs.mojang.com",
@@ -31,9 +32,11 @@ def limited_bug(issueid):
         color=bug_colour_mappings[str(status)],
         title="**{}**: {}".format(str.upper(issueid), issue.fields.summary),
         url=f"https://bugs.mojang.com/browse/{issueid}")
+
     embed.set_author(name=issue.fields.creator,
                      icon_url=getattr(issue.fields.reporter.avatarUrls, "48x48"),
                      url="https://bugs.mojang.com/secure/ViewProfile.jspa?name={}".format(issue.fields.reporter.name.replace(" ", "+")))
+
     date_time = issue.fields.created.split("T")
     embed.set_footer(text="created on {} at {}".format(date_time[0], date_time[1][:-9]))
     embed.description = "**Status:** {} | **Resolution:** {} | **Votes:** {}".format(status,
@@ -115,6 +118,7 @@ def extended_bug(issueid):
     return embed
 
 
+# This function is used to handle receiving and sending bug reports back to discord
 async def mc_bug(message):
     # Convert the regex to usable issues.
     raw_issues = re.findall(regex_normal, message.content)
@@ -138,11 +142,7 @@ async def mc_bug(message):
 
                 else:
                     embed = limited_bug(issueid[0])
-                    print(embed)
                     await message.channel.send(embed=embed)
 
             except jira.exceptions.JIRAError:
-                try:
-                    await message.channel.send(f"{issueid[0]} does not exist")
-                except:
-                    await message.channel.send(f"fuck off {message.author.mention}")
+                await message.channel.send(f"{issueid[0]} does not exist")

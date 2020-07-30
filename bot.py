@@ -4,19 +4,17 @@
 
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
-import os  # import module for directory management
-import concurrent.futures as futures
-import time
+import os
 
 from utilities.data import *
 from other.task import task_list
 from bug.fetcher import mc_bug
 from other.voting import vote_handler
-from help_command.helping import permissions
 from other.role import role_giver
 import help_command.help_data as hd
 from help_command.helping import helper
 import bug.fixed as bug_fix
+import bug.versions as mc_version
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -32,7 +30,7 @@ bot.last_bug_loop = 0
 @bot.event
 async def on_ready():
     print("bot connected")
-    channel = bot.get_channel(fixed_bug_channel_id)
+    mc_version.get_versions(bot)
     await bot.change_presence(activity=discord.Game("Technical Minecraft on HammerSMP"))
 
 
@@ -158,7 +156,7 @@ async def coordinates(ctx, action, *args):
 
 # A admin only command to mass delete messages in case of a bad discord discussion.
 @bot.command(name="mass_delete", help=hd.mass_delete_help, usage=hd.mass_delete_usage)
-@commands.has_role("members")
+@commands.has_role("admin")
 async def mass_delete(ctx, number_of_messages):
     await ctx.message.delete()
     if number_of_messages > 200:
@@ -221,15 +219,35 @@ async def error(ctx, discord_error):
         print("unknown error: {}".format(discord_error))
 
 
+# this loop is used to check for new updates on the bug tracker every 60 seconds
 @tasks.loop(seconds=60, reconnect=True)
 async def fixed_bug_loop():
     try:
+        # on startup this is ran the first time but the bot isn't yet online so this would return []
+        # to make sure it doesn't break we check for this
         channel = bot.get_channel(fixed_bug_channel_id)
         if channel:
             await bug_fix.fixes_handler(bot)
+
+    # exceptions need to be handled, otherwise the loop might break
     except Exception as e:
         print(e)
 
 
-fixed_bug_loop.start()
-bot.run(TOKEN)
+@tasks.loop(seconds=120, reconnect=True)
+async def version_update_loop():
+    try:
+        # on startup this is ran the first time but the bot isn't yet online so this would return []
+        # to make sure it doesn't break we check for this
+        channel = bot.get_channel(fixed_bug_channel_id)
+        if channel:
+            await mc_version.version_update_handler(bot, channel)
+
+    # exceptions need to be handled, otherwise the loop might break
+    except Exception as e:
+        print(e)
+
+
+version_update_loop.start()  # start the loop to check for new versions
+fixed_bug_loop.start()  # start the loop to check for bugs
+bot.run(TOKEN)  # start the bug loop
