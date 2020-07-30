@@ -33,7 +33,7 @@ def limited_bug(issueid):
         url=f"https://bugs.mojang.com/browse/{issueid}")
     embed.set_author(name=issue.fields.creator,
                      icon_url=getattr(issue.fields.reporter.avatarUrls, "48x48"),
-                     url="https://bugs.mojang.com/secure/ViewProfile.jspa?name={}".format(issue.fields.reporter.name))
+                     url="https://bugs.mojang.com/secure/ViewProfile.jspa?name={}".format(issue.fields.reporter.name.replace(" ", "+")))
     date_time = issue.fields.created.split("T")
     embed.set_footer(text="created on {} at {}".format(date_time[0], date_time[1][:-9]))
     embed.description = "**Status:** {} | **Resolution:** {} | **Votes:** {}".format(status,
@@ -91,7 +91,10 @@ def extended_bug(issueid):
         category_field = "No categories available"
 
     embed.add_field(name="Category", value=category_field)
-    embed.add_field(name="Assignee", value=issue.fields.assignee)
+    try:
+        embed.add_field(name="Assignee", value=issue.fields.assignee)
+    except AttributeError:
+        embed.add_field(name="Assignee", value="No Assignee")
     embed.add_field(name="Watchers", value=issue.fields.watches.raw["watchCount"])
     try:
         priority = issue.fields.customfield_12200
@@ -135,6 +138,7 @@ async def mc_bug(message):
 
                 else:
                     embed = limited_bug(issueid[0])
+                    print(embed)
                     await message.channel.send(embed=embed)
 
             except jira.exceptions.JIRAError:
