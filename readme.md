@@ -148,6 +148,11 @@ This will check weather a new version has been added on the bug tracker, when it
 On each of these events the bot will send an embed showing how many bugs were fixed in that version and how many bugs the version affected.
 
 ### Custom help command
+A custom help command is used. When someone uses `/help` it will show all commands that person can use and a small bit of info on them in a nice embed.
+
+When someone uses `/help <command>` it will show a detailed explanation of how the command works as well as it's syntax.
+
+This will only display commands that the user who uses the command can use. It will send an error when it tries to access a command it cannot use.
 
 
 ### Other smaller features
