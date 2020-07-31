@@ -5,7 +5,7 @@ The part of the bot that interacts with the server can be found on [AMereBagatel
 
 This bot has various utilities that get used on the server like voting, todo messages editable by anyone, bulletin boards, applications and more
 
-All code is written to be as easily portable as possible, most guild specific data is in **data.py**.
+All code is written to be as easily portable as possible, most guild specific data is in `utilities.data.py`.
 
 For any issues or questions you can contact `Viktor40#0001` on discord.
 ### Coordinate List
