@@ -173,3 +173,10 @@ This command will DM the CMP IP to people with CMP access role
 ```
 /CMP
 ```
+
+### Future features
+##### Automatic applications and ticket
+Check a google form and send new applications to discord as well as automatically creating a ticket for that application.
+
+##### Better in discord handling
+We will handle some events via reactions instead of via commands
