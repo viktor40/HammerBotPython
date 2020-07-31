@@ -234,7 +234,7 @@ async def fixed_bug_loop():
         print(e)
 
 
-@tasks.loop(seconds=120, reconnect=True)
+@tasks.loop(seconds=5, reconnect=True)
 async def version_update_loop():
     try:
         # on startup this is ran the first time but the bot isn't yet online so this would return []

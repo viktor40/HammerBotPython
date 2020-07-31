@@ -9,10 +9,30 @@ All code is written to be as easily portable as possible, most guild specific da
 
 For any issues or questions you can contact `Viktor40#0001` on discord.
 ### Coordinate List
-This feature lets people add or remove coordinates to a message in a coordinate channel. This is still WIP and will be moved to Embeds.
+This feature lets people add or remove coordinates to a message in a coordinate channel.
+There are supposed to be 3 embeds, one for each dimension (overworld, nether, end). People can add or remove locations to this.
 
-### Bug reports
-When someone posts either a link to a bug report or the code of a bug (e.g MC-190669) and will post an embed containing a summary of the issue containing most of the important info. I used [Grohiik's code for accessing the bug tracker](https://gist.github.com/Grohiik/bc86c86a1536e343304d5bb07c924923).
+The command has the following syntax:
+```
+/coordinate <action> <*args>
+```
+Possible actions are: `create`, `add`, `remove` and `delete`
+
+**Some examples:**
+
+Create a new bulletin with tasks
+`/coordinate create <dimension> | <first coordinate> & <second coordinate> & <third coordinate> ...`
+
+Add a bulletin to an existing board:
+`/coordinate add <dimension> | <first extra coordinate> & <second extra coordinate> ...`
+
+Remove a bulletin from an existing board, if the last bulletin is removed, the board gets deleted:
+`/coordinate remove <dimension> | <first coordinate> & <second coordinate> ...`
+
+Delete a dimension
+`/coordinate remove <dimension>`
+
+Currently you can remove and add dimensions. This is because the bot doesn't automatically create a new embed when the character limit has been reached. this will be changed in the future. 
 
 ### Role
 The bot has the ability to give members certain roles if they want to. Those are mostly utility roles used for pinging but can be switched out to anything.
@@ -97,6 +117,38 @@ The command has the following syntax:
 ```
 /mass_delete <number_of_messages>
 ```
+
+### Bug report handling
+##### Show bug reports:
+When someone posts either a link to a bug report or the code of a bug (e.g MC-190669) and will post an embed containing a summary of the issue containing most of the important info. I used [Grohiik's code for accessing the bug tracker](https://gist.github.com/Grohiik/bc86c86a1536e343304d5bb07c924923).
+Custom code was used for everything other than accessing the jira API
+
+The different types of bugs are:
+`mc`, `mcapi`, `mcce`, `mcd`, `mcl`, `mcpe`, `mce`, `realms`, `web`, `bds`
+
+An example is: mc-69. It is not case sensitive.
+The following is a list of what the different abbreviations mean:
+- `mc`: Minecraft Java Edition
+- `mcapi`: Minecraft API
+- `mcce`: Minecraft Console Edition
+- `mcd`: Minecraft Dungeons
+- `mcl`: Minecraft Launcher
+- `mcpe`: Minecraft (Bedrock Codebase)
+- `mce`: Minecraft Earth
+- `realms`: Minecraft Realms
+- `web`: Mojang Web Services
+- `bds`: Bedrock Dedicated Server
+
+##### Bug resolution checker
+This will check if bugs have been resolved as fixed or as won't fix and puts them in a predefined channel.
+
+##### New version checker
+This will check weather a new version has been added on the bug tracker, when it is released and when a older version is archived.
+
+On each of these events the bot will send an embed showing how many bugs were fixed in that version and how many bugs the version affected.
+
+### Custom help command
+
 
 ### Other smaller features
 ##### User leave notification

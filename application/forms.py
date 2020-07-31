@@ -3,6 +3,12 @@ from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 import json
 
+"""
+----------------------------------------------------------------------------------------------------------------
+Not in development at the moment. Will be worked on sometime
+----------------------------------------------------------------------------------------------------------------
+"""
+
 SCOPE = ["https://www.googleapis.com/auth/drive"]
 SECRETS_FILE = "../forms-key.json"
 SPREADSHEET = "application test answers"
