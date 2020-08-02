@@ -72,6 +72,25 @@ async def on_raw_reaction_add(payload):
         pass
 
 
+# This will handle some errors and suppress raising them. It will also report to the user what the error was.
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        await ctx.send("This command doesn't exist", delete_after=15)
+
+    elif isinstance(error, discord.ext.commands.MissingPermissions):
+        await ctx.send("You don't have permission to do that!", delete_after=15)
+
+    elif isinstance(error, discord.ext.commands.MissingRole):
+        await ctx.send("You don't have the correct role to use that command!", delete_after=15)
+
+    elif isinstance(error, discord.ext.commands.CheckFailure):
+        print("check failed")
+
+    else:
+        print("unknown error: {}".format(error))
+
+
 # This command will provide the users with a way of testing if the bot is online.
 @bot.command(name="ping", help=hd.ping_help, usage=hd.ping_usage)
 async def ping(ctx):
@@ -157,14 +176,14 @@ async def coordinates(ctx, action, *args):
 # A admin only command to mass delete messages in case of a bad discord discussion.
 @bot.command(name="mass_delete", help=hd.mass_delete_help, usage=hd.mass_delete_usage)
 @commands.has_role("admin")
-async def mass_delete(ctx, number_of_messages):
+async def mass_delete(ctx, number_of_messages: int):
     await ctx.message.delete()
-    if number_of_messages > 200:
+    if number_of_messages > 250:
         response = "You want to delete too many messages at once, I'm sorry."
         await ctx.send(response)
-    channel_history = await ctx.channel.history(limit=int(number_of_messages)).flatten()
-    for message in channel_history:
-        await message.delete()
+        return
+    else:
+        await ctx.channel.purge(limit=number_of_messages)
 
 
 """
@@ -193,30 +212,6 @@ async def scoreboard():
 @commands.has_role("members")
 async def upload_file():
     pass
-
-
-# This will handle the errors thrown when using a certain command and tell the user if they are missing permissions.
-@role.error
-@ping.error
-@stop_lazy.error
-@cmp.error
-@vote.error
-@bulletin.error
-@todo.error
-@coordinates.error
-@mass_delete.error
-async def error(ctx, discord_error):
-    if isinstance(discord_error, discord.ext.commands.MissingPermissions):
-        await ctx.send("You don't have permission to do that!")
-
-    elif isinstance(discord_error, discord.ext.commands.MissingRole):
-        await ctx.send("You don't have the correct role to use that command!")
-
-    elif isinstance(discord_error, discord.ext.commands.CheckFailure):
-        print("check failed")
-
-    else:
-        print("unknown error: {}".format(discord_error))
 
 
 # this loop is used to check for new updates on the bug tracker every 60 seconds

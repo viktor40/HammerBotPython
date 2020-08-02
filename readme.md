@@ -152,7 +152,7 @@ A custom help command is used. When someone uses `/help` it will show all comman
 
 When someone uses `/help <command>` it will show a detailed explanation of how the command works as well as it's syntax.
 
-This will only display commands that the user who uses the command can use. It will send an error when it tries to access a command it cannot use.
+This will only display commands that the user who uses the command can use. It will send an error when it tries to access a command it cannot use.ou 
 
 
 ### Other smaller features

@@ -9,6 +9,7 @@ from utilities.data import hammer_bot_id
 Left over code from older versions. Will most likely be deleted soon and is not used.
 """
 
+
 def edit(message, channel_history):
     # add the new message to the old message
     coordinate_message = channel_history[0]
