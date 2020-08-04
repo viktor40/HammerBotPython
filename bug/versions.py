@@ -64,9 +64,9 @@ def new_version(bot, versions):
 
 def archived_version(bot, versions):
     previous_version = versions[-2]
-    if not bot.previous_version_archive_status and previous_version.archive:
+    if not bot.previous_version_archive_status and previous_version.archived:
         print("archived detected")
-        bot.previous_version_archive_status = previous_version.archive
+        bot.previous_version_archive_status = previous_version.archived
         print("archived completed")
         return previous_version
     else:
