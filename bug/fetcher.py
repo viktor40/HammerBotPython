@@ -126,7 +126,8 @@ async def mc_bug(message):
     # remove any duplicates in the message
     issues = []
     for bug in raw_issues:
-        if bug not in issues:
+        escape = f'%{bug[0].lower()}' not in message.content and f'%{bug[0].upper()}' not in message.content
+        if bug not in issues and escape:
             issues.append(bug)
 
     # Extended will show a much more verbose embed with more info about the bug.
