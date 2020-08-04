@@ -31,6 +31,7 @@ async def role_giver(ctx, action, args, bot):
             response = "I'm sorry but you already have this role"
             await ctx.send(response)
             return
+
         elif action == "remove" and guild_role not in member.roles:
             response = "I'm sorry but you don't have this role."
             await ctx.send(response)

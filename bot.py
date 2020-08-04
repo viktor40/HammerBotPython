@@ -15,6 +15,7 @@ import help_command.help_data as hd
 from help_command.helping import helper
 import bug.fixed as bug_fix
 import bug.versions as mc_version
+import bug.utils as bug_utils
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -45,7 +46,9 @@ async def on_message(message):
         for e in vote_emotes:
             await message.add_reaction(bot.get_emoji(e))
 
-    await mc_bug(message)
+    if "/bug_vote" not in message.content:
+        await mc_bug(message)
+
     # We need this since since overriding the default provided on_message forbids any extra commands from running.
     await bot.process_commands(message)
 
@@ -85,10 +88,11 @@ async def on_command_error(ctx, error):
         await ctx.send("You don't have the correct role to use that command!", delete_after=15)
 
     elif isinstance(error, discord.ext.commands.CheckFailure):
-        print("check failed")
+        print("Check failed")
 
     else:
         print("unknown error: {}".format(error))
+        raise error
 
 
 # This command will provide the users with a way of testing if the bot is online.
@@ -100,9 +104,9 @@ async def ping(ctx):
 
 @bot.command(name="help", help=hd.help_help, usage=hd.help_usage)
 @commands.has_role("members")
-async def helping(ctx, argument=""):
+async def helping(ctx, command=""):
     try:
-        await ctx.send(embed=helper(ctx, bot, argument))
+        await ctx.send(embed=helper(ctx, bot, command))
     except KeyError:
         await ctx.send("Help Error: This command doesn't exist.", delete_after=10)
 
@@ -114,7 +118,7 @@ async def testing(ctx, argument=""):
     await ctx.send(embed=helper(ctx, bot, argument))
 
 
-# This command will be used so members can give themselves some roles wiht a command
+# This command will be used so members can give themselves some roles with a command
 @bot.command(name="role", help=hd.role_help, usage=hd.role_usage)
 @commands.has_role("members")
 async def role(ctx, action, *args):
@@ -173,6 +177,14 @@ async def coordinates(ctx, action, *args):
         await task_list(ctx=ctx, action=action, args=args, use="bulletin")
 
 
+"""@bot.command(name="bug_vote", help=hd.bug_vote_help, usage=hd.bug_vote_usage)
+@commands.has_any_role("members", "comrades")
+async def bug_vote(ctx, bug):
+    embed = bug_utils.vote(bug)
+    print(embed)
+    await ctx.send(embed=embed)"""
+
+
 # A admin only command to mass delete messages in case of a bad discord discussion.
 @bot.command(name="mass_delete", help=hd.mass_delete_help, usage=hd.mass_delete_usage)
 @commands.has_role("admin")
@@ -194,28 +206,28 @@ These dummy commands are used in HammerBot Java
 
 @bot.command(name="whitelist", help=hd.whitelist_help, usage=hd.whitelist_usage)
 @commands.has_role("admin")
-async def whitelist():
+async def whitelist(ctx, *args):
     pass
 
 
 @bot.command(name="online", help=hd.online_help, usage=hd.online_usage)
-async def online():
+async def online(ctx, *args):
     pass
 
 
 @bot.command(name="scoreboard", help=hd.scoreboard_help, usage=hd.scoreboard_usage)
-async def scoreboard():
+async def scoreboard(ctx, *args):
     pass
 
 
 @bot.command(name="uploadFile", help=hd.upload_file_help, usage=hd.upload_file_usage)
 @commands.has_role("members")
-async def upload_file():
+async def upload_file(ctx, *args):
     pass
 
 
 # this loop is used to check for new updates on the bug tracker every 60 seconds
-@tasks.loop(seconds=60, reconnect=True)
+@tasks.loop(seconds=10, reconnect=True)
 async def fixed_bug_loop():
     try:
         # on startup this is ran the first time but the bot isn't yet online so this would return []
@@ -227,9 +239,10 @@ async def fixed_bug_loop():
     # exceptions need to be handled, otherwise the loop might break
     except Exception as e:
         print(e)
+        raise e
 
 
-@tasks.loop(seconds=5, reconnect=True)
+@tasks.loop(seconds=120, reconnect=True)
 async def version_update_loop():
     try:
         # on startup this is ran the first time but the bot isn't yet online so this would return []
