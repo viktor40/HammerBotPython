@@ -26,7 +26,7 @@ vote_emotes: Final[list] = [upvote_emote, downvote_emote, votent_emote]
 vote_role_id: Final[int] = 729381591197024379
 tour_giver_id: Final[int] = 702542764893536346
 
-role_ids: Final[dict] = {"tour giver": vote_role_id, "voting": tour_giver_id}
+role_ids: Final[dict] = {"tour giver": tour_giver_id, "voting": vote_role_id}
 role_list: Final[list] = ["tour giver", "voten'tn't"]
 
 hammer_bot_id: Final[int] = 724012480661028907
