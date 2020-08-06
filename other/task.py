@@ -2,6 +2,12 @@
 # other module
 # task.py
 
+"""
+task.py will handle different task embeds such as the coordinate embeds, the bulletin board and the to do embeds.
+This embed allows everyone to add or remove things from the embed, which isn't possible with user sent messages.
+Furthermore it will do automatic formatting and everyone will be able to delete the embeds.
+"""
+
 import discord
 from utilities.utils import format_conversion
 

@@ -35,8 +35,8 @@ def permissions(ctx, bot):
             command_list[name] = (usage, help_text, permitted)
 
     # add things to help that are either from HammerBot Java or not based on commands
-    command_list["other"] = (other_usage, other_help, True)
-    command_list["bug"] = (bug_usage, bug_help, True)
+    command_list['other'] = (other_usage, other_help, True)
+    command_list['bug'] = (bug_usage, bug_help, True)
 
     # sort the commands in the dictionary on the keys (command names)
     sorted_key = sorted(command_list.keys(), key=lambda x: x.lower())
@@ -47,8 +47,8 @@ def permissions(ctx, bot):
 def help_formatter(ctx, bot):
     help_embed = discord.Embed(
         color=discord.Color.orange(),
-        title="HammerBot Help",
-        description="Use `/help <command>` to get a more in depth information on a command."
+        title='HammerBot Help',
+        description='Use `/help <command>` to get a more in depth information on a command.'
     )
 
     # get the list of all the help stuff and iterate over the sorted keys so it's in alphabetical order
@@ -69,8 +69,9 @@ def help_verbose(ctx, bot, argument):
 
     help_embed = discord.Embed(
         color=discord.Color.orange(),
-        title="HammerBot Help on the {} command".format(argument),
+        title='HammerBot Help on the {} command'.format(argument),
     )
+
     if permitted:
         help_embed.description = help_text
     else:
@@ -79,6 +80,7 @@ def help_verbose(ctx, bot, argument):
     return help_embed
 
 
+# The helper will just decide which embed needs to be sent.
 def helper(ctx, bot, argument):
     if argument:
         help_embed = help_verbose(ctx, bot, argument)

@@ -2,6 +2,13 @@
 # help_command module
 # help_data.py
 
+"""
+This file contains all the data for the help command.
+It has a usage and a help text for each command and some things that aren't commands.
+The usage is a small concise explanation of what the command does.
+The help is a verbose explanation, containing all the info you need as well as the correct syntax and some examples.
+"""
+
 from utilities.data import role_list
 from typing_extensions import Final
 

@@ -1,10 +1,14 @@
-import discord
+# HammerBotPython
+# utilities module
+# utils.py
 
 """
 These classes are still very much in development and will be used to easier handle all the embed handling,
-creating, editing etc by commands like done in the todo, voting, bulletin and coordinate commands. Currently this
-doesn't do anything useful yet.
+creating, editing etc by commands like done in the to do, voting, bulletin and coordinate commands. Currently this
+doesn't do anything useful yet and doesn't properly work yet. That's why this code isn't documented.
 """
+
+import discord
 
 
 class RichEmbed:

@@ -1,5 +1,13 @@
 # HammerBotPython
+# utilities module
 # utils.py
+
+"""
+utils.py holds some utilities which can be used in various places.
+format_conversion will convert the format we use in discord to something we can easily work with in python.
+get_server_roles will get all roles available on the server.
+timetest can be used as a decorator to test the speed of a certain method.
+"""
 
 import time
 from utilities.data import discord_letters

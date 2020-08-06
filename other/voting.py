@@ -2,6 +2,11 @@
 # other module
 # voting.py
 
+"""
+voting.py will handle voting. It will put the vote in an embed. This embed will have the creator as author as well as
+it's profile picture as the author icon. The bot will also automatically add voting options to the vote.
+"""
+
 from utilities.data import vote_role_id, vote_emotes, discord_letters
 from other.task import format_conversion
 import datetime

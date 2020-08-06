@@ -9,9 +9,9 @@ Not in development at the moment. Will be worked on sometime
 ----------------------------------------------------------------------------------------------------------------
 """
 
-SCOPE = ["https://www.googleapis.com/auth/drive"]
-SECRETS_FILE = "../forms-key.json"
-SPREADSHEET = "application test answers"
+SCOPE = ['https://www.googleapis.com/auth/drive']
+SECRETS_FILE = '../forms-key.json'
+SPREADSHEET = 'application test answers'
 # Based on docs here - http://gspread.readthedocs.org/en/latest/oauth2.html
 # Load in the secret JSON key (must be a service account)
 json_key = json.load(open(SECRETS_FILE))
@@ -21,9 +21,9 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name(SECRETS_FILE, SCO
 
 
 gc = gspread.authorize(credentials)
-print("The following sheets are available")
+print('The following sheets are available')
 for sheet in gc.openall():
-    print("{} - {}".format(sheet.title, sheet.id))
+    print('{} - {}'.format(sheet.title, sheet.id))
 # Open up the workbook based on the spreadsheet name
 workbook = gc.open(SPREADSHEET)
 # Get the first sheet
@@ -45,7 +45,6 @@ column_names = {'Tijdstempel': 'timestamp',
 data.rename(columns=column_names, inplace=True)
 data.timestamp = pd.to_datetime(data.timestamp)
 test = data.head().iloc
-print(test)
 for i in range(len(data.head())):
     print(test[i])
     print(type(test[i]))
