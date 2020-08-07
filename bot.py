@@ -24,8 +24,8 @@ More info can be found in readme.md.
 This also requires a .env file containing the following data:
 DISCORD_TOKEN
 CMP_IP
-mojira_password
 mojira_username
+mojira_password
 
 This file cannot be found on github for security reasons.
 """
