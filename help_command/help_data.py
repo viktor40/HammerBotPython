@@ -9,8 +9,9 @@ The usage is a small concise explanation of what the command does.
 The help is a verbose explanation, containing all the info you need as well as the correct syntax and some examples.
 """
 
-from utilities.data import role_list
 from typing_extensions import Final
+
+from utilities.data import role_list
 
 # general syntax
 syntax_pre: Final[str] = "The command has the following syntax:\n"

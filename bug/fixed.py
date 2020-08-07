@@ -9,16 +9,16 @@ After that i'll check if the bug has already been sent to discord, if not we'll 
 and send it over to discord.
 """
 
+import datetime
 import discord
-from jira import JIRA
 from dotenv import load_dotenv
+from jira import JIRA
 import os
 import re
-import datetime
 
-from utilities.data import fixed_bug_channel_id
 from bug.fetcher import limited_bug
 from bug.jira_filters import fixes_filter, no_fix_filter
+from utilities.data import fixed_bug_channel_id
 
 # Get the login details to login to the bug tracker.
 load_dotenv()

@@ -9,11 +9,12 @@ The 2nd embed is an extended one. The extended embed has a lot more information 
 """
 
 import discord
-import re
-from jira import JIRA
-import jira
 from dotenv import load_dotenv
+import jira
+from jira import JIRA
 import os
+import re
+
 from utilities.data import bug_colour_mappings
 
 # The regex is used to check for bugs in teh correct format.

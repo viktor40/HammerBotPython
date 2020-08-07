@@ -7,10 +7,11 @@ voting.py will handle voting. It will put the vote in an embed. This embed will 
 it's profile picture as the author icon. The bot will also automatically add voting options to the vote.
 """
 
-from utilities.data import vote_role_id, vote_emotes, discord_letters
-from other.task import format_conversion
 import datetime
 import discord
+
+from other.task import format_conversion
+from utilities.data import vote_role_id, vote_emotes, discord_letters
 
 
 # This method can change the vote from to [closed] or [reopened]

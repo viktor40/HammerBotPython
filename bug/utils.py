@@ -7,8 +7,8 @@ This doesn't work yet and is still in development.
 """
 
 import discord
-from jira import JIRA
 from dotenv import load_dotenv
+from jira import JIRA
 import os
 
 from bug.fetcher import limited_bug

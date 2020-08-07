@@ -3,6 +3,9 @@
 # bot.py
 
 """
+The source code can be found at:
+https://github.com/viktor40/HammerBotPython
+
 bot.py is the main file for the bot.
 This file contains task loops for bug and version reporting as well as the main bot loop.
 
@@ -14,22 +17,37 @@ It also has dummy commands that are used by the help command so this bot lists t
 
 Finally this file will also check for errors inside commands, but also in on_command_error. After an error gets
 detected the bot will notify the user. The error message will be deleted after 15 seconds.
+
+The required packages can be found in requirements.txt.
+More info can be found in readme.md.
+
+This also requires a .env file containing the following data:
+DISCORD_TOKEN
+CMP_IP
+mojira_password
+mojira_username
+
+This file cannot be found on github for security reasons.
 """
 
+import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 import os
 
-from utilities.data import *
-from other.task import task_list
-from bug.fetcher import mc_bug
-from other.voting import vote_handler
 from other.role import role_giver
+from other.task import task_list
+from other.voting import vote_handler
+
 import help_command.help_data as hd
 from help_command.helping import helper
+
+from bug.fetcher import mc_bug
 import bug.fixed as bug_fix
-import bug.versions as mc_version
 import bug.utils as bug_utils
+import bug.versions as mc_version
+
+import utilities.data as data
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -56,8 +74,8 @@ async def on_message(message):
         return
 
     # Ff a new message is sent in the application forms channel, the bot will automatically add reactions.
-    if message.channel.id == application_channel:
-        for e in vote_emotes:
+    if message.channel.id == data.application_channel:
+        for e in data.vote_emotes:
             await message.add_reaction(bot.get_emoji(e))
 
     if '/bug_vote' not in message.content:
@@ -78,14 +96,14 @@ async def on_member_join(member):
 async def on_member_remove(member):
     if bot.latest_new_person == member:
         response = 'Sadly, `{}` left us already.'.format(member.name)
-        await bot.get_guild(hammer_guild).system_channel.send(response)
+        await bot.get_guild(data.hammer_guild).system_channel.send(response)
 
 
 # Checking for new reactions being added.
 # on_raw_reaction_add is used since it is called regardless of the state of the internal message cache.
 @bot.event
 async def on_raw_reaction_add(payload):
-    if payload.channel_id == vote_channel_id:
+    if payload.channel_id == data.vote_channel_id:
         pass
 
 
@@ -187,7 +205,7 @@ async def todo(ctx, action, *args):
 @commands.has_role('members')
 async def coordinates(ctx, action, *args):
     await ctx.message.delete()
-    if ctx.channel.id == coordinate_channel:
+    if ctx.channel.id == data.coordinate_channel:
         await task_list(ctx=ctx, action=action, args=args, use="bulletin")
 
 
@@ -246,7 +264,7 @@ async def fixed_bug_loop():
     try:
         # on startup this is ran the first time but the bot isn't yet online so this would return []
         # to make sure it doesn't break we check for this
-        channel = bot.get_channel(fixed_bug_channel_id)
+        channel = bot.get_channel(data.fixed_bug_channel_id)
         if channel:
             await bug_fix.fixes_handler(bot)
 
@@ -261,7 +279,7 @@ async def version_update_loop():
     try:
         # on startup this is ran the first time but the bot isn't yet online so this would return []
         # to make sure it doesn't break we check for this
-        channel = bot.get_channel(fixed_bug_channel_id)
+        channel = bot.get_channel(data.fixed_bug_channel_id)
         if channel:
             await mc_version.version_update_handler(bot, channel)
 

@@ -4,7 +4,8 @@
 
 """
 All non sensitive data used in functions is stored here. Sensitive data like the bot token and server IP is stored
-in the .env file which is in the gitignore. Final is used to show that the variables are constant.
+in the .env file which is in the gitignore. Final is used to show that the variables are constant, and should not
+be changed.
 """
 
 import discord

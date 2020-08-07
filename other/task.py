@@ -9,6 +9,7 @@ Furthermore it will do automatic formatting and everyone will be able to delete 
 """
 
 import discord
+
 from utilities.utils import format_conversion
 
 

@@ -2,8 +2,9 @@
 # help_command module
 # helping.py
 
-from discord.ext import commands
 import discord
+from discord.ext import commands
+
 from help_command.help_data import other_usage, other_help, bug_usage, bug_help
 
 

@@ -9,10 +9,10 @@ If a new version has been found or an old one has been archived it will be forma
 It will also list the affected bugs and fixed bugs in that version.
 """
 
+import discord
+from dotenv import load_dotenv
 from jira import JIRA
 import os
-from dotenv import load_dotenv
-import discord
 
 from bug.jira_filters import affected_filter, number_fixed_filter
 

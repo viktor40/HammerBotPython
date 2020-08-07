@@ -10,6 +10,7 @@ timetest can be used as a decorator to test the speed of a certain method.
 """
 
 import time
+
 from utilities.data import discord_letters
 
 
