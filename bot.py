@@ -56,7 +56,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 bot = commands.Bot(command_prefix='/')
 bot.remove_command('help')
 bot.latest_new_person = ""
-bot.last_bug_loop = 0
+bot.enabled = False
 
 
 # Print a message if the bot is online and change it's status.
@@ -64,6 +64,7 @@ bot.last_bug_loop = 0
 async def on_ready():
     print('bot connected')
     mc_version.get_versions(bot)
+    bot.enabled = True
     await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
 
 
@@ -73,28 +74,36 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    # Ff a new message is sent in the application forms channel, the bot will automatically add reactions.
-    if message.channel.id == data.application_channel:
-        for e in data.vote_emotes:
-            await message.add_reaction(bot.get_emoji(e))
+    if bot.enabled:
+        # Ff a new message is sent in the application forms channel, the bot will automatically add reactions.
+        if message.channel.id == data.application_channel:
+            for e in data.vote_emotes:
+                await message.add_reaction(bot.get_emoji(e))
 
-    if '/bug_vote' not in message.content:
-        await mc_bug(message)
+        if '/bug_vote' not in message.content:
+            await mc_bug(message)
 
-    # We need this since since overriding the default provided on_message forbids any extra commands from running.
-    await bot.process_commands(message)
+        # We need this since since overriding the default provided on_message forbids any extra commands from running.
+        await bot.process_commands(message)
+
+    if not bot.enabled:
+        if message.content == "/enable":
+            bot.enabled = True
+            print('Bot enabled')
+            return
 
 
 # Check which user was the latest to join and store this in a global variable.0
 @bot.event
 async def on_member_join(member):
-    bot.latest_new_person = member
+    if bot.enabled:
+        bot.latest_new_person = member
 
 
 # When the newest member leaves, there is a notification in th system channel.
 @bot.event
 async def on_member_remove(member):
-    if bot.latest_new_person == member:
+    if bot.latest_new_person == member and bot.enabled:
         response = 'Sadly, `{}` left us already.'.format(member.name)
         await bot.get_guild(data.hammer_guild).system_channel.send(response)
 
@@ -124,7 +133,13 @@ async def on_command_error(ctx, error):
 
     else:
         print('unknown error: {}'.format(error))
-        raise error
+
+
+# This is a command purely for testing purposes during development.
+@bot.command(name='testing', help=hd.testing_help, usage=hd.testing_usage)
+@commands.has_role('members')
+async def testing(ctx, *args):
+    pass
 
 
 # This command will provide the users with a way of testing if the bot is online.
@@ -141,13 +156,6 @@ async def helping(ctx, command=''):
         await ctx.send(embed=helper(ctx, bot, command))
     except KeyError:
         await ctx.send("Help Error: This command doesn't exist.", delete_after=10)
-
-
-# This is a command purely for testing purposes during development.
-@bot.command(name='testing', help=hd.testing_help, usage=hd.testing_usage)
-@commands.has_role('members')
-async def testing(ctx, *args: str):
-    pass
 
 
 # This command will be used so members can give themselves some roles with a command
@@ -228,6 +236,19 @@ async def mass_delete(ctx, number_of_messages: int):
         return
     else:
         await ctx.channel.purge(limit=number_of_messages)
+
+
+def disable_check(ctx):
+    bot_dev = bot.get_user(234257395910443008)
+    admin_role = bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
+    return ctx.author == bot_dev or admin_role in ctx.author.roles
+
+
+@bot.command(name='disable', help=hd.disable_help, usage=hd.disable_usage)
+@commands.check(disable_check)
+async def disable_bot(ctx):
+    bot.enabled = False
+    print('Bot disabled')
 
 
 """

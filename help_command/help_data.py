@@ -160,6 +160,15 @@ bug_vote_usage: Final[str] = f"This command will add a vote to a certain issue o
 bug_vote_help: Final[str] = f"{bug_usage}\n\n{syntax_pre}" \
                             f"`/bug_vote <issue>`" \
 
+disable_usage: Final[str] = f"This command can turn the bot on and off."
+disable_help: Final[str] = f"{bug_usage}\n\n{syntax_pre}" \
+                           f"`/disable`\n\n" \
+                           f"This command can only be used by the bot developers or the admins. Currently it is only" \
+                           f"implemented in HammerBotPython.\n" \
+                           f"This command will prevent the bot from doing anything except for enabling itself.\n" \
+                           f"To enable the bot again you can simply use `/enable` and everything will work again."
+
+
 # HammerBot java commands:
 
 # online command
