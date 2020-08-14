@@ -37,7 +37,7 @@ import os
 
 from other.role import role_giver
 from other.task import task_list
-from other.voting import vote_handler
+from other.voting import vote_handler, Voting
 
 import help_command.help_data as hd
 from help_command.helping import helper
@@ -53,7 +53,7 @@ import utilities.data as data
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix='/')
+bot = commands.Bot(command_prefix=':')
 bot.remove_command('help')
 bot.latest_new_person = ""
 bot.enabled = False
@@ -65,6 +65,7 @@ async def on_ready():
     print('bot connected')
     mc_version.get_versions(bot)
     bot.enabled = True
+    await bot.get_channel(730396648995422288).send("no u @sarah")
     await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
 
 
@@ -93,7 +94,7 @@ async def on_message(message):
             return
 
 
-# Check which user was the latest to join and store this in a global variable.0
+# Check which user was the latest to join and store this in a global variable.
 @bot.event
 async def on_member_join(member):
     if bot.enabled:
@@ -139,7 +140,11 @@ async def on_command_error(ctx, error):
 @bot.command(name='testing', help=hd.testing_help, usage=hd.testing_usage)
 @commands.has_role('members')
 async def testing(ctx, *args):
-    pass
+    import utilities.test as test
+    try:
+        await ctx.channel.send(embed=test.bruh(bot))
+    except Exception as e:
+        print(e)
 
 
 # This command will provide the users with a way of testing if the bot is online.
@@ -309,6 +314,12 @@ async def version_update_loop():
         print(e)
 
 
+@tasks.loop(seconds=60, reconnect=True)
+async def form_fetcher_loop():
+    pass
+
+
+bot.add_cog(Voting)
 version_update_loop.start()  # start the loop to check for new versions
 fixed_bug_loop.start()  # start the loop to check for bugs
 bot.run(TOKEN)  # start the bug loop

@@ -55,20 +55,18 @@ async def vote_handler(ctx, vote_type, args, bot):
         string_votes = " ".join(args)
         embed = discord.Embed(
             colour=0xe74c3c,
-            title=string_votes,
+            title=string_votes
         )
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
         embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())[:-7]))
-        poll_message = await ctx.send(embed=embed)
+        poll_message = await ctx.send(content=vote_role.mention, embed=embed)
 
         # Add upvote, downvote and questionmark emote to vote for voting
         for e in vote_emotes:
             await poll_message.add_reaction(bot.get_emoji(e))
 
         # add lock emote to close the vote (not yet implemented)
-        await ctx.message.add_reaction("🔒")
-        ping = await ctx.send(vote_role.mention)
-        await ping.delete()
+        # await ctx.message.add_reaction("🔒")
 
     # A vote which has multiple options A, B, C ... which one can vote on
     elif vote_type == "multiple":
@@ -80,14 +78,13 @@ async def vote_handler(ctx, vote_type, args, bot):
         )
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
         embed.set_footer(text="Poll created on {}".format(str(datetime.datetime.now())[:-7]))
-        poll_message = await ctx.send(embed=embed)
+        poll_message = await ctx.send(content=vote_role.mention, embed=embed)
 
         # Add as many emotes as there are options
         for n in range(len(poll_list)):
             await poll_message.add_reaction(discord_letters[n])
-        await ctx.message.add_reaction("🔒")
-        ping = await ctx.send(vote_role.mention)
-        await ping.delete()
+
+        # await ctx.message.add_reaction("🔒")
 
     # close the vote
     elif vote_type == "close":
