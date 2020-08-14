@@ -169,6 +169,10 @@ disable_help: Final[str] = f"{bug_usage}\n\n{syntax_pre}" \
                            f"To enable the bot again you can simply use `/enable` and everything will work again."
 
 
+chess_usage: Final[str] = f""
+chess_help: Final[str] = f""
+
+
 # HammerBot java commands:
 
 # online command
