@@ -22,26 +22,44 @@ class ForbiddenChessMove(Exception):
 
 
 class Chess:
+    """Handles all chess game related actions like generating the board, moving pieces and promoting pawns.
+
+    Attributes:
+         board -- a chess.board object containing the current board
+         turn -- a string containing the colour of the player who's turn it is
+    """
+
     def __init__(self):
         self.board = None
         self.turn = "white"
 
     def generate_board(self):
+        """Generates the board and converts the .svg file to a .env file"""
         self.board = chess.Board()
         self.board.turn = chess.WHITE
         utils.gen_png_from_svg(self.board)
 
     def move_piece(self, move):
+        """
+        Move a piece. It checks for illegal moves first. Then it'll move the piece, generate the board
+        and change turns. If there is an illegal move a ForbiddenChessMove error will be raised.
+        """
         chess_move = chess.Move.from_uci(move)
         if chess_move in self.board.legal_moves:
             self.board.push(chess_move)
             utils.gen_png_from_svg(self.board)
             self.turn = "white" if self.turn == "black" else "black"
             self.board.turn = turn_mapping[self.turn]
+
         else:
             raise ForbiddenChessMove
 
     def check_finished(self, arg):
+        """
+        Checks if the conditions are met to end a game.
+        :param arg: can be 'checkmate', 'stalemate' or 'draw'. It will return either True or False depending on if the
+                    condition was met.
+        """
         if arg == "checkmate":
             return self.board.is_checkmate()
 
@@ -50,3 +68,6 @@ class Chess:
 
         elif arg == "draw":
             return self.board.has_insufficient_material(self.board.turn) or self.board.can_claim_draw()
+
+    def promote_pawn(self):
+        pass

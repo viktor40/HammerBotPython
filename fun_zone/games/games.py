@@ -7,12 +7,30 @@ import help_command.help_data as hd
 
 
 class Games(commands.Cog):
+    """Handles all commands that are used for the games.
+
+    Attributes:
+        bot -- a discord.ext.commands.Bot object containing the bot's information
+        chess_game -- a fun_zone.games.chess.Chess object containing the complete chess game
+    """
+
     def __init__(self, bot):
         self.bot = bot
         self.chess_game = Chess()
 
     @commands.command(name='chess', help=hd.chess_help, usage=hd.chess_usage, pass_context=True)
     async def chess(self, ctx, action, move=""):
+        """
+        :param action: The action to be performed. If the action is 'new' a new board and game will start.
+                       If the action is 'move' you can move a piece on the board.
+                       If the action is 'checkmate', 'stalemate' or 'draw' it will check if the conditions to end the
+                       game are met.
+        :param move: This parameter contains the move of a piece. Current position first, targeted position second.
+
+        After an action is performed either the board will be sent to discord as a .png or an error message will be
+        sent containing what has gone wrong.
+        """
+
         if action == "new":
             self.chess_game.generate_board()
             response = "It's white's turn!"
