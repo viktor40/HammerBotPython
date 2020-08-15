@@ -180,7 +180,7 @@ chess_help: Final[str] = f"{chess_usage}\n\n{syntax_pre}" \
                          f"- `checkmate`: Check if there is a checkmate.\n" \
                          f"- `stalemate`: Check if there is a stalemate.\n" \
                          f"- `draw`: Check if the requirements are satisfied to claim a draw.\n\n" \
-                         f"The bot will aslo prevent you from using illegal moves. Pawn promotion is not supported yet.\n" \
+                         f"The bot will aslo prevent you from using illegal moves.\n" \
                          f"This only supports 1 player at the moment."
 
 hangman_usage: Final[str] = f"This command allows you to play hangman."
