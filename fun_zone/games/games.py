@@ -13,6 +13,7 @@ class Games(commands.Cog):
     Attributes:
         bot -- a discord.ext.commands.Bot object containing the bot's information
         chess_game -- a fun_zone.games.chess.Chess object containing the complete chess game
+        hangman -- a fun_zone.games.hangman.Hangman object containing the hangman game
     """
 
     def __init__(self, bot):
@@ -72,6 +73,11 @@ class Games(commands.Cog):
 
     @commands.command(name='hangman', help=hd.hangman_help, usage=hd.hangman_usage, pass_context=True)
     async def hangman(self, ctx, action, guess=""):
+        """
+        :param action: The action to be performed. If the a
+        :param guess:
+
+        """
         if action == "start":
             self.hangman = Hangman()
             message = self.hangman.start()
