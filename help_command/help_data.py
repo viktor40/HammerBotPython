@@ -172,6 +172,9 @@ disable_help: Final[str] = f"{bug_usage}\n\n{syntax_pre}" \
 chess_usage: Final[str] = f""
 chess_help: Final[str] = f""
 
+hangman_usage: Final[str] = f""
+hangman_help: Final[str] = f""
+
 
 # HammerBot java commands:
 

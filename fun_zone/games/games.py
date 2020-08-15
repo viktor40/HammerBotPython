@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from fun_zone.games.chess import Chess
+from fun_zone.games.hangman import Hangman
 import fun_zone.games.game_data as gd
 
 import help_command.help_data as hd
@@ -17,6 +18,7 @@ class Games(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.chess_game = Chess()
+        self.hangman = Hangman()
 
     @commands.command(name='chess', help=hd.chess_help, usage=hd.chess_usage, pass_context=True)
     async def chess(self, ctx, action, move=""):
@@ -64,6 +66,43 @@ class Games(commands.Cog):
 
             else:
                 await ctx.send("There isn't a draw.")
+
+        else:
+            await ctx.send("Unknown action.")
+
+    @commands.command(name='hangman', help=hd.hangman_help, usage=hd.hangman_usage, pass_context=True)
+    async def hangman(self, ctx, action, guess=""):
+        if action == "start":
+            self.hangman = Hangman()
+            message = self.hangman.start()
+            await ctx.send(message)
+
+        elif action == "stop":
+            self.hangman = Hangman()
+            response = "The game has stopped, you gave up."
+            await ctx.send(response)
+
+        elif action == "guess":
+            if not guess or not guess.isalpha():
+                await ctx.send("Please choose a valid letter or word to guess.")
+
+            if len(guess) == 1:
+                result = self.hangman.guess_letter(guess.upper())
+                if self.hangman.tries == 0:
+                    result += "\n This was your last try."
+                    self.hangman = Hangman()
+                    await ctx.send(result)
+                else:
+                    await ctx.send(result)
+
+            else:
+                result = self.hangman.guess_word(guess.upper())
+                if self.hangman.tries == 0:
+                    result += "\n This was your last try."
+                    self.hangman = Hangman()
+                    await ctx.send(result)
+                else:
+                    await ctx.send(result)
 
         else:
             await ctx.send("Unknown action.")
