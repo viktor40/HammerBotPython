@@ -68,5 +68,18 @@ class Chess:
         elif arg == "draw":
             return self.board.has_insufficient_material(self.board.turn) or self.board.can_claim_draw()
 
-    def promote_pawn(self):
-        pass
+    def promote_pawn(self, move, piece):
+        pseudo_move = chess.Move.from_uci(move)
+        chess_move = chess.Move(from_square=pseudo_move.from_square,
+                                to_square=pseudo_move.to_square,
+                                promotion=piece
+                                )
+
+        if chess_move in self.board.legal_moves:
+            self.board.push(chess_move)
+            utils.gen_png_from_svg(self.board)
+            self.turn = "white" if self.turn == "black" else "black"
+            self.board.turn = turn_mapping[self.turn]
+
+        else:
+            raise ForbiddenChessMove

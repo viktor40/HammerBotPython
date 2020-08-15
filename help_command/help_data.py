@@ -173,9 +173,10 @@ chess_usage: Final[str] = f"This command allows you to play chess."
 chess_help: Final[str] = f"{chess_usage}\n\n{syntax_pre}" \
                          f"`/hangman <action> <move=''>`\n\n" \
                          f"Possible actions are:\n" \
-                         f"- `new`: Create a new chess game and board.\n" \
+                         f"- `play`: Create a new chess game and board.\n" \
                          f"- `move`: Move a piece. Example: `/chess move <piece pos><move to>`\n" \
                          f"Example: `/chess move d2d3`\n" \
+                         f"- `promote` Promote a piece. Example: `/chess move <move> <piece>`\n" \
                          f"- `checkmate`: Check if there is a checkmate.\n" \
                          f"- `stalemate`: Check if there is a stalemate.\n" \
                          f"- `draw`: Check if the requirements are satisfied to claim a draw.\n\n" \

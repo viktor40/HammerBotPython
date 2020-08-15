@@ -22,7 +22,7 @@ class Games(commands.Cog):
         self.hangman = Hangman()
 
     @commands.command(name='chess', help=hd.chess_help, usage=hd.chess_usage, pass_context=True)
-    async def chess(self, ctx, action, move=""):
+    async def chess(self, ctx, action, move="", piece=""):
         """
         :param ctx: a context variable for the command
         :param action: The action to be performed. If the action is 'new' a new board and game will start.
@@ -30,18 +30,37 @@ class Games(commands.Cog):
                        If the action is 'checkmate', 'stalemate' or 'draw' it will check if the conditions to end the
                        game are met.
         :param move: This parameter contains the move of a piece. Current position first, targeted position second.
+        :param piece: This is only used when promoting a pawn
 
         After an action is performed either the board will be sent to discord as a .png or an error message will be
         sent containing what has gone wrong.
         """
 
-        if action == "new":
+        if action == "play":
             self.chess_game.generate_board()
             response = "It's white's turn!"
             await ctx.send(content=response, file=discord.File("board.png"))
 
         elif action == "move":
+            if not move:
+                await ctx.send("Please provide a move to play.")
+
             self.chess_game.move_piece(move=move)
+            response = "It's {}'s turn!".format(self.chess_game.turn)
+            await ctx.send(content=response, file=discord.File("board.png"))
+
+        elif action == "promote":
+            if not piece:
+                await ctx.send("Please provide a piece to promote to.")
+
+            if not move:
+                await ctx.send("Please provide a move to play.")
+
+            pieces_mappings = {"knight": 2, "bishop": 3, "rook": 4, "queen": 5}
+            if piece.lower() not in pieces_mappings:
+                await ctx.send("Please provide a valid piece to promote to.")
+
+            self.chess_game.promote_pawn(move, pieces_mappings[piece.lower()])
             response = "It's {}'s turn!".format(self.chess_game.turn)
             await ctx.send(content=response, file=discord.File("board.png"))
 
