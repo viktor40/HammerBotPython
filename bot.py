@@ -140,18 +140,14 @@ async def on_command_error(ctx, error):
     else:
         print('unknown error: {}'.format(error))
         await ctx.channel.send(error)
+        # raise error
 
 
 # This is a command purely for testing purposes during development.
 @bot.command(name='testing', help=hd.testing_help, usage=hd.testing_usage)
 @commands.has_role('members')
 async def testing(ctx, *args):
-    import utilities.test as test
-    try:
-        await ctx.channel.send(embed=test.bruh(bot))
-    except Exception as e:
-        print(e)
-
+    pass
 
 # This command will provide the users with a way of testing if the bot is online.
 @bot.command(name='ping', help=hd.ping_help, usage=hd.ping_usage)

@@ -169,11 +169,28 @@ disable_help: Final[str] = f"{bug_usage}\n\n{syntax_pre}" \
                            f"To enable the bot again you can simply use `/enable` and everything will work again."
 
 
-chess_usage: Final[str] = f""
-chess_help: Final[str] = f""
+chess_usage: Final[str] = f"This command allows you to play chess."
+chess_help: Final[str] = f"{chess_usage}\n\n{syntax_pre}" \
+                         f"`/hangman <action> <move=''>`\n\n" \
+                         f"Possible actions are:\n" \
+                         f"- `new`: Create a new chess game and board.\n" \
+                         f"- `move`: Move a piece. Example: `/chess move <piece pos><move to>`\n" \
+                         f"Example: `/chess move d2d3`\n" \
+                         f"- `checkmate`: Check if there is a checkmate.\n" \
+                         f"- `stalemate`: Check if there is a stalemate.\n" \
+                         f"- `draw`: Check if the requirements are satisfied to claim a draw.\n\n" \
+                         f"The bot will aslo prevent you from using illegal moves. Pawn promotion is not supported yet.\n" \
+                         f"This only supports 1 player at the moment."
 
-hangman_usage: Final[str] = f""
-hangman_help: Final[str] = f""
+hangman_usage: Final[str] = f"This command allows you to play hangman."
+hangman_help: Final[str] = f"{hangman_usage}\n\n{syntax_pre}" \
+                           f"`/hangman <action> <guess=''>`\n\n" \
+                           f"Possible actions are:\n" \
+                           f"- `play`: Start a new game.\n" \
+                           f"- `stop`: Stop the current game.\n" \
+                           f"- `guess`: Guess either a letter or a word.\n\n" \
+                           f"The bot will check for duplicate guesses and always tell you the amount of tries left\n" \
+                           f"It will also show a character art hangman and a representation of the word completion."
 
 
 # HammerBot java commands:

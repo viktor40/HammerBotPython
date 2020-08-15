@@ -12,7 +12,6 @@ class ForbiddenChessMove(Exception):
     """Exception raised when using a forbidden chess move.
 
     Attributes:
-        salary -- input salary which caused the error
         message -- explanation of the error
     """
 

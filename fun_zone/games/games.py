@@ -84,7 +84,7 @@ class Games(commands.Cog):
         game or checking if the guess was correct. It also checks for duplicate guesses. If the guess was wrong
         it'll send the hangman character art. It will always send how many tries are left
         """
-        if action == "start":
+        if action == "play":
             self.hangman = Hangman()
             message = self.hangman.start()
             await ctx.send(message)
