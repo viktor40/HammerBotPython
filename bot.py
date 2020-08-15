@@ -77,6 +77,9 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
+    if message.content == "/status":
+        await message.channel.send('Bot enabled = {}!'.format(bot.enabled))
+
     if bot.enabled:
         # Ff a new message is sent in the application forms channel, the bot will automatically add reactions.
         if message.channel.id == data.application_channel:
@@ -92,6 +95,7 @@ async def on_message(message):
     if not bot.enabled:
         if message.content == "/enable":
             bot.enabled = True
+            await message.channel.send('Bot enabled!')
             print('Bot enabled')
             return
 
@@ -148,6 +152,7 @@ async def on_command_error(ctx, error):
 @commands.has_role('members')
 async def testing(ctx, *args):
     pass
+
 
 # This command will provide the users with a way of testing if the bot is online.
 @bot.command(name='ping', help=hd.ping_help, usage=hd.ping_usage)
@@ -255,7 +260,19 @@ def disable_check(ctx):
 @commands.check(disable_check)
 async def disable_bot(ctx):
     bot.enabled = False
+    await ctx.send('Bot disabled!')
     print('Bot disabled')
+
+
+@bot.command(name='enable', help=hd.enable_help, usage=hd.enable_usage)
+@commands.check(disable_check)
+async def enable_bot(ctx, *args):
+    pass
+
+
+@bot.command(name='status', help=hd.status_help, usage=hd.status_usage)
+async def status(ctx, *args):
+    pass
 
 
 """

@@ -160,13 +160,27 @@ bug_vote_usage: Final[str] = f"This command will add a vote to a certain issue o
 bug_vote_help: Final[str] = f"{bug_usage}\n\n{syntax_pre}" \
                             f"`/bug_vote <issue>`" \
 
-disable_usage: Final[str] = f"This command can turn the bot on and off."
+disable_usage: Final[str] = f"This command can turn the bot off. Enable it again with `/enable`"
 disable_help: Final[str] = f"{bug_usage}\n\n{syntax_pre}" \
                            f"`/disable`\n\n" \
                            f"This command can only be used by the bot developers or the admins. Currently it is only" \
                            f"implemented in HammerBotPython.\n" \
                            f"This command will prevent the bot from doing anything except for enabling itself.\n" \
                            f"To enable the bot again you can simply use `/enable` and everything will work again."
+
+enable_usage: Final[str] = f"This command can turn the bot on again after disabling it with `/disable`."
+enable_help: Final[str] = f"{bug_usage}\n\n{syntax_pre}" \
+                          f"`/enable`\n\n" \
+                          f"This command can only be used by the bot developers or the admins. Currently it is only" \
+                          f"implemented in HammerBotPython.\n" \
+                          f"This command will make the bot work again after disabling it."
+
+
+status_usage: Final[str] = f"This command will tell you if the Python bot is currently enabled or disabled."
+status_help: Final[str] = f"{bug_usage}\n\n{syntax_pre}" \
+                          f"`/status`\n\n" \
+                          f"Enabling or disabling the bot is only available to admins and the bot developers." \
+                          f"Ask them for more information if you're unsure if the bot needs to be disabled."
 
 
 chess_usage: Final[str] = f"This command allows you to play chess."
