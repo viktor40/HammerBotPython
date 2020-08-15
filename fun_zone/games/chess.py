@@ -69,6 +69,14 @@ class Chess:
             return self.board.has_insufficient_material(self.board.turn) or self.board.can_claim_draw()
 
     def promote_pawn(self, move, piece):
+        """
+        Promote a piece. It checks for illegal moves. Then it'll move the piece and promote it correctly then
+        change turns. If there is an illegal move a ForbiddenChessMove error will be raised.
+
+        :param move: the chess move in uci format
+        :param piece: the piece in number format. See pieces_mappings in the Games class in games.py
+                      It can be found within th chess command in the section for the promote action.
+        """
         pseudo_move = chess.Move.from_uci(move)
         chess_move = chess.Move(from_square=pseudo_move.from_square,
                                 to_square=pseudo_move.to_square,

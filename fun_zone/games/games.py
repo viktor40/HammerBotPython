@@ -27,8 +27,12 @@ class Games(commands.Cog):
         :param ctx: a context variable for the command
         :param action: The action to be performed. If the action is 'new' a new board and game will start.
                        If the action is 'move' you can move a piece on the board.
+                       If the action is 'promote' you can promote a piece. Specify the move and the piece to promote to.
+                       the piece is case insensitive.
+
                        If the action is 'checkmate', 'stalemate' or 'draw' it will check if the conditions to end the
                        game are met.
+
         :param move: This parameter contains the move of a piece. Current position first, targeted position second.
         :param piece: This is only used when promoting a pawn
 
