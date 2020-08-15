@@ -87,13 +87,13 @@ class Hangman:
                         "You won the game. The correct word was indeed {}.\n"
                         "You won after {} tries".format(letter,
                                                         self.word,
-                                                        self.word_completion)
+                                                        9 - self.tries)
                         )
             else:
                 return ("Congratulations, the letter {} was in the word."
                         "You have {} tries left.\n\n{}".format(letter,
                                                                self.tries,
-                                                               9 - self.tries)
+                                                               self.word_completion)
                         )
 
     def guess_word(self, word):
