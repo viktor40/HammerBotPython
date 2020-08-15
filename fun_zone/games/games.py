@@ -24,6 +24,7 @@ class Games(commands.Cog):
     @commands.command(name='chess', help=hd.chess_help, usage=hd.chess_usage, pass_context=True)
     async def chess(self, ctx, action, move=""):
         """
+        :param ctx: a context variable for the command
         :param action: The action to be performed. If the action is 'new' a new board and game will start.
                        If the action is 'move' you can move a piece on the board.
                        If the action is 'checkmate', 'stalemate' or 'draw' it will check if the conditions to end the
@@ -74,9 +75,14 @@ class Games(commands.Cog):
     @commands.command(name='hangman', help=hd.hangman_help, usage=hd.hangman_usage, pass_context=True)
     async def hangman(self, ctx, action, guess=""):
         """
-        :param action: The action to be performed. If the a
-        :param guess:
+        :param ctx: a context variable for the command
+        :param action: The action to be performed. If the action is start it will initialise the game.
+                       If the action is guess, you can guess either a word or a letter.
+        :param guess: The word or letter being guessed.
 
+        After an action is performed the bot will send the results. It does this by either sending the initialised
+        game or checking if the guess was correct. It also checks for duplicate guesses. If the guess was wrong
+        it'll send the hangman character art. It will always send how many tries are left
         """
         if action == "start":
             self.hangman = Hangman()
