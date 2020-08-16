@@ -207,6 +207,14 @@ hangman_help: Final[str] = f"{hangman_usage}\n\n{syntax_pre}" \
                            f"The bot will check for duplicate guesses and always tell you the amount of tries left\n" \
                            f"It will also show a character art hangman and a representation of the word completion."
 
+minesweeper_usage: Final[str] = f"This command allows you to play hangman."
+minesweeper_help: Final[str] = f"{hangman_usage}\n\n{syntax_pre}" \
+                               f"`/minesweeper <difficulty> <size>`\n" \
+                               f"Their are 4 difficulties: `easy`, `medium`, `hard`, `extreme`.\n" \
+                               f"The size must be in the format: '<xSize>x<ySize>'. A side can not be" \
+                               f"larger than 20 and the total number of tiles must be smaller than 190.\n" \
+                               f"If no extra values are provided the command defaults to: `/minesweeper medium 10x15."
+
 
 # HammerBot java commands:
 

@@ -145,7 +145,7 @@ class Games(commands.Cog):
         else:
             await ctx.send('Unknown action.')
 
-    @commands.command(name='minesweeper', help=hd.chess_help, usage=hd.chess_usage, pass_context=True)
+    @commands.command(name='minesweeper', help=hd.minesweeper_help, usage=hd.minesweeper_usage, pass_context=True)
     async def minesweeper(self, ctx, difficulty='medium', size='10x15'):
         self.minesweeper = Minesweeper()
         board = self.minesweeper.generate_board(size, difficulty)
