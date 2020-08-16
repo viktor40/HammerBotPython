@@ -15,6 +15,9 @@ class Minesweeper:
     def generate_board(self, size, difficulty):
         self.difficulty = difficulty
         self.rows, self.columns = int(size.split('x')[0]), int(size.split('x')[1])
+        if self.rows > 25 or self.columns > 25:
+            return "Please choose a size smaller or equal to 25x25!"
+
         self.mines = number_of_mines(self.rows, self.columns, self.difficulty)
         self.mine_locations = generate_mines(self.rows, self.columns, self.mines)
 
