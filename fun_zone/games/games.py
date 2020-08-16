@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from fun_zone.games.chess import Chess
 from fun_zone.games.hangman import Hangman
+from fun_zone.games.minesweeper import Minesweeper
 import fun_zone.games.game_data as gd
 
 import help_command.help_data as hd
@@ -14,15 +15,17 @@ class Games(commands.Cog):
         bot -- a discord.ext.commands.Bot object containing the bot's information
         chess_game -- a fun_zone.games.chess.Chess object containing the complete chess game
         hangman -- a fun_zone.games.hangman.Hangman object containing the hangman game
+        minesweeper -- a fun_zone.games.minesweeper.Minesweeper object containing the minesweeper game
     """
 
     def __init__(self, bot):
         self.bot = bot
         self.chess_game = Chess()
         self.hangman = Hangman()
+        self.minesweeper = Minesweeper()
 
     @commands.command(name='chess', help=hd.chess_help, usage=hd.chess_usage, pass_context=True)
-    async def chess(self, ctx, action, move="", piece=""):
+    async def chess(self, ctx, action, move='', piece=''):
         """
         :param ctx: a context variable for the command
         :param action: The action to be performed. If the action is 'new' a new board and game will start.
@@ -40,63 +43,63 @@ class Games(commands.Cog):
         sent containing what has gone wrong.
         """
 
-        if action == "play":
+        if action == 'play':
             self.chess_game.generate_board()
             response = "It's white's turn!"
-            await ctx.send(content=response, file=discord.File("board.png"))
+            await ctx.send(content=response, file=discord.File('board.png'))
 
-        elif action == "move":
+        elif action == 'move':
             if not move:
-                await ctx.send("Please provide a move to play.")
+                await ctx.send('Please provide a move to play.')
 
             self.chess_game.move_piece(move=move)
             response = "It's {}'s turn!".format(self.chess_game.turn)
-            await ctx.send(content=response, file=discord.File("board.png"))
+            await ctx.send(content=response, file=discord.File('board.png'))
 
-        elif action == "promote":
+        elif action == 'promote':
             if not piece:
-                await ctx.send("Please provide a piece to promote to.")
+                await ctx.send('Please provide a piece to promote to.')
 
             if not move:
-                await ctx.send("Please provide a move to play.")
+                await ctx.send('Please provide a move to play.')
 
-            pieces_mappings = {"knight": 2, "bishop": 3, "rook": 4, "queen": 5}
+            pieces_mappings = {'knight': 2, 'bishop': 3, 'rook': 4, 'queen': 5}
             if piece.lower() not in pieces_mappings:
-                await ctx.send("Please provide a valid piece to promote to.")
+                await ctx.send('Please provide a valid piece to promote to.')
 
             self.chess_game.promote_pawn(move, pieces_mappings[piece.lower()])
             response = "It's {}'s turn!".format(self.chess_game.turn)
-            await ctx.send(content=response, file=discord.File("board.png"))
+            await ctx.send(content=response, file=discord.File('board.png'))
 
-        elif action == "checkmate":
-            if self.chess_game.check_finished("checkmate"):
-                await ctx.send("The game ended. Checkmate!")
+        elif action == 'checkmate':
+            if self.chess_game.check_finished('checkmate'):
+                await ctx.send('The game ended. Checkmate!')
                 self.chess_game = Chess()
 
             else:
                 await ctx.send("There isn't a checkmate.")
 
-        elif action == "stalemate":
-            if self.chess_game.check_finished("stalemate"):
-                await ctx.send("The game ended. stalemate!")
+        elif action == 'stalemate':
+            if self.chess_game.check_finished('stalemate'):
+                await ctx.send('The game ended. stalemate!')
                 self.chess_game = Chess()
 
             else:
                 await ctx.send("There isn't a stalemate.")
 
-        elif action == "draw":
-            if self.chess_game.check_finished("draw"):
-                await ctx.send("The game ended. draw!")
+        elif action == 'draw':
+            if self.chess_game.check_finished('draw'):
+                await ctx.send('The game ended. draw!')
                 self.chess_game = Chess()
 
             else:
                 await ctx.send("There isn't a draw.")
 
         else:
-            await ctx.send("Unknown action.")
+            await ctx.send('Unknown action.')
 
     @commands.command(name='hangman', help=hd.hangman_help, usage=hd.hangman_usage, pass_context=True)
-    async def hangman(self, ctx, action, guess=""):
+    async def hangman(self, ctx, action, guess=''):
         """
         :param ctx: a context variable for the command
         :param action: The action to be performed. If the action is start it will initialise the game.
@@ -107,24 +110,24 @@ class Games(commands.Cog):
         game or checking if the guess was correct. It also checks for duplicate guesses. If the guess was wrong
         it'll send the hangman character art. It will always send how many tries are left
         """
-        if action == "play":
+        if action == 'play':
             self.hangman = Hangman()
             message = self.hangman.start()
             await ctx.send(message)
 
-        elif action == "stop":
+        elif action == 'stop':
             self.hangman = Hangman()
-            response = "The game has stopped, you gave up."
+            response = 'The game has stopped, you gave up.'
             await ctx.send(response)
 
-        elif action == "guess":
+        elif action == 'guess':
             if not guess or not guess.isalpha():
-                await ctx.send("Please choose a valid letter or word to guess.")
+                await ctx.send('Please choose a valid letter or word to guess.')
 
             if len(guess) == 1:
                 result = self.hangman.guess_letter(guess.upper())
                 if self.hangman.tries == 0:
-                    result += "\n This was your last try."
+                    result += '\n This was your last try.'
                     self.hangman = Hangman()
                     await ctx.send(result)
                 else:
@@ -133,11 +136,17 @@ class Games(commands.Cog):
             else:
                 result = self.hangman.guess_word(guess.upper())
                 if self.hangman.tries == 0:
-                    result += "\n This was your last try."
+                    result += '\n This was your last try.'
                     self.hangman = Hangman()
                     await ctx.send(result)
                 else:
                     await ctx.send(result)
 
         else:
-            await ctx.send("Unknown action.")
+            await ctx.send('Unknown action.')
+
+    @commands.command(name='minesweeper', help=hd.chess_help, usage=hd.chess_usage, pass_context=True)
+    async def minesweeper(self, ctx, difficulty='medium', size='10x15'):
+        self.minesweeper = Minesweeper()
+        board = self.minesweeper.generate_board(size, difficulty)
+        await ctx.send(board)
