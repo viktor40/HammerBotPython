@@ -36,6 +36,7 @@ class Chess:
         """Generates the board and converts the .svg file to a .env file"""
         self.board = chess.Board()
         self.board.turn = chess.WHITE
+        self.turn = "white"
         utils.gen_png_from_svg(self.board)
 
     def move_piece(self, move):
