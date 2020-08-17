@@ -144,7 +144,7 @@ async def on_command_error(ctx, error):
     else:
         print('unknown error: {}'.format(error))
         await ctx.channel.send(error)
-        # raise error
+        raise error
 
 
 # This is a command purely for testing purposes during development.

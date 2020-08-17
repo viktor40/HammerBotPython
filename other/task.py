@@ -18,9 +18,11 @@ def exists(args, channel_history):
     exists_already = False
     for message in channel_history:
         if message.embeds:
-            if message.embeds[0].title in " ".join(args):
-                exists_already = True
-                return exists_already
+            title = message.embeds[0].title
+            if title != discord.Embed.Empty:
+                if message.embeds[0].title in " ".join(args):
+                    exists_already = True
+                    return exists_already
 
     return exists_already
 
