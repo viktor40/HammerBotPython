@@ -52,7 +52,7 @@ class Chess:
             self.board.turn = turn_mapping[self.turn]
 
         else:
-            raise ForbiddenChessMove
+            raise ForbiddenChessMove()
 
     def check_finished(self, arg):
         """
@@ -91,4 +91,4 @@ class Chess:
             self.board.turn = turn_mapping[self.turn]
 
         else:
-            raise ForbiddenChessMove
+            raise ForbiddenChessMove()

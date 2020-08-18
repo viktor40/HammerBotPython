@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from fun_zone.games.chess import Chess
+from fun_zone.games.chess import Chess, ForbiddenChessMove
 from fun_zone.games.hangman import Hangman
 from fun_zone.games.minesweeper import Minesweeper
 import fun_zone.games.game_data as gd

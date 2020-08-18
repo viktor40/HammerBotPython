@@ -140,14 +140,22 @@ async def on_command_error(ctx, error):
     elif isinstance(error, discord.ext.commands.CheckFailure):
         print('Check failed')
 
-    elif isinstance(error, ForbiddenChessMove):
-        await ctx.send("This is not a valid move!", delete_after=15)
+    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+        if isinstance(error.original, ForbiddenChessMove):
+            await ctx.send("This is not a valid move!", delete_after=15)
 
     else:
-        print('unknown error: {}'.format(error))
+        print('unknown error: {} of type {}'.format(error, type(error)))
         await ctx.channel.send(error)
         if bot.debug:
             raise error
+
+
+@bot.event
+async def on_error(event_method, *args, **kwargs):
+    print(event_method)
+    print(*args)
+    print(**kwargs)
 
 
 # This is a command purely for testing purposes during development.
