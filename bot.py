@@ -34,6 +34,7 @@ import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 import os
+import asyncio
 
 from other.role import role_giver
 from other.task import task_list
@@ -338,7 +339,19 @@ async def form_fetcher_loop():
     pass
 
 
-bot.add_cog(Games(bot))
-version_update_loop.start()  # start the loop to check for new versions
-fixed_bug_loop.start()  # start the loop to check for bugs
-bot.run(TOKEN)  # start the bug loop
+try:
+    bot.add_cog(Games(bot))
+    version_update_loop.start()  # start the loop to check for new versions
+    fixed_bug_loop.start()  # start the loop to check for bugs
+    bot.loop.run_until_complete(bot.start(TOKEN))
+
+except KeyboardInterrupt:
+    pass
+
+finally:
+    bot.loop.run_until_complete(bot.logout())
+    asyncio.sleep(3)
+    version_update_loop.close()
+    fixed_bug_loop.close()
+    bot.loop.close()
+
