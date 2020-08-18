@@ -61,6 +61,7 @@ bot = commands.Bot(command_prefix='/')
 bot.remove_command('help')
 bot.latest_new_person = ""
 bot.enabled = False
+bot.debug = False
 
 
 # Print a message if the bot is online and change it's status.
@@ -145,7 +146,8 @@ async def on_command_error(ctx, error):
     else:
         print('unknown error: {}'.format(error))
         await ctx.channel.send(error)
-        raise error
+        if bot.debug:
+            raise error
 
 
 # This is a command purely for testing purposes during development.
