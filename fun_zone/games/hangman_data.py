@@ -676,5 +676,44 @@ word_list: Final[list] = [
                             'xylophone',
                             'youthful',
                             'yummy',
-                            'zephyr'
+                            'zephyr',
+                            'differential',
+                            'contour',
+                            'thorough',
+                            'obvious',
+                            'gauge',
+                            'collectible',
+                            'asteroid',
+                            'astrology',
+                            'supernovae',
+                            'quanta',
+                            'meteorologist',
+                            'meteor',
+                            'astrophysicist',
+                            'inertia',
+                            'quark',
+                            'boson',
+                            'vector',
+                            'parameterised',
+                            'accelerometer',
+                            'acoustics',
+                            'aerodynamics',
+                            'displacement',
+                            'inclination',
+                            'antimatter',
+                            'coefficient',
+                            'quantization',
+                            'zugzwang',
+                            'ytterbium',
+                            'buzzers',
+                            'fox'
                             ]
+
+# use this in case you want to add new words but first check if the words aren't already in the list
+new_words = [
+
+]
+
+for word in new_words:
+    if word in word_list:
+        print(word)
