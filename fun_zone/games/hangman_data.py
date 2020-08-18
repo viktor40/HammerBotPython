@@ -706,7 +706,8 @@ word_list: Final[list] = [
                             'zugzwang',
                             'ytterbium',
                             'buzzers',
-                            'fox'
+                            'fox',
+                            'Hangover'
                             ]
 
 # use this in case you want to add new words but first check if the words aren't already in the list
