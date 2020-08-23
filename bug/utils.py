@@ -20,13 +20,17 @@ mojira_password = os.getenv('mojira_password')
 
 
 # This method will be used to vote for an open issue.
-def vote(bug):
+async def vote(bug):
     jira_access = JIRA(
         server='https://bugs.mojang.com',
         basic_auth=(mojira_username, mojira_password),
+        async_=True
     )
 
-    jira_access.add_vote(bug)
+    try:
+        await jira_access.add_vote(bug)
+    except Exception as e:
+        print(e)
     issue = jira_access.issue(bug)
     votes = issue.fields.votes
 

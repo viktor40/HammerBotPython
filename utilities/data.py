@@ -27,6 +27,8 @@ vote_emotes: Final[list] = [upvote_emote, downvote_emote, votent_emote]
 
 vote_role_id: Final[int] = 729381591197024379
 tour_giver_id: Final[int] = 702542764893536346
+cmp_role_id: Final[int] = 728002223887351830
+member_role_id: Final[int] = 645465607856324608
 admin_role_id: Final[int] = 649340485093031957
 
 role_ids: Final[dict] = {"tour giver": tour_giver_id, "voting": vote_role_id}

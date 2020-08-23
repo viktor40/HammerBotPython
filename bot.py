@@ -57,7 +57,8 @@ from fun_zone.games.chess import ForbiddenChessMove
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix='/')
+prefix = "/"
+bot = commands.Bot(command_prefix=prefix)
 bot.remove_command('help')
 bot.latest_new_person = ""
 bot.enabled = False
@@ -88,7 +89,7 @@ async def on_message(message):
             for e in data.vote_emotes:
                 await message.add_reaction(bot.get_emoji(e))
 
-        if '/bug_vote' not in message.content:
+        if '{}bug_vote'.format(prefix) not in message.content:
             await mc_bug(message)
 
         # We need this since since overriding the default provided on_message forbids any extra commands from running.
@@ -160,7 +161,7 @@ async def on_error(event_method, *args, **kwargs):
 
 # This is a command purely for testing purposes during development.
 @bot.command(name='testing', help=hd.testing_help, usage=hd.testing_usage)
-@commands.has_role('members')
+@commands.has_role(data.member_role_id)
 async def testing(ctx, *args):
     pass
 
@@ -173,7 +174,7 @@ async def ping(ctx):
 
 
 @bot.command(name='help', help=hd.help_help, usage=hd.help_usage)
-@commands.has_role('members')
+@commands.has_role(data.member_role_id)
 async def helping(ctx, command=''):
     try:
         await ctx.send(embed=helper(ctx, bot, command))
@@ -183,14 +184,14 @@ async def helping(ctx, command=''):
 
 # This command will be used so members can give themselves some roles with a command
 @bot.command(name='role', help=hd.role_help, usage=hd.role_usage)
-@commands.has_role('members')
+@commands.has_role(data.member_role_id)
 async def role(ctx, action, *args):
     await role_giver(ctx, action, args, bot)
 
 
 # Tell someone to stop being lazy
 @bot.command(name='stop_lazy', help=hd.stop_lazy_help, usage=hd.stop_lazy_usage)
-@commands.has_role('members')
+@commands.has_role(data.member_role_id)
 async def stop_lazy(ctx, mention='jerk'):
     await ctx.message.delete()
     response = 'Stop Lazy {}'.format(mention)
@@ -199,7 +200,7 @@ async def stop_lazy(ctx, mention='jerk'):
 
 
 @bot.command(name='CMP', help=hd.CMP_help, usage=hd.CMP_usage)
-@commands.has_any_role('CMP access', 'members')
+@commands.has_any_role(data.member_role_id, data.cmp_role_id)
 async def cmp(ctx):
     CMP_IP = os.getenv('CMP_IP')
     response = "Check your DM's"
@@ -209,7 +210,7 @@ async def cmp(ctx):
 
 # Command that will handle voting, see voting.py.
 @bot.command(name='vote', help=hd.vote_help, usage=hd.vote_usage)
-@commands.has_role('members')
+@commands.has_role(data.member_role_id)
 async def vote(ctx, vote_type='', *args):
     await ctx.message.delete()
     await vote_handler(ctx, vote_type, args, bot)
@@ -217,7 +218,7 @@ async def vote(ctx, vote_type='', *args):
 
 # Command to create, add, remove and delete bulletins in the bulletin board.
 @bot.command(name='bulletin', help=hd.bulletin_help, usage=hd.bulletin_usage)
-@commands.has_role('members')
+@commands.has_role(data.member_role_id)
 async def bulletin(ctx, action, *args):
     await ctx.message.delete()
     await task_list(ctx=ctx, action=action, args=args, use='bulletin')
@@ -225,7 +226,7 @@ async def bulletin(ctx, action, *args):
 
 # Command to add a to do list to a project channel and pin it.
 @bot.command(name='todo', help=hd.todo_help, usage=hd.todo_usage)
-@commands.has_role('members')
+@commands.has_role(data.member_role_id)
 async def todo(ctx, action, *args):
     await ctx.message.delete()
     await task_list(ctx=ctx, action=action, args=args, use='todo')
@@ -233,7 +234,7 @@ async def todo(ctx, action, *args):
 
 # Command to handle the coordinate list. There is one embed per dimension
 @bot.command(name='coordinates', help=hd.coordinates_help, usage=hd.coordinates_usage)
-@commands.has_role('members')
+@commands.has_role(data.member_role_id)
 async def coordinates(ctx, action, *args):
     await ctx.message.delete()
     if ctx.channel.id == data.coordinate_channel:
@@ -243,14 +244,14 @@ async def coordinates(ctx, action, *args):
 """@bot.command(name="bug_vote", help=hd.bug_vote_help, usage=hd.bug_vote_usage)
 @commands.has_any_role("members", "comrades")
 async def bug_vote(ctx, bug):
-    embed = bug_utils.vote(bug)
+    embed = await bug_utils.vote(bug)
     print(embed)
     await ctx.send(embed=embed)"""
 
 
 # A admin only command to mass delete messages in case of a bad discord discussion.
 @bot.command(name='mass_delete', help=hd.mass_delete_help, usage=hd.mass_delete_usage)
-@commands.has_role('admin')
+@commands.has_role(data.admin_role_id)
 async def mass_delete(ctx, number_of_messages: int):
     await ctx.message.delete()
     if number_of_messages > 250:
@@ -293,7 +294,7 @@ These dummy commands are used in HammerBot Java
 
 
 @bot.command(name='whitelist', help=hd.whitelist_help, usage=hd.whitelist_usage)
-@commands.has_role('admin')
+@commands.has_role(data.admin_role_id)
 async def whitelist(ctx, *args):
     pass
 
@@ -309,7 +310,7 @@ async def scoreboard(ctx, *args):
 
 
 @bot.command(name='uploadFile', help=hd.upload_file_help, usage=hd.upload_file_usage)
-@commands.has_role('members')
+@commands.has_role(data.member_role_id)
 async def upload_file(ctx, *args):
     pass
 
