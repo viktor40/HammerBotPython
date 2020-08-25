@@ -58,6 +58,7 @@ def limited_bug(issueid):
     embed.description = '**Status:** {} | **Resolution:** {} | **Votes:** {}'.format(status,
                                                                                      issue.fields.resolution,
                                                                                      issue.fields.votes)
+    jira_access.close()
     return embed
 
 
@@ -85,6 +86,7 @@ def extended_bug(issueid):
     embed = add_priority(issue, embed)
     embed = add_image(issue, embed)
 
+    jira_access.close()
     return embed
 
 

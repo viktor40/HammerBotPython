@@ -24,7 +24,6 @@ async def vote(bug):
     jira_access = JIRA(
         server='https://bugs.mojang.com',
         basic_auth=(mojira_username, mojira_password),
-        async_=True
     )
 
     try:
@@ -38,4 +37,6 @@ async def vote(bug):
     embed.color = discord.Colour.teal()
     embed.description = f'Issue {issue} has been voted on.\n' \
                         f'The issue now has a total of {votes} votes.'
+
+    jira_access.close()
     return embed

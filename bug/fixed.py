@@ -86,3 +86,5 @@ async def fixes_handler(bot):
             if not await duplicate_checker(bot, bug):
                 embed, status = fixed_bug_embed(jira_access, bug, status="Won't Fix")
                 await bug_fix_channel.send(content=status, embed=embed)
+
+    jira_access.close()

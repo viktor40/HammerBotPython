@@ -39,6 +39,8 @@ def get_versions(bot):
     bot.previous_version_archive_status = versions[-2].archived
     bot.latest_version_release_status = versions[-1].released
 
+    jira_access.close()
+
 
 # This method will get the number of bugs that a certain filter returns.
 def get_from_filter(jira_filter, jira_access):
@@ -122,6 +124,8 @@ def version_update_reporter(bot):
         embed.add_field(name="Fixed", value=str(fixed_bugs(str(new), jira_access)))
 
         content = "Version **{}** has just been created!".format(str(new))
+
+        jira_access.close()
         return embed, content
 
     # Check for archived versions, if there are we send the embed containing that info.
@@ -133,6 +137,8 @@ def version_update_reporter(bot):
         embed.add_field(name="Released", value=str(archived.released))
 
         content = "Version **{}** has just been archived!".format(str(archived))
+
+        jira_access.close()
         return embed, content
 
     # Check for released versions, if there are we send the embed containing that info.
@@ -144,8 +150,11 @@ def version_update_reporter(bot):
         embed.add_field(name="Released", value=str(released.released))
 
         content = "Version **{}** has just been released!".format(str(released))
+
+        jira_access.close()
         return embed, content
 
+    jira_access.close()
     return None
 
 
