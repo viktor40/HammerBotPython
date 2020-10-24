@@ -45,7 +45,6 @@ from help_command.helping import helper
 
 from bug.fetcher import mc_bug
 import bug.fixed as bug_fix
-import bug.utils as bug_utils
 import bug.versions as mc_version
 
 import utilities.data as data
@@ -53,11 +52,15 @@ import utilities.data as data
 from fun_zone.games.games import Games
 from fun_zone.games.chess import ForbiddenChessMove
 
+from cogs.dummy_commands import Dummy
+from cogs.status import Status
+
+
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-prefix = "/"
+prefix = "="
 bot = commands.Bot(command_prefix=prefix)
 bot.remove_command('help')
 bot.latest_new_person = ""
@@ -80,7 +83,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.content == "/status":
+    if message.content == "{}status".format(prefix):
         await message.channel.send('Bot enabled = {}!'.format(bot.enabled))
 
     if bot.enabled:
@@ -96,7 +99,7 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if not bot.enabled:
-        if message.content == "/enable":
+        if message.content == "{}enable".format(prefix):
             bot.enabled = True
             await message.channel.send('Bot enabled!')
             print('Bot enabled')
@@ -166,15 +169,7 @@ async def testing(ctx, *args):
     pass
 
 
-# This command will provide the users with a way of testing if the bot is online.
-@bot.command(name='ping', help=hd.ping_help, usage=hd.ping_usage)
-async def ping(ctx):
-    response = 'HammerBot Python is online and has a ping of {} ms.'.format(str(bot.latency)[:5])
-    await ctx.send(response)
-
-
 @bot.command(name='help', help=hd.help_help, usage=hd.help_usage)
-@commands.has_role(data.member_role_id)
 async def helping(ctx, command=''):
     try:
         await ctx.send(embed=helper(ctx, bot, command))
@@ -262,61 +257,8 @@ async def mass_delete(ctx, number_of_messages: int):
         await ctx.channel.purge(limit=number_of_messages)
 
 
-def disable_check(ctx):
-    bot_dev = bot.get_user(234257395910443008)
-    admin_role = bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
-    return ctx.author == bot_dev or admin_role in ctx.author.roles
-
-
-@bot.command(name='disable', help=hd.disable_help, usage=hd.disable_usage)
-@commands.check(disable_check)
-async def disable_bot(ctx):
-    bot.enabled = False
-    await ctx.send('Bot disabled!')
-    print('Bot disabled')
-
-
-@bot.command(name='enable', help=hd.enable_help, usage=hd.enable_usage)
-@commands.check(disable_check)
-async def enable_bot(ctx, *args):
-    pass
-
-
-@bot.command(name='status', help=hd.status_help, usage=hd.status_usage)
-async def status(ctx, *args):
-    pass
-
-
-"""
-Registering dummy commands so it can be easily implemented to work with other functions like errors and help commands.
-These dummy commands are used in HammerBot Java
-"""
-
-
-@bot.command(name='whitelist', help=hd.whitelist_help, usage=hd.whitelist_usage)
-@commands.has_role(data.admin_role_id)
-async def whitelist(ctx, *args):
-    pass
-
-
-@bot.command(name='online', help=hd.online_help, usage=hd.online_usage)
-async def online(ctx, *args):
-    pass
-
-
-@bot.command(name='scoreboard', help=hd.scoreboard_help, usage=hd.scoreboard_usage)
-async def scoreboard(ctx, *args):
-    pass
-
-
-@bot.command(name='uploadFile', help=hd.upload_file_help, usage=hd.upload_file_usage)
-@commands.has_role(data.member_role_id)
-async def upload_file(ctx, *args):
-    pass
-
-
 # this loop is used to check for new updates on the bug tracker every 60 seconds
-@tasks.loop(seconds=50, reconnect=True)
+@tasks.loop(seconds=10, reconnect=True)
 async def fixed_bug_loop():
     try:
         # on startup this is ran the first time but the bot isn't yet online so this would return []
@@ -331,7 +273,7 @@ async def fixed_bug_loop():
         raise e
 
 
-@tasks.loop(seconds=75, reconnect=True)
+@tasks.loop(seconds=25, reconnect=True)
 async def version_update_loop():
     try:
         # on startup this is ran the first time but the bot isn't yet online so this would return []
@@ -345,13 +287,15 @@ async def version_update_loop():
         print(e)
 
 
-@tasks.loop(seconds=60, reconnect=True)
-async def form_fetcher_loop():
+@tasks.loop(seconds=1, reconnect=True)
+async def test():
     pass
-
 
 try:
     bot.add_cog(Games(bot))
+    bot.add_cog(Dummy(bot))
+    bot.add_cog(Status(bot))
+
     version_update_loop.start()  # start the loop to check for new versions
     fixed_bug_loop.start()  # start the loop to check for bugs
     bot.loop.run_until_complete(bot.start(TOKEN))
@@ -362,7 +306,5 @@ except KeyboardInterrupt:
 finally:
     bot.loop.run_until_complete(bot.logout())
     asyncio.sleep(3)
-    version_update_loop.close()
-    fixed_bug_loop.close()
-    bot.loop.close()
+    print("done")
 

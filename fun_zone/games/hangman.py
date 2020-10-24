@@ -35,7 +35,6 @@ class Hangman:
         self.word_completion = "\\_ " * len(self.word)
         self.guessed_letters = []
         self.guessed_words = []
-        print(self.word)
         return ("Thanks for playing hangman. Try to guess this {} letter word. You have {} tries left"
                 "\n\n{}".format(len(self.word),
                                 self.tries,

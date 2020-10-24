@@ -31,14 +31,18 @@ def permissions(ctx, bot):
             else:
                 permitted = True
                 command_list[name] = (usage, help_text, permitted)
+
         except commands.MissingRole:
             permitted = False
             command_list[name] = (usage, help_text, permitted)
 
+        except Exception as e:
+            print(e)
+            print(com)
+
     # add things to help that are either from HammerBot Java or not based on commands
     command_list['other'] = (other_usage, other_help, True)
     command_list['bug'] = (bug_usage, bug_help, True)
-
     # sort the commands in the dictionary on the keys (command names)
     sorted_key = sorted(command_list.keys(), key=lambda x: x.lower())
     return sorted_key, command_list
