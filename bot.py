@@ -59,7 +59,7 @@ from cogs.status import Status
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-prefix = "="
+prefix = "/"
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None, intents=discord.Intents.all())
 
 bot.latest_new_person = ""
