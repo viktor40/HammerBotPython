@@ -33,7 +33,7 @@ cmp_role_id: Final[int] = 728002223887351830
 member_role_id: Final[int] = 645465607856324608
 admin_role_id: Final[int] = 649340485093031957
 
-role_ids: Final[dict] = {"tour giver": tour_giver_id, "voting": vote_role_id}
+role_ids: Final[dict] = {"tour giver": tour_giver_id, "voten'tn't": vote_role_id}
 role_list: Final[list] = ["tour giver", "voten'tn't"]
 
 hammer_bot_id: Final[int] = 724012480661028907

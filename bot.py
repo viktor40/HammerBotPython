@@ -61,11 +61,11 @@ load_dotenv()  # load the .env file containing id's that have to be kept secret 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 prefix = "/"
-bot = commands.Bot(command_prefix=prefix)
-bot.remove_command('help')
+bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None)
+
 bot.latest_new_person = ""
-bot.enabled = False
 bot.debug = False
+bot.enabled = False
 
 
 # Print a message if the bot is online and change it's status.
@@ -83,14 +83,11 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if bot.enabled:
+    if bot.enabled and not bot.debug:
         # Ff a new message is sent in the application forms channel, the bot will automatically add reactions.
         if message.channel.id == data.application_channel:
             for e in data.vote_emotes:
                 await message.add_reaction(bot.get_emoji(e))
-
-        if '{}bug_vote'.format(prefix) not in message.content:
-            await mc_bug(message)
 
         # We need this since since overriding the default provided on_message forbids any extra commands from running.
         await bot.process_commands(message)
@@ -99,14 +96,14 @@ async def on_message(message):
 # Check which user was the latest to join and store this in a global variable.
 @bot.event
 async def on_member_join(member):
-    if bot.enabled:
+    if bot.enabled and not bot.debug:
         bot.latest_new_person = member
 
 
 # When the newest member leaves, there is a notification in th system channel.
 @bot.event
 async def on_member_remove(member):
-    if bot.latest_new_person == member and bot.enabled:
+    if bot.latest_new_person == member and bot.enabled and not bot.debug:
         response = 'Sadly, `{}` left us already.'.format(member.name)
         await bot.get_guild(data.hammer_guild).system_channel.send(response)
 
@@ -152,11 +149,17 @@ async def on_error(event_method, *args, **kwargs):
     print(**kwargs)
 
 
+def author_is_admin_or_dev(ctx):
+    developers = [bot.get_user(_id) for _id in data.developer_ids]
+    admin_role = bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
+    return ctx.author in developers or admin_role in ctx.author.roles
+
+
 # This is a command purely for testing purposes during development.
 @bot.command(name='testing', help=hd.testing_help, usage=hd.testing_usage)
-@commands.has_role(data.member_role_id)
+@commands.check(author_is_admin_or_dev)
 async def testing(ctx, *args):
-    pass
+    await ctx.send("Testing method called.\n There is nothing here")
 
 
 @bot.command(name='help', help=hd.help_help, usage=hd.help_usage)
@@ -250,7 +253,6 @@ async def mass_delete(ctx, number_of_messages: int):
 # this loop is used to check for new updates on the bug tracker every 60 seconds
 @tasks.loop(seconds=10, reconnect=True)
 async def fixed_bug_loop():
-    print("loop")
     try:
         # on startup this is ran the first time but the bot isn't yet online so this would return []
         # to make sure it doesn't break we check for this
@@ -296,6 +298,5 @@ except KeyboardInterrupt:
 
 finally:
     bot.loop.run_until_complete(bot.logout())
-    asyncio.sleep(3)
     print("done")
 

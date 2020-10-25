@@ -7,9 +7,10 @@ import utilities.data as data
 
 class Status(commands.Cog):
     """
-    This cog is used to enable / disable the but and check the bots status. It uses 2 dummy commands.
-    2 of the actions listen in on_message so they can listen to the /enable and /status commands even if
-    the bot is disabled.
+    This cog is used to enable / disable the bot and check the bots status. It uses 2 dummy commands.
+    2 of these commands are handled in on_message so they can listen to the /enable and /status commands even if
+    the bot is disabled. The dummy commands are used so they are registered in bot.commands which is used for the
+    help command
 
     This class also has the /ping command which will give the status and ping of the bot.
 
@@ -20,26 +21,28 @@ class Status(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def author_is_admin_or_dev(self, ctx):
-        developers = [self.bot.get_user(_id) for _id in data.developer_ids]
-        admin_role = self.bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
-        return ctx.author in developers or admin_role in ctx.author.roles
+    def author_is_admin_or_dev(self):
+        def predicate(ctx):
+            developers = [self.bot.get_user(_id) for _id in data.developer_ids]
+            admin_role = self.bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
+            return ctx.author in developers or admin_role in ctx.author.roles
+        return predicate
 
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author == self.bot.user:
             return
 
-        if message.content == "{}status".format(self.bot.command_prefix):
+        if message.content.lower() == "{}status".format(self.bot.command_prefix):
             await message.channel.send('Bot enabled = {}!'.format(self.bot.enabled))
 
         if not self.bot.enabled:
-            if message.content == "{}enable".format(self.bot.command_prefix):
+            if message.content.lower() == "{}enable".format(self.bot.command_prefix):
                 self.bot.enabled = True
                 await message.channel.send('Bot enabled!')
                 print('Bot enabled!')
 
-        await self.bot.process_commands(message)
+        return
 
     @commands.command(name='disable', help=hd.disable_help, usage=hd.disable_usage)
     @commands.check(author_is_admin_or_dev)
