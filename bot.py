@@ -55,13 +55,12 @@ from fun_zone.games.chess import ForbiddenChessMove
 from cogs.dummy_commands import Dummy
 from cogs.status import Status
 
-
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 prefix = "="
-bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None)
+bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None, intents=discord.Intents.all())
 
 bot.latest_new_person = ""
 bot.debug = False
