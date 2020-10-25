@@ -57,7 +57,7 @@ from cogs.help_command.helping import Helping
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-DEBUG = False
+DEBUG = True
 if not DEBUG:
     prefix = "/"
 else:
@@ -130,19 +130,6 @@ async def on_command_error(ctx, error):
             raise error
 
 
-def author_is_admin_or_dev(ctx):
-    developers = [bot.get_user(_id) for _id in data.developer_ids]
-    admin_role = bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
-    return ctx.author in developers or admin_role in ctx.author.roles
-
-
-# This is a command purely for testing purposes during development.
-@bot.command(name='testing', help=hd.testing_help, usage=hd.testing_usage)
-@commands.check(author_is_admin_or_dev)
-async def testing(ctx, *args):
-    await ctx.send("Nothing to test.")
-
-
 # this loop is used to check for new updates on the bug tracker every 60 seconds
 @tasks.loop(seconds=10, reconnect=True)
 async def fixed_bug_loop():
@@ -187,4 +174,3 @@ except KeyboardInterrupt:
 finally:
     bot.loop.run_until_complete(bot.logout())
     print("done")
-
