@@ -54,6 +54,7 @@ from fun_zone.games.chess import ForbiddenChessMove
 
 from cogs.dummy_commands import Dummy
 from cogs.status import Status
+from cogs.join_leave_notifier import JoinLeaveNotifier
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -65,6 +66,7 @@ bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=No
 bot.latest_new_person = ""
 bot.debug = False
 bot.enabled = False
+COGS = [Dummy, Status, JoinLeaveNotifier, Games]
 
 
 # Print a message if the bot is online and change it's status.
@@ -90,21 +92,6 @@ async def on_message(message):
 
         # We need this since since overriding the default provided on_message forbids any extra commands from running.
         await bot.process_commands(message)
-
-
-# Check which user was the latest to join and store this in a global variable.
-@bot.event
-async def on_member_join(member):
-    if bot.enabled and not bot.debug:
-        bot.latest_new_person = member
-
-
-# When the newest member leaves, there is a notification in th system channel.
-@bot.event
-async def on_member_remove(member):
-    if bot.latest_new_person == member and bot.enabled and not bot.debug:
-        response = 'Sadly, `{}` left us already.'.format(member.name)
-        await bot.get_guild(data.hammer_guild).system_channel.send(response)
 
 
 # Checking for new reactions being added.
@@ -229,19 +216,6 @@ async def bug_vote(ctx, bug):
     await ctx.send(embed=embed)"""
 
 
-# A admin only command to mass delete messages in case of a bad discord discussion.
-@bot.command(name='mass_delete', help=hd.mass_delete_help, usage=hd.mass_delete_usage)
-@commands.has_role(data.admin_role_id)
-async def mass_delete(ctx, number_of_messages: int):
-    await ctx.message.delete()
-    if number_of_messages > 250:
-        response = "You want to delete too many messages at once, I'm sorry."
-        await ctx.send(response)
-        return
-    else:
-        await ctx.channel.purge(limit=number_of_messages)
-
-
 # this loop is used to check for new updates on the bug tracker every 60 seconds
 @tasks.loop(seconds=10, reconnect=True)
 async def fixed_bug_loop():
@@ -277,9 +251,8 @@ async def test():
     pass
 
 try:
-    bot.add_cog(Games(bot))
-    bot.add_cog(Dummy(bot))
-    bot.add_cog(Status(bot))
+    for cog in COGS:
+        bot.add_cog(cog(bot))
 
     version_update_loop.start()  # start the loop to check for new versions
     fixed_bug_loop.start()  # start the loop to check for bugs
