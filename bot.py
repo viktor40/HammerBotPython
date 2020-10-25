@@ -60,7 +60,7 @@ from cogs.status import Status
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-prefix = "/"
+prefix = "="
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None)
 
 bot.latest_new_person = ""
@@ -129,7 +129,7 @@ async def on_command_error(ctx, error):
         await ctx.send("You don't have the correct role to use that command!", delete_after=15)
 
     elif isinstance(error, discord.ext.commands.CheckFailure):
-        print('Check failed')
+        await ctx.send("I'm afraid you aren't allowed to use that command.", delete_after=15)
 
     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
         if isinstance(error.original, ForbiddenChessMove):
@@ -142,13 +142,6 @@ async def on_command_error(ctx, error):
             raise error
 
 
-@bot.event
-async def on_error(event_method, *args, **kwargs):
-    print(event_method)
-    print(*args)
-    print(**kwargs)
-
-
 def author_is_admin_or_dev(ctx):
     developers = [bot.get_user(_id) for _id in data.developer_ids]
     admin_role = bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
@@ -159,7 +152,7 @@ def author_is_admin_or_dev(ctx):
 @bot.command(name='testing', help=hd.testing_help, usage=hd.testing_usage)
 @commands.check(author_is_admin_or_dev)
 async def testing(ctx, *args):
-    await ctx.send("Testing method called.\n There is nothing here")
+    await ctx.send("Nothing to test.")
 
 
 @bot.command(name='help', help=hd.help_help, usage=hd.help_usage)

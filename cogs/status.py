@@ -5,6 +5,12 @@ import help_command.help_data as hd
 import utilities.data as data
 
 
+def author_is_admin_or_dev(ctx):
+    developers = [ctx.bot.get_user(_id) for _id in data.developer_ids]
+    admin_role = ctx.bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
+    return ctx.author in developers or admin_role in ctx.author.roles
+
+
 class Status(commands.Cog):
     """
     This cog is used to enable / disable the bot and check the bots status. It uses 2 dummy commands.
@@ -20,13 +26,6 @@ class Status(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-
-    def author_is_admin_or_dev(self):
-        def predicate(ctx):
-            developers = [self.bot.get_user(_id) for _id in data.developer_ids]
-            admin_role = self.bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
-            return ctx.author in developers or admin_role in ctx.author.roles
-        return predicate
 
     @commands.Cog.listener()
     async def on_message(self, message):
