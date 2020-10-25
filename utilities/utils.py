@@ -55,7 +55,7 @@ def get_server_roles(ctx):
     return role_list
 
 
-def timetest(input_func):
+def tim_etest(input_func):
     def timed(*args, **kwargs):
         start_time = time.time()
         result = input_func(*args, **kwargs)

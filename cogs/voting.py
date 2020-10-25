@@ -9,9 +9,24 @@ it's profile picture as the author icon. The bot will also automatically add vot
 
 import datetime
 import discord
+from discord.ext import commands
 
-from other.task import format_conversion
+from cogs.task import format_conversion
 from utilities.data import vote_role_id, vote_emotes, discord_letters
+import cogs.help_command.help_data as hd
+import utilities.data as data
+
+
+class Voting(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    # Command that will handle voting, see voting.py.
+    @commands.command(name='vote', help=hd.vote_help, usage=hd.vote_usage)
+    @commands.has_role(data.member_role_id)
+    async def vote(self, ctx, vote_type='', *args):
+        await ctx.message.delete()
+        await vote_handler(ctx, vote_type, args, self.bot)
 
 
 # This method can change the vote from to [closed] or [reopened]

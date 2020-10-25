@@ -8,9 +8,23 @@ These roles are used for notification and pinging purposes.
 """
 
 import discord
+from discord.ext import commands
 
 from utilities.data import role_list, role_ids, hammer_guild
 from utilities.utils import get_server_roles
+import cogs.help_command.help_data as hd
+import utilities.data as data
+
+
+class Role(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    # This command will be used so members can give themselves some roles with a command
+    @commands.command(name='role', help=hd.role_help, usage=hd.role_usage)
+    @commands.has_role(data.member_role_id)
+    async def role(self, ctx, action, *args):
+        await role_giver(ctx, action, args, self.bot)
 
 
 async def role_giver(ctx, action, args, bot):

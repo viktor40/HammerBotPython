@@ -9,8 +9,38 @@ Furthermore it will do automatic formatting and everyone will be able to delete 
 """
 
 import discord
+from discord.ext import commands
 
 from utilities.utils import format_conversion
+import cogs.help_command.help_data as hd
+import utilities.data as data
+
+
+class Task(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    # Command to create, add, remove and delete bulletins in the bulletin board.
+    @commands.command(name='bulletin', help=hd.bulletin_help, usage=hd.bulletin_usage)
+    @commands.has_role(data.member_role_id)
+    async def bulletin(self, ctx, action, *args):
+        await ctx.message.delete()
+        await task_list(ctx=ctx, action=action, args=args, use='bulletin')
+
+    # Command to add a to do list to a project channel and pin it.
+    @commands.command(name='todo', help=hd.todo_help, usage=hd.todo_usage)
+    @commands.has_role(data.member_role_id)
+    async def todo(self, ctx, action, *args):
+        await ctx.message.delete()
+        await task_list(ctx=ctx, action=action, args=args, use='todo')
+
+    # Command to handle the coordinate list. There is one embed per dimension
+    @commands.command(name='coordinates', help=hd.coordinates_help, usage=hd.coordinates_usage)
+    @commands.has_role(data.member_role_id)
+    async def coordinates(self, ctx, action, *args):
+        await ctx.message.delete()
+        if ctx.channel.id == data.coordinate_channel:
+            await task_list(ctx=ctx, action=action, args=args, use="bulletin")
 
 
 # Check if the task already exists.
@@ -80,7 +110,7 @@ def rename_task(project, new_title, channel_history):
 
 
 # Generates the task list embed.
-async def task_list(ctx, action, use, args="",):
+async def task_list(ctx, action, use, args=""):
     # check for the correct syntax
     if use == "bulletin":
         channel_history = await ctx.channel.history(limit=50).flatten()

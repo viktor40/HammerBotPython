@@ -1,11 +1,10 @@
 import discord
 from discord.ext import commands
-from fun_zone.games.chess import Chess, ForbiddenChessMove
+from fun_zone.games.chess import Chess
 from fun_zone.games.hangman import Hangman
 from fun_zone.games.minesweeper import Minesweeper
-import fun_zone.games.game_data as gd
 
-import help_command.help_data as hd
+import cogs.help_command.help_data as hd
 
 
 class Games(commands.Cog):

@@ -1,7 +1,6 @@
-import discord
 from discord.ext import commands
 
-import help_command.help_data as hd
+import cogs.help_command.help_data as hd
 import utilities.data as data
 
 

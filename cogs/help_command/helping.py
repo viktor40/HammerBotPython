@@ -5,7 +5,21 @@
 import discord
 from discord.ext import commands
 
-from help_command.help_data import other_usage, other_help, bug_usage, bug_help
+from cogs.help_command.help_data import other_usage, other_help, bug_usage, bug_help
+import cogs.help_command.help_data as hd
+import utilities.data as data
+
+
+class Helping(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command(name='help', help=hd.help_help, usage=hd.help_usage)
+    async def helping(self, ctx, command=''):
+        try:
+            await ctx.send(embed=helper(ctx, self.bot, command))
+        except KeyError:
+            await ctx.send("Help Error: This command doesn't exist.", delete_after=10)
 
 
 # this command will go through all commands, fetch the name, usage and help variable given to the
