@@ -60,7 +60,7 @@ from cogs.status import Status
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-prefix = "="
+prefix = "/"
 bot = commands.Bot(command_prefix=prefix)
 bot.remove_command('help')
 bot.latest_new_person = ""
@@ -83,9 +83,6 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.content == "{}status".format(prefix):
-        await message.channel.send('Bot enabled = {}!'.format(bot.enabled))
-
     if bot.enabled:
         # Ff a new message is sent in the application forms channel, the bot will automatically add reactions.
         if message.channel.id == data.application_channel:
@@ -97,13 +94,6 @@ async def on_message(message):
 
         # We need this since since overriding the default provided on_message forbids any extra commands from running.
         await bot.process_commands(message)
-
-    if not bot.enabled:
-        if message.content == "{}enable".format(prefix):
-            bot.enabled = True
-            await message.channel.send('Bot enabled!')
-            print('Bot enabled')
-            return
 
 
 # Check which user was the latest to join and store this in a global variable.
@@ -260,6 +250,7 @@ async def mass_delete(ctx, number_of_messages: int):
 # this loop is used to check for new updates on the bug tracker every 60 seconds
 @tasks.loop(seconds=10, reconnect=True)
 async def fixed_bug_loop():
+    print("loop")
     try:
         # on startup this is ran the first time but the bot isn't yet online so this would return []
         # to make sure it doesn't break we check for this

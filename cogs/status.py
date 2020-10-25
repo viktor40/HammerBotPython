@@ -20,24 +20,36 @@ class Status(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def get_self(self):
-        return self
-
-    @staticmethod
-    def admin_or_dev_check(ctx):
-        bot_dev = self.bot.get_user(234257395910443008)
+    def author_is_admin_or_dev(self, ctx):
+        developers = [self.bot.get_user(_id) for _id in data.developer_ids]
         admin_role = self.bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
-        return ctx.author == bot_dev or admin_role in ctx.author.roles
+        return ctx.author in developers or admin_role in ctx.author.roles
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author == self.bot.user:
+            return
+
+        if message.content == "{}status".format(self.bot.command_prefix):
+            await message.channel.send('Bot enabled = {}!'.format(self.bot.enabled))
+
+        if not self.bot.enabled:
+            if message.content == "{}enable".format(self.bot.command_prefix):
+                self.bot.enabled = True
+                await message.channel.send('Bot enabled!')
+                print('Bot enabled!')
+
+        await self.bot.process_commands(message)
 
     @commands.command(name='disable', help=hd.disable_help, usage=hd.disable_usage)
-    @commands.check(admin_or_dev_check)
+    @commands.check(author_is_admin_or_dev)
     async def disable_bot(self, ctx):
         self.bot.enabled = False
         await ctx.send('Bot disabled!')
         print('Bot disabled')
 
     @commands.command(name='enable', help=hd.enable_help, usage=hd.enable_usage)
-    @commands.check(self.admin_or_dev_check)
+    @commands.check(author_is_admin_or_dev)
     async def enable_bot(self, ctx, *args):
         pass
 

@@ -11,6 +11,8 @@ be changed.
 import discord
 from typing_extensions import Final
 
+developer_ids: Final[list] = [234257395910443008, 561705204630683648]
+
 coordinate_channel: Final[int] = 690080048375529481
 application_channel: Final[int] = 647293235248496644
 bulletin_board_channel: Final[int] = 724371678393663569
@@ -70,4 +72,5 @@ bug_colour_mappings: Final[dict] = {"Open": discord.Color.red(),
                                     "Resolved": discord.Colour.green(),
                                     "Reopened": discord.Colour.blue(),
                                     "Postponed": discord.Colour.purple(),
-                                    "Closed": discord.Colour.dark_grey()}
+                                    "Closed": discord.Colour.dark_grey()
+                                    }
