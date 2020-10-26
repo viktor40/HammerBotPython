@@ -7,6 +7,17 @@ import utilities.data as data
 
 
 class MiscellaneousCommands(commands.Cog):
+    """
+    This cog is used to implement some miscellaneous commands.
+    - stop_lazy: sends an image in discord to tell someone to "Stop Lazy". It takes a positional argument which can
+                 contain an extra argument with custom text or an @ to mention someone.
+
+    - CMP: The CMP command will DM the CMP IP to people with the CMP Access or member role.
+
+    Attributes:
+        bot -- a discord.ext.commands.Bot object containing the bot's information
+    """
+
     def __init__(self, bot):
         self.bot = bot
 

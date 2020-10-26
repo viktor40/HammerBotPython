@@ -3,6 +3,10 @@
 # bot.py
 
 """
+The MIT License (MIT)
+
+Copyright (c) 2020 Viktor40
+
 The source code can be found at:
 https://github.com/viktor40/HammerBotPython
 
@@ -13,7 +17,6 @@ In this file we will check for different discord events like on_member_join, on_
 different tasks.
 
 This file also contains all the commands that the bot listens to.
-It also has dummy commands that are used by the help command so this bot lists the HammerBot Java commands too.
 
 Finally this file will also check for errors inside commands, but also in on_command_error. After an error gets
 detected the bot will notify the user. The error message will be deleted after 15 seconds.
@@ -52,6 +55,7 @@ from cogs.miscellaneous_commands import MiscellaneousCommands
 from cogs.role import Role
 from cogs.voting import Voting
 from cogs.help_command.helping import Helping
+from cogs.task_command import Task
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -65,10 +69,9 @@ else:
 
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None, intents=discord.Intents.all())
 
-bot.latest_new_person = ""
 bot.debug = DEBUG
 bot.enabled = False
-COGS = [Dummy, Status, JoinLeaveNotifier, Games, AdminCommands, MiscellaneousCommands, Role, Voting, Helping]
+COGS = [Dummy, Status, JoinLeaveNotifier, Games, AdminCommands, MiscellaneousCommands, Voting, Helping, Role, Task]
 
 
 # Print a message if the bot is online and change it's status.
@@ -77,6 +80,10 @@ async def on_ready():
     print('bot connected')
     mc_version.get_versions(bot)
     bot.enabled = True
+
+    from testing.one_time_messages import important_member_information
+    new_member_channel = bot.get_channel(744501245569400863)
+    await new_member_channel.send(embed=important_member_information(bot))
     await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
 
 

@@ -11,13 +11,20 @@ import datetime
 import discord
 from discord.ext import commands
 
-from cogs.task import format_conversion
+from cogs.task_command import format_conversion
 from utilities.data import vote_role_id, vote_emotes, discord_letters
 import cogs.help_command.help_data as hd
 import utilities.data as data
 
 
 class Voting(commands.Cog):
+    """
+    This cog is used to implement the voting command.
+
+    Attributes:
+        bot -- a discord.ext.commands.Bot object containing the bot's information
+    """
+
     def __init__(self, bot):
         self.bot = bot
 

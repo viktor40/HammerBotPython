@@ -11,6 +11,17 @@ def author_is_admin_or_dev(ctx):
 
 
 class AdminCommands(commands.Cog):
+    """
+    This cog is used to implement admin and developer commands.
+    - mass_delete: This command will mass delete (purge) messages. Up to 250 messages are allowed to be purged at once.
+                   The command is obviously only available to admins
+
+    - testing: A command purely used for testing during development.
+
+    Attributes:
+        bot -- a discord.ext.commands.Bot object containing the bot's information
+    """
+
     def __init__(self, bot):
         self.bot = bot
 
