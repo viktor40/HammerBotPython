@@ -215,8 +215,11 @@ minesweeper_help: Final[str] = f"{hangman_usage}\n\n{syntax_pre}" \
                                f"larger than 20 and the total number of tiles must be smaller than 190.\n" \
                                f"If no extra values are provided the command defaults to: `/minesweeper medium 10x15."
 
-count_usage: Final[str] = f"Shows the number of members the discord has"
-count_help: Final[str] = f"{count_usage}"
+count_usage: Final[str] = f"Shows the number of members the discord has."
+count_help: Final[str] = f"{count_usage}\n\n{syntax_pre}" \
+                         f"`/count <optional_arg>`\n" \
+                         f"If the optional argument `roles` is provided, the member count per role will be shown, else" \
+                         f"the total server member count."
 
 
 # HammerBot java commands:
