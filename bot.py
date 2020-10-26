@@ -71,19 +71,18 @@ bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=No
 
 bot.debug = DEBUG
 bot.enabled = False
-COGS = [Dummy, Status, JoinLeaveNotifier, Games, AdminCommands, MiscellaneousCommands, Voting, Helping, Role, Task]
+COGS = [Dummy, Status, JoinLeaveNotifier, Games, AdminCommands, MiscellaneousCommands, Voting, Helping, Role]
 
 
 # Print a message if the bot is online and change it's status.
 @bot.event
 async def on_ready():
-    print('bot connected')
+    print('Bot connected with prefix: {}'.format(bot.command_prefix))
+    if bot.debug:
+        print('Debug mode is enabled.')
+
     mc_version.get_versions(bot)
     bot.enabled = True
-
-    from testing.one_time_messages import important_member_information
-    new_member_channel = bot.get_channel(744501245569400863)
-    await new_member_channel.send(embed=important_member_information(bot))
     await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
 
 

@@ -37,3 +37,23 @@ class MiscellaneousCommands(commands.Cog):
         response = "Check your DM's"
         await ctx.author.send(CMP_IP)
         await ctx.send(response)
+
+    @commands.command(name='count', help=hd.count_help, usage=hd.count_usage)
+    async def count(self, ctx, count_type):
+        if count_type.lower() == 'roles':
+            roles = ctx.guild.roles
+            description = {role: len(role.members) for role in roles}
+            sorted_description = ["{}: {}".format(role.mention, count) for role, count in sorted(description.items(),
+                                                                                                 key=lambda i: i[1])]
+            count_embed = discord.Embed(title='members in {}'.format(ctx.guild.name),
+                                        description='\n'.join(sorted_description[::-1]),
+                                        color=discord.Color(0xFF7DD0))
+
+        else:
+            total_count = ctx.guild.member_count
+            count_embed = discord.Embed(title='members in {}'.format(ctx.guild.name),
+                                        description=total_count,
+                                        color=discord.Color(0xFF7DD0)
+                                        )
+
+        await ctx.send(embed=count_embed)
