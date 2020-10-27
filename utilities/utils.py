@@ -15,37 +15,20 @@ from utilities.data import discord_letters
 
 
 # Convert something from the format <> | <> & <> & <> ... in the correct way to variables for easy usage.
-def format_conversion(args, command):
-    value_list = []
-    description = ""
-    value = ""
-    for i in args:
-        # everything before | is the description
-        if "|" in i:
-            value += i[:-1]
-            description = value[:-1]
-            value = ""
+def format_conversion(args):
+    title, options = args.split('|')
+    options = options.split('&')
+    title = strip_surrounding(title)
+    options = [strip_surrounding(option) for option in options]
+    return title, options
 
-        # everything after | are options split by &
-        elif "&" not in i:
-            value += i + " "
-        else:
-            value += i
-            value_list.append(value[:-1])
-            value = ""
 
-    value_list.append(value[:-1])
-    formatted = ""
-
-    # For polls we add a emote letter in front instead of a dash which is used for bulletins and others.
-    if command == "poll":
-        for pos, option in enumerate(value_list):
-            formatted += discord_letters[pos] + " " + option + "\n"
-        return formatted, value_list, description
-    elif command == "bulletin":
-        for pos, option in enumerate(value_list):
-            formatted += "- " + option + "\n"
-        return formatted, description, value_list
+def strip_surrounding(word):
+    if word[0] == ' ':
+        word = word[1:]
+    if word[-1] == ' ':
+        word = word[:-1]
+    return word
 
 
 # get a list of all roles in the server
@@ -55,7 +38,7 @@ def get_server_roles(ctx):
     return role_list
 
 
-def tim_etest(input_func):
+def time_test(input_func):
     def timed(*args, **kwargs):
         start_time = time.time()
         result = input_func(*args, **kwargs)
@@ -63,3 +46,12 @@ def tim_etest(input_func):
         print("Method Name - {0}, Args - {1}, Kwargs - {2}, Execution Time - {3}".format(input_func.__name__, args, kwargs, end_time - start_time))
         return result
     return timed
+
+
+print("----------------------")
+arg = "Titel | option 1 & option 2 & option 3 & option 4"
+tit, opt = format_conversion(arg)
+print(tit)
+print(opt)
+bulletin_list = "\n".join()
+print(bulletin_list)
