@@ -71,7 +71,7 @@ bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=No
 
 bot.debug = DEBUG
 bot.enabled = False
-COGS = [Dummy, Status, JoinLeaveNotifier, Games, AdminCommands, MiscellaneousCommands, Voting, Helping, Role]
+COGS = [Dummy, Status, JoinLeaveNotifier, Games, AdminCommands, MiscellaneousCommands, Voting, Helping, Role]  # Task
 
 
 # Print a message if the bot is online and change it's status.
@@ -84,22 +84,6 @@ async def on_ready():
     mc_version.get_versions(bot)
     bot.enabled = True
     await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
-
-
-@bot.event
-async def on_message(message):
-    # Make sure the bot doesn't respond to itself.
-    if message.author == bot.user:
-        return
-
-    if bot.enabled and not bot.debug:
-        # Ff a new message is sent in the application forms channel, the bot will automatically add reactions.
-        if message.channel.id == data.application_channel:
-            for e in data.vote_emotes:
-                await message.add_reaction(bot.get_emoji(e))
-
-        # We need this since since overriding the default provided on_message forbids any extra commands from running.
-        await bot.process_commands(message)
 
 
 # Checking for new reactions being added.
@@ -134,37 +118,6 @@ async def on_command_error(ctx, error):
         await ctx.channel.send(error)
         if bot.debug:
             raise error
-
-
-# this loop is used to check for new updates on the bug tracker every 60 seconds
-@tasks.loop(seconds=10, reconnect=True)
-async def fixed_bug_loop():
-    try:
-        # on startup this is ran the first time but the bot isn't yet online so this would return []
-        # to make sure it doesn't break we check for this
-        channel = bot.get_channel(data.fixed_bug_channel_id)
-        if channel:
-            await bug_fix.fixes_handler(bot)
-
-    # exceptions need to be handled, otherwise the loop might break
-    except Exception as e:
-        print(e)
-        raise e
-
-
-@tasks.loop(seconds=25, reconnect=True)
-async def version_update_loop():
-    try:
-        # on startup this is ran the first time but the bot isn't yet online so this would return []
-        # to make sure it doesn't break we check for this
-        channel = bot.get_channel(data.fixed_bug_channel_id)
-        if channel:
-            await mc_version.version_update_handler(bot, channel)
-
-    # exceptions need to be handled, otherwise the loop might break
-    except Exception as e:
-        print(e)
-
 
 try:
     for cog in COGS:
