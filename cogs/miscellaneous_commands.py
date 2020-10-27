@@ -39,7 +39,7 @@ class MiscellaneousCommands(commands.Cog):
         await ctx.send(response)
 
     @commands.command(name='count', help=hd.count_help, usage=hd.count_usage)
-    async def count(self, ctx, count_type):
+    async def count(self, ctx, count_type=None):
         if count_type.lower() == 'roles':
             roles = ctx.guild.roles
             description = {role: len(role.members) for role in roles}

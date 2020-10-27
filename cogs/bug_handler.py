@@ -1,7 +1,7 @@
 from discord.ext import commands, tasks
 import bug.fixed as bug_fix
 import bug.versions as mc_version
-import cogs.help_command.help_data as hd
+from bug.fetcher import mc_bug
 import utilities.data as data
 
 
@@ -13,17 +13,8 @@ class BugHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        # Make sure the bot doesn't respond to itself.
-        if message.author == self.bot.user:
-            return
-
-        if self.bot.enabled and not self.bot.debug:
-            # Ff a new message is sent in the application forms channel, the bot will automatically add reactions.
-            if message.channel.id == data.application_channel:
-                for e in data.vote_emotes:
-                    await message.add_reaction(self.bot.get_emoji(e))
-
-            await self.bot.process_commands(message)  # allow other commands to run
+        if self.bot.enabled:
+            await mc_bug(message)
 
     # this loop is used to check for new updates on the bug tracker every 60 seconds
     @tasks.loop(seconds=10, reconnect=True)

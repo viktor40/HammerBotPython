@@ -58,8 +58,7 @@ def limited_bug(issueid):
     embed.description = '**Status:** {} | **Resolution:** {} | **Votes:** {}'.format(status,
                                                                                      issue.fields.resolution,
                                                                                      issue.fields.votes)
-    jobs = jira_access._session._async_jobs
-    print(jobs)
+
     jira_access.close()
     return embed
 

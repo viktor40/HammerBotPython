@@ -41,4 +41,4 @@ class AdminCommands(commands.Cog):
     @commands.command(name='testing', help=hd.testing_help, usage=hd.testing_usage)
     @commands.check(author_is_admin_or_dev)
     async def testing(self, ctx, *args):
-        await ctx.send("Nothing to test.")
+        print('-- test called --')

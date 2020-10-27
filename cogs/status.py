@@ -40,9 +40,7 @@ class Status(commands.Cog):
                 await message.channel.send('Bot enabled!')
                 print('Bot enabled!')
 
-        await self.bot.process_commands(message)
-
-        return
+        await self.bot.process_commands(message)  # allow other commands to run
 
     @commands.command(name='disable', help=hd.disable_help, usage=hd.disable_usage)
     @commands.check(author_is_admin_or_dev)

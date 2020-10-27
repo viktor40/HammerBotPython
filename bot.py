@@ -60,7 +60,7 @@ from cogs.bug_handler import BugHandler
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-DEBUG = True
+DEBUG = False
 if not DEBUG:
     prefix = "/"
 else:
@@ -92,6 +92,21 @@ async def on_ready():
     mc_version.get_versions(bot)
     bot.enabled = True
     await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
+
+
+@bot.event
+async def on_message(message):
+    # Make sure the bot doesn't respond to itself.
+    if message.author == bot.user:
+        return
+
+    if bot.enabled and not bot.debug:
+        # Ff a new message is sent in the application forms channel, the bot will automatically add reactions.
+        if message.channel.id == data.application_channel:
+            for e in data.vote_emotes:
+                await message.add_reaction(bot.get_emoji(e))
+
+        await bot.process_commands(message)  # allow other commands to run
 
 
 # This will handle some errors and suppress raising them. It will also report to the user what the error was.
