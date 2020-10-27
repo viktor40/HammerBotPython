@@ -60,16 +60,11 @@ from cogs.bug_handler import BugHandler
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-DEBUG = False
+DEBUG = True
 if not DEBUG:
     prefix = "/"
 else:
     prefix = "="
-
-bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None, intents=discord.Intents.all())
-
-bot.debug = DEBUG
-bot.enabled = False
 
 COGS = [Dummy,
         Status,
@@ -81,6 +76,11 @@ COGS = [Dummy,
         Role,
         BugHandler]  # Task not added to avoid errors at this point
 
+bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None, intents=discord.Intents.all())
+
+bot.debug = DEBUG
+bot.enabled = False
+
 
 # Print a message if the bot is online and change it's status.
 @bot.event
@@ -91,6 +91,7 @@ async def on_ready():
 
     mc_version.get_versions(bot)
     bot.enabled = True
+    bot.debug = DEBUG
     await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
 
 

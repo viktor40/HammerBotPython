@@ -8,8 +8,9 @@ import utilities.data as data
 class BugHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.fixed_bug_loop.start()
-        self.version_update_loop.start()
+        if not self.bot.debug:
+            self.fixed_bug_loop.start()
+            self.version_update_loop.start()
 
     @commands.Cog.listener()
     async def on_message(self, message):
