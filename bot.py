@@ -34,11 +34,10 @@ This file cannot be found on github for security reasons.
 """
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from dotenv import load_dotenv
 import os
 
-import bug.fixed as bug_fix
 import bug.versions as mc_version
 
 import utilities.data as data
@@ -46,7 +45,6 @@ import utilities.data as data
 from fun_zone.games.games import Games
 from fun_zone.games.chess import ForbiddenChessMove
 
-import cogs.help_command.help_data as hd
 from cogs.dummy_commands import Dummy
 from cogs.status import Status
 from cogs.join_leave_notifier import JoinLeaveNotifier
@@ -56,6 +54,7 @@ from cogs.role import Role
 from cogs.voting import Voting
 from cogs.help_command.helping import Helping
 from cogs.task_command import Task
+from cogs.bug_handler import BugHandler
 
 # discord token is stored in a .env file in the same directory as the bot
 load_dotenv()  # load the .env file containing id's that have to be kept secret for security
@@ -71,7 +70,16 @@ bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=No
 
 bot.debug = DEBUG
 bot.enabled = False
-COGS = [Dummy, Status, JoinLeaveNotifier, Games, AdminCommands, MiscellaneousCommands, Voting, Helping, Role]  # Task
+
+COGS = [Dummy,
+        Status,
+        JoinLeaveNotifier,
+        Games, AdminCommands,
+        MiscellaneousCommands,
+        Voting,
+        Helping,
+        Role,
+        BugHandler]  # Task not added to avoid errors at this point
 
 
 # Print a message if the bot is online and change it's status.
@@ -84,14 +92,6 @@ async def on_ready():
     mc_version.get_versions(bot)
     bot.enabled = True
     await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
-
-
-# Checking for new reactions being added.
-# on_raw_reaction_add is used since it is called regardless of the state of the internal message cache.
-@bot.event
-async def on_raw_reaction_add(payload):
-    if payload.channel_id == data.vote_channel_id:
-        pass
 
 
 # This will handle some errors and suppress raising them. It will also report to the user what the error was.
@@ -122,9 +122,6 @@ async def on_command_error(ctx, error):
 try:
     for cog in COGS:
         bot.add_cog(cog(bot))
-
-    version_update_loop.start()  # start the loop to check for new versions
-    fixed_bug_loop.start()  # start the loop to check for bugs
     bot.loop.run_until_complete(bot.start(TOKEN))
 
 except KeyboardInterrupt:
