@@ -46,12 +46,3 @@ def time_test(input_func):
         print("Method Name - {0}, Args - {1}, Kwargs - {2}, Execution Time - {3}".format(input_func.__name__, args, kwargs, end_time - start_time))
         return result
     return timed
-
-
-print("----------------------")
-arg = "Titel | option 1 & option 2 & option 3 & option 4"
-tit, opt = format_conversion(arg)
-print(tit)
-print(opt)
-bulletin_list = "\n".join()
-print(bulletin_list)
