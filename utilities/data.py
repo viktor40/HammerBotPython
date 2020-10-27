@@ -29,11 +29,15 @@ vote_emotes: Final[list] = [upvote_emote, downvote_emote, votent_emote]
 
 vote_role_id: Final[int] = 729381591197024379
 tour_giver_id: Final[int] = 702542764893536346
+never_alone_id: Final[int] = 770083452581969940
 cmp_role_id: Final[int] = 728002223887351830
 member_role_id: Final[int] = 645465607856324608
 admin_role_id: Final[int] = 649340485093031957
 
-role_ids: Final[dict] = {"tour giver": tour_giver_id, "voten'tn't": vote_role_id}
+role_ids: Final[dict] = {"tour giver": tour_giver_id,
+                         "voten'tn't": vote_role_id,
+                         "never-alone": never_alone_id}
+
 role_list: Final[list] = ["tour giver", "voten'tn't"]
 
 hammer_bot_id: Final[int] = 724012480661028907
