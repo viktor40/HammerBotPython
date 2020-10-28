@@ -114,11 +114,17 @@ coordinates_help: Final[str] = f"{todo_usage}\n\n{syntax_pre}" \
                                f"of that dimension and add a index number after it."
 
 # mass_delete command
-mass_delete_usage: Final[str] = f"This command will provide admins a way to mass delete messages"
+mass_delete_usage: Final[str] = f"This command will provide admins a way to purge messages"
 mass_delete_help: Final[str] = f"{mass_delete_usage}\n\n{syntax_pre}" \
                                f"`/mass_delete <number of messages`\n" \
-                               f"`<number of messages` cannot be bigger than 200.\n" \
+                               f"`<number of messages>` cannot be bigger than 250.\n" \
                                f"This command can only be used by admins."
+
+# mini_delete command
+mini_delete_usage: Final[str] = f"This command will provide members a way to purge messages"
+mini_delete_help: Final[str] = f"{mass_delete_usage}\n\n{syntax_pre}" \
+                               f"`/mass_delete <number of messages`\n" \
+                               f"`<number of messages>` cannot be bigger than 10.\n" \
 
 # help command
 help_usage: Final[str] = f"Shows this command."

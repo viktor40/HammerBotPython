@@ -38,7 +38,7 @@ class AdminCommands(commands.Cog):
             await ctx.channel.purge(limit=number_of_messages)
 
     # A admin only command to mass delete messages in case of a bad discord discussion.
-    @commands.command(name='mini_delete', help=hd.mass_delete_help, usage=hd.mass_delete_usage)
+    @commands.command(name='mini_delete', help=hd.mini_delete_help, usage=hd.mini_delete_usage)
     @commands.has_role(data.member_role_id)
     async def mini_delete(self, ctx, number_of_messages: int):
         await ctx.message.delete()
