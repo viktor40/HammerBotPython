@@ -61,21 +61,21 @@ class TaskCommand(commands.Cog):
     @commands.command(name='bulletin', help=hd.bulletin_help, usage=hd.bulletin_usage)
     @commands.has_role(data.member_role_id)
     async def bulletin(self, ctx, action, *args):
-        task = Task(ctx, action, args, 'bulletin')
+        task = Bulletin(ctx, action, args, 'bulletin')
         await create_task(task, ctx, action)
 
     # Command to add a to do list to a project channel and pin it.
     @commands.command(name='todo', help=hd.todo_help, usage=hd.todo_usage)
     @commands.has_role(data.member_role_id)
     async def todo(self, ctx, action, *args):
-        task = Task(ctx, action, args, 'todo')
+        task = Todo(ctx, action, args, 'todo')
         await create_task(task, ctx, action)
 
     # Command to handle the coordinate list. There is one embed per dimension
     @commands.command(name='coordinates', help=hd.coordinates_help, usage=hd.coordinates_usage)
     @commands.has_role(data.member_role_id)
     async def coordinates(self, ctx, action, *args):
-        task = Task(ctx, action, args, 'todo')
+        task = Coordinate(ctx, action, args, 'todo')
         await create_task(task, ctx, action)
 
 
@@ -94,11 +94,7 @@ class Task:
         self.exist = False
 
     async def get_channel_history(self):
-        if self.use == "bulletin" and self.ctx.channel == self.ctx.bot.get_channel():
-            self.channel_history = await self.ctx.channel.history(limit=50).flatten()
-
-        elif self.use == "todo":
-            self.channel_history = await self.ctx.channel.pins()
+        self.channel_history = await self.ctx.channel.history(limit=50).flatten()
 
     def verifier(self):
         if self.use not in ['bulletin', 'todo', 'coordinate']:
@@ -167,6 +163,14 @@ class Task:
                                    title=self.options[0],
                                    description=message.embeds[0].description)
         return message
+
+
+class Todo(Task):
+    def __init__(self, ctx, action, args, use):
+        super(Task).__init__(ctx, action, args, use)
+
+    async def get_channel_history(self):
+        self.channel_history = await self.ctx.channel.pins()
 
 
 class ChannelLockedTask(Task):
