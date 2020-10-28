@@ -197,8 +197,50 @@ class Coordinate(ChannelLockedTask):
     def __init__(self, ctx, action, args, use):
         target_channel = ctx.get_channel(data.coordinate_channel)
         super().__init__(ctx, action, args, use, target_channel)
+        self.coordinate_options = None
+
+        self.x = None
+        self.y = None
+        self.z = None
+        self.location = None
 
         self.max_length = 2000
+
+    def verifier(self):
+        basic_verification = super(Coordinate, self).verifier()
+        if basic_verification:
+            return basic_verification
+
+        coordinate_verification = self.is_coordinate()
+        if coordinate_verification:
+            return coordinate_verification
+
+    def is_coordinate(self):
+        coordinates = self.options
+        for coord in coordinates:
+            title, positions = coord.split(': ')
+            if len(positions) <= 1 or len(positions) > 3:
+                return 'No proper coordinates provided.'
+
+            else:
+                for pos in positions:
+                    if not pos.isnumeric():
+                        return 'Coordinate isn\'t numeric.'
+
+                self.decompose_coordinate(title, positions)
+
+    def decompose_coordinate(self, title, positions):
+        self.title = title
+        for pos in positions:
+            if len(pos) == 2:
+                self.x = int(pos[0])
+                self.y = 256
+                self.z = int(pos[1])
+
+            elif pos == 3:
+                self.x = int(pos[0])
+                self.y = int(pos[1])
+                self.z = int(pos[2])
 
     def check_length(self):
         pass
