@@ -256,3 +256,9 @@ class Coordinate(ChannelLockedTask):
             return False
         else:
             return True
+
+    def reorganise_embeds(self):
+        pass
+
+    def length_handler(self):
+        pass
