@@ -16,6 +16,35 @@ import cogs.help_command.help_data as hd
 import utilities.data as data
 
 
+async def create_task(ctx, action, args, use):
+    task = Task(ctx, action, args, use)
+    task.search_history()
+    pre_verification = task.verifier()
+    if pre_verification:
+        await ctx.send(pre_verification)
+        return
+
+    if action == 'delete':
+        task.delete_task()
+        await ctx.send(embed=task.embed)
+
+    elif action == 'remove':
+        task.remove_task()
+        await ctx.send(embed=task.embed)
+
+    elif action == 'create':
+        task.create_task()
+        await ctx.send(embed=task.embed)
+
+    elif action == 'add':
+        task.add_task()
+        await ctx.send(embed=task.embed)
+
+    elif action == 'rename':
+        task.rename_task()
+        await ctx.send(embed=task.embed)
+
+
 class TaskCommand(commands.Cog):
     """
     This cog is used to implement the bulletin, to-do and coordinate command.
@@ -31,15 +60,13 @@ class TaskCommand(commands.Cog):
     @commands.command(name='bulletin', help=hd.bulletin_help, usage=hd.bulletin_usage)
     @commands.has_role(data.member_role_id)
     async def bulletin(self, ctx, action, *args):
-        await ctx.message.delete()
-        await task_list(ctx=ctx, action=action, args=args, use='bulletin')
+        await create_task(ctx=ctx, action=action, args=args, use="bulletin")
 
     # Command to add a to do list to a project channel and pin it.
     @commands.command(name='todo', help=hd.todo_help, usage=hd.todo_usage)
     @commands.has_role(data.member_role_id)
     async def todo(self, ctx, action, *args):
-        await ctx.message.delete()
-        await task_list(ctx=ctx, action=action, args=args, use='todo')
+        await create_task(ctx=ctx, action=action, args=args, use="todo")
 
     # Command to handle the coordinate list. There is one embed per dimension
     @commands.command(name='coordinates', help=hd.coordinates_help, usage=hd.coordinates_usage)
@@ -47,154 +74,116 @@ class TaskCommand(commands.Cog):
     async def coordinates(self, ctx, action, *args):
         await ctx.message.delete()
         if ctx.channel.id == data.coordinate_channel:
-            await task_list(ctx=ctx, action=action, args=args, use="bulletin")
+            await self.task_list(ctx=ctx, action=action, args=args, use="bulletin")
 
 
 class Task:
-    def __init__(self, ctx, action, args):
+    def __init__(self, ctx, action, args, use):
         self.ctx = ctx
-        self.action = action
+        self.action = action.lower
+        self.use = use.lower()
         self.args = args
 
-    # Check if the task already exists.
-    def exists(args, channel_history):
-        exists_already = False
-        for message in channel_history:
+        self.title, self.options = format_conversion(args)
+        self.bulletin_options = ['- {}'.format(option) if '- ' not in option else option for option in self.options]
+        self.embed = discord.Embed(color=0xe74c3c)
+
+        self.channel_history = None
+        self.get_channel_history()
+        self.exist = False
+
+    def verifier(self):
+        if self.use not in ['bulletin', 'todo', 'coordinate']:
+            return 'Wrong use specified.'
+
+        if self.action not in ['delete', 'create', 'add', 'rename', 'remove']:
+            return 'Wrong action specified.'
+
+        elif self.action in ['delete', 'add', 'rename', 'remove'] and not self.exist:
+            return 'This {} does not exist.'.format(self.use)
+
+        elif self.action == 'create' and self.exist:
+            return 'This {} can\'t be created. It already exists.'.format(self.use)
+
+        if not self.args:
+            return 'No arguments have been specified.'
+
+        if not self.title:
+            return 'No title specified.'
+
+        if not self.options:
+            return 'No options specified.'
+
+    def get_channel_history(self):
+        if self.use == "bulletin" and self.ctx.channel == self.ctx.bot.get_channel():
+            self.channel_history = await self.ctx.channel.history(limit=50).flatten()
+
+        elif self.use == "todo":
+            self.channel_history = await self.ctx.channel.pins()
+
+    def search_history(self, assign_to_self=False, find=False):
+        for message in self.channel_history:
             if message.embeds:
-                title = message.embeds[0].title
-                if title != discord.Embed.Empty:
-                    if message.embeds[0].title in " ".join(args):
-                        exists_already = True
-                        return exists_already
+                if message.embeds[0].title == self.title:
+                    self.exist = True
+                    if assign_to_self:
+                        self.embed = message
 
-        return exists_already
+                    if find:
+                        return message
 
-    # Delete a task from the list.
-    def delete_task(args, channel_history):
-        project = " ".join(args)
-        for message in channel_history:
-            if message.embeds:
-                if message.embeds[0].title == project:
-                    return message
+    def create_task(self):
+        self.embed.title = self.title
+        self.embed.description = "\n".join(self.bulletin_options)
 
-    # Add a task to the list.
-    def add_task(project, formatted, channel_history):
-        if project[:-1] == " ":
-            project = project[:-1]
-        for message in channel_history:
-            if message.embeds:
-                if message.embeds[0].title == project:
-                    edited_embed = discord.Embed(
-                        color=0xe74c3c,
-                        title=message.embeds[0].title,
-                        description=message.embeds[0].description + "\n" + formatted
-                    )
-                    return message, edited_embed
+    def does_task_exist(self):
+        self.search_history()
 
-    # Remove a task from the list.
-    def remove_task(project, value_list, channel_history):
-        for message in channel_history:
-            if message.embeds:
-                if message.embeds[0].title == project:
-                    bulletin_list = message.embeds[0].description.split("\n")
-                    for i in value_list:
-                        for j in bulletin_list:
-                            if i in j:
-                                bulletin_list.remove(j)
-                    return bulletin_list, message
+    def delete_task(self):
+        self.search_history(assign_to_self=True)
 
-    # Rename a task.
-    def rename_task(project, new_title, channel_history):
-        if project[:-1] == " ":
-            project = project[:-1]
-        for message in channel_history:
-            if message.embeds:
-                if message.embeds[0].title == project:
-                    edited_embed = discord.Embed(
-                        color=0xe74c3c,
-                        title=new_title,
-                        description=message.embeds[0].description
-                    )
-                    return message, edited_embed
+    def add_task(self):
+        message = self.search_history(find=True)
+        self.embed = discord.Embed(color=0xe74c3c,
+                                   title=self.title,
+                                   description=message.embeds[0].description + self.bulletin_options)
 
-    # Generates the task list embed.
-    async def task_list(ctx, action, use, args=""):
-        # check for the correct syntax
-        if use == "bulletin":
-            channel_history = await ctx.channel.history(limit=50).flatten()
-        elif use == "todo":
-            channel_history = await ctx.channel.pins()
-        else:
-            return
+    def remove_task(self):
+        message = self.search_history(find=True)
+        bulletin_list = message.embeds[0].description.split("\n")
+        for i in self.bulletin_options:
+            if i in bulletin_list:
+                bulletin_list.remove(i)
 
-        if not args:
-            response = "I'm sorry but you didn't specify anything."
-            await ctx.send(response, delete_after=5)
-            return
+        self.embed = discord.Embed(color=0xe74c3c,
+                                   title=self.title,
+                                   description='\n'.join(bulletin_list))
+        return message
 
-        exists_already = exists(args, channel_history)
+    def rename_task(self):
+        message = self.search_history(find=True)
+        self.embed = discord.Embed(color=0xe74c3c,
+                                   title=self.options[0],
+                                   description=message.embeds[0].description)
+        return message
 
-        # Check for more syntax and perform the correct action.
-        if action == "delete":
-            await delete_task(args, channel_history).delete()
-            return
 
-        formatted, project, value_list = format_conversion(args, "bulletin")
+class Coordinate(Task):
+    def __init__(self, ctx, action, args, use):
+        super().__init__(ctx, action, args, use)
+        self.target_channel = ctx.get_channel(data.coordinate_channel)
+        self.max_length = 2000
 
-        if not project:
-            response = "I'm sorry but you didn't specify a project"
-            await ctx.send(response, delete_after=5)
-            return
+    def verifier(self):
+        basic_verification = super(Coordinate, self).verifier()
+        if basic_verification:
+            return basic_verification
 
-        if not value_list:
-            response = "I'm sorry but you didn't specify any other"
-            await ctx.send(response, delete_after=5)
-            return
+        elif self.ctx.channel != self.target_channel:
+            return 'This command can only be used in {}.'.format(self.target_channel.mention)
 
-        if action == "create":
-            if exists_already:
-                response = "I'm sorry but this board already exists"
-                await ctx.send(response, delete_after=5)
-                return
+    def check_length(self):
+        pass
 
-            embed = discord.Embed(
-                color=0xe74c3c,
-                title=project,
-                description=formatted
-            )
-            task = await ctx.send(embed=embed)
-            if use == "todo":
-                await task.pin()
-                return
-            return
-
-        if not exists_already:
-            response = "I'm sorry but this board doesn't exist"
-            await ctx.send(response, delete_after=5)
-            return
-
-        if action == "add":
-            message, embed = add_task(project, formatted, channel_history)
-            await message.edit(embed=embed)
-            return
-
-        if action == "rename":
-            title = " ".join(args).split("|")[1]
-            message, embed = rename_task(project, title, channel_history)
-            await message.edit(embed=embed)
-            return
-
-        if action == "remove":
-            bulletin_list, message = remove_task(project, value_list, channel_history)
-            if bulletin_list:
-                edited_embed = discord.Embed(
-                    color=0xe74c3c,
-                    title=message.embeds[0].title,
-                    description="\n".join(bulletin_list))
-                await message.edit(embed=edited_embed)
-                return
-
-            else:
-                await message.delete()
-                return
-
+    def exceeds_max_length(self):
+        pass
