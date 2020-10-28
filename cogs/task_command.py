@@ -16,8 +16,9 @@ import cogs.help_command.help_data as hd
 import utilities.data as data
 
 
-async def create_task(ctx, action, args, use):
-    task = Task(ctx, action, args, use)
+async def create_task(task, ctx, action):
+    await ctx.message.delete()
+    await task.get_channel_history()
     task.search_history()
     pre_verification = task.verifier()
     if pre_verification:
@@ -60,21 +61,22 @@ class TaskCommand(commands.Cog):
     @commands.command(name='bulletin', help=hd.bulletin_help, usage=hd.bulletin_usage)
     @commands.has_role(data.member_role_id)
     async def bulletin(self, ctx, action, *args):
-        await create_task(ctx=ctx, action=action, args=args, use="bulletin")
+        task = Task(ctx, action, args, 'bulletin')
+        await create_task(task, ctx, action)
 
     # Command to add a to do list to a project channel and pin it.
     @commands.command(name='todo', help=hd.todo_help, usage=hd.todo_usage)
     @commands.has_role(data.member_role_id)
     async def todo(self, ctx, action, *args):
-        await create_task(ctx=ctx, action=action, args=args, use="todo")
+        task = Task(ctx, action, args, 'todo')
+        await create_task(task, ctx, action)
 
     # Command to handle the coordinate list. There is one embed per dimension
     @commands.command(name='coordinates', help=hd.coordinates_help, usage=hd.coordinates_usage)
     @commands.has_role(data.member_role_id)
     async def coordinates(self, ctx, action, *args):
-        await ctx.message.delete()
-        if ctx.channel.id == data.coordinate_channel:
-            await self.task_list(ctx=ctx, action=action, args=args, use="bulletin")
+        task = Task(ctx, action, args, 'todo')
+        await create_task(task, ctx, action)
 
 
 class Task:
@@ -89,8 +91,14 @@ class Task:
         self.embed = discord.Embed(color=0xe74c3c)
 
         self.channel_history = None
-        self.get_channel_history()
         self.exist = False
+
+    async def get_channel_history(self):
+        if self.use == "bulletin" and self.ctx.channel == self.ctx.bot.get_channel():
+            self.channel_history = await self.ctx.channel.history(limit=50).flatten()
+
+        elif self.use == "todo":
+            self.channel_history = await self.ctx.channel.pins()
 
     def verifier(self):
         if self.use not in ['bulletin', 'todo', 'coordinate']:
@@ -113,13 +121,6 @@ class Task:
 
         if not self.options:
             return 'No options specified.'
-
-    def get_channel_history(self):
-        if self.use == "bulletin" and self.ctx.channel == self.ctx.bot.get_channel():
-            self.channel_history = await self.ctx.channel.history(limit=50).flatten()
-
-        elif self.use == "todo":
-            self.channel_history = await self.ctx.channel.pins()
 
     def search_history(self, assign_to_self=False, find=False):
         for message in self.channel_history:
@@ -168,19 +169,32 @@ class Task:
         return message
 
 
-class Coordinate(Task):
-    def __init__(self, ctx, action, args, use):
-        super().__init__(ctx, action, args, use)
-        self.target_channel = ctx.get_channel(data.coordinate_channel)
-        self.max_length = 2000
+class ChannelLockedTask(Task):
+    def __init__(self, ctx, action, args, use, target_channel):
+        super(Task).__init__(ctx, action, args, use)
+        self.target_channel = target_channel
 
     def verifier(self):
-        basic_verification = super(Coordinate, self).verifier()
+        basic_verification = super(ChannelLockedTask, self).verifier()
         if basic_verification:
             return basic_verification
 
         elif self.ctx.channel != self.target_channel:
             return 'This command can only be used in {}.'.format(self.target_channel.mention)
+
+
+class Bulletin(ChannelLockedTask):
+    def __init__(self, ctx, action, args, use):
+        target_channel = ctx.get_channel(data.bulletin_board_channel)
+        super(ChannelLockedTask).__init__(ctx, action, args, use, target_channel)
+
+
+class Coordinate(ChannelLockedTask):
+    def __init__(self, ctx, action, args, use):
+        target_channel = ctx.get_channel(data.coordinate_channel)
+        super().__init__(ctx, action, args, use, target_channel)
+
+        self.max_length = 2000
 
     def check_length(self):
         pass
