@@ -16,10 +16,14 @@ from utilities.data import discord_letters
 
 # Convert something from the format <> | <> & <> & <> ... in the correct way to variables for easy usage.
 def format_conversion(args):
-    title, options = args.split('|')
-    options = options.split('&')
-    title = strip_surrounding(title)
-    options = [strip_surrounding(option) for option in options]
+    arg_string = ' '.join(args)
+    if '|' in arg_string:
+        title, options = arg_string.split('|')
+        options = options.split('&')
+        title = strip_surrounding(title)
+        options = [strip_surrounding(option) for option in options]
+    else:
+        title, options = arg_string, None
     return title, options
 
 
@@ -46,10 +50,3 @@ def time_test(input_func):
         print("Method Name - {0}, Args - {1}, Kwargs - {2}, Execution Time - {3}".format(input_func.__name__, args, kwargs, end_time - start_time))
         return result
     return timed
-
-
-arg = 'Overworld | Wither Rose Farm: -2558 100 1221 & Wool Farm Gateway: -96 75 -1 & Crop Farms: 456 122 616'
-a, b = format_conversion(arg)
-for i in b:
-    coords = i.split(': ')[1]
-    print(coords.split(' '))

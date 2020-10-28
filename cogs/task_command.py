@@ -16,7 +16,7 @@ import cogs.help_command.help_data as hd
 import utilities.data as data
 
 
-async def create_task(task, ctx, action):
+async def create_task(task, ctx, action, use=''):
     await ctx.message.delete()
     await task.get_channel_history()
     task.search_history()
@@ -26,24 +26,26 @@ async def create_task(task, ctx, action):
         return
 
     if action == 'delete':
-        task.delete_task()
-        await ctx.send(embed=task.embed)
+        message = task.delete_task()
+        await message.delete()
 
     elif action == 'remove':
-        task.remove_task()
-        await ctx.send(embed=task.embed)
+        message = task.remove_task()
+        await message.edit(embed=task.embed)
 
     elif action == 'create':
         task.create_task()
-        await ctx.send(embed=task.embed)
+        message = await ctx.send(embed=task.embed)
+        if use == 'todo':
+            await message.pin()
 
     elif action == 'add':
-        task.add_task()
-        await ctx.send(embed=task.embed)
+        message = task.add_task()
+        await message.edit(embed=task.embed)
 
     elif action == 'rename':
-        task.rename_task()
-        await ctx.send(embed=task.embed)
+        message = task.rename_task()
+        await message.edit(embed=task.embed)
 
 
 class TaskCommand(commands.Cog):
@@ -69,7 +71,7 @@ class TaskCommand(commands.Cog):
     @commands.has_role(data.member_role_id)
     async def todo(self, ctx, action, *args):
         task = Todo(ctx, action, args, 'todo')
-        await create_task(task, ctx, action)
+        await create_task(task, ctx, action, use='todo')
 
     # Command to handle the coordinate list. There is one embed per dimension
     @commands.command(name='coordinates', help=hd.coordinates_help, usage=hd.coordinates_usage)
@@ -82,12 +84,16 @@ class TaskCommand(commands.Cog):
 class Task:
     def __init__(self, ctx, action, args, use):
         self.ctx = ctx
-        self.action = action.lower
+        self.action = action.lower()
         self.use = use.lower()
         self.args = args
 
         self.title, self.options = format_conversion(args)
-        self.bulletin_options = ['- {}'.format(option) if '- ' not in option else option for option in self.options]
+        if self.options:
+            self.bulletin_options = ['- {}'.format(option) if '- ' not in option else option for option in self.options]
+        else:
+            self.bulletin_option = None
+
         self.embed = discord.Embed(color=0xe74c3c)
 
         self.channel_history = None
@@ -115,7 +121,7 @@ class Task:
         if not self.title:
             return 'No title specified.'
 
-        if not self.options:
+        if not self.options and self.action != 'delete':
             return 'No options specified.'
 
     def search_history(self, assign_to_self=False, find=False):
@@ -125,6 +131,7 @@ class Task:
                     self.exist = True
                     if assign_to_self:
                         self.embed = message
+                        return message
 
                     if find:
                         return message
@@ -137,13 +144,14 @@ class Task:
         self.search_history()
 
     def delete_task(self):
-        self.search_history(assign_to_self=True)
+        return self.search_history(assign_to_self=True)
 
     def add_task(self):
         message = self.search_history(find=True)
         self.embed = discord.Embed(color=0xe74c3c,
                                    title=self.title,
-                                   description=message.embeds[0].description + self.bulletin_options)
+                                   description=message.embeds[0].description + '\n' + '\n'.join(self.bulletin_options))
+        return message
 
     def remove_task(self):
         message = self.search_history(find=True)
@@ -167,7 +175,7 @@ class Task:
 
 class Todo(Task):
     def __init__(self, ctx, action, args, use):
-        super(Task).__init__(ctx, action, args, use)
+        super().__init__(ctx, action, args, use)
 
     async def get_channel_history(self):
         self.channel_history = await self.ctx.channel.pins()
@@ -175,7 +183,7 @@ class Todo(Task):
 
 class ChannelLockedTask(Task):
     def __init__(self, ctx, action, args, use, target_channel):
-        super(Task).__init__(ctx, action, args, use)
+        super().__init__(ctx, action, args, use)
         self.target_channel = target_channel
 
     def verifier(self):
@@ -190,7 +198,7 @@ class ChannelLockedTask(Task):
 class Bulletin(ChannelLockedTask):
     def __init__(self, ctx, action, args, use):
         target_channel = ctx.get_channel(data.bulletin_board_channel)
-        super(ChannelLockedTask).__init__(ctx, action, args, use, target_channel)
+        super().__init__(ctx, action, args, use, target_channel)
 
 
 class Coordinate(ChannelLockedTask):
@@ -242,8 +250,9 @@ class Coordinate(ChannelLockedTask):
                 self.y = int(pos[1])
                 self.z = int(pos[2])
 
-    def check_length(self):
-        pass
-
-    def exceeds_max_length(self):
-        pass
+    def check_length(self, message):
+        new_length = message.embeds[0].description + self.bulletin_options
+        if new_length > self.max_length:
+            return False
+        else:
+            return True

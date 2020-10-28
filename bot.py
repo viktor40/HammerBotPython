@@ -53,7 +53,7 @@ from cogs.miscellaneous_commands import MiscellaneousCommands
 from cogs.role import Role
 from cogs.voting import Voting
 from cogs.help_command.helping import Helping
-from cogs.task_command import Task
+from cogs.task_command import TaskCommand
 from cogs.bug_handler import BugHandler
 
 # discord token is stored in a .env file in the same directory as the bot
@@ -69,12 +69,14 @@ else:
 COGS = [Dummy,
         Status,
         JoinLeaveNotifier,
-        Games, AdminCommands,
+        Games,
+        AdminCommands,
         MiscellaneousCommands,
         Voting,
         Helping,
         Role,
-        BugHandler]  # Task not added to avoid errors at this point
+        BugHandler,
+        TaskCommand]
 
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None, intents=discord.Intents.all())
 
@@ -113,6 +115,7 @@ async def on_message(message):
 # This will handle some errors and suppress raising them. It will also report to the user what the error was.
 @bot.event
 async def on_command_error(ctx, error):
+    print(error)
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
         await ctx.send("This command doesn't exist", delete_after=15)
 
@@ -128,6 +131,12 @@ async def on_command_error(ctx, error):
     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
         if isinstance(error.original, ForbiddenChessMove):
             await ctx.send("This is not a valid move!", delete_after=15)
+
+        else:
+            print('unknown error: {} of type {}'.format(error, type(error)))
+            await ctx.channel.send(error)
+            if bot.debug:
+                raise error
 
     else:
         print('unknown error: {} of type {}'.format(error, type(error)))
