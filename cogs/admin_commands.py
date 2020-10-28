@@ -5,7 +5,7 @@ import utilities.data as data
 
 
 def author_is_admin_or_dev(ctx):
-    developers = [ctx.bot.get_user(_id) for _id in data.developer_ids]
+    developers = [ctx.bot.get_user(id_) for id_ in data.developer_ids]
     admin_role = ctx.bot.get_guild(data.hammer_guild).get_role(data.admin_role_id)
     return ctx.author in developers or admin_role in ctx.author.roles
 
