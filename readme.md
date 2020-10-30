@@ -1,5 +1,4 @@
 # HammerBot Python
-[![HitCount](http://hits.dwyl.com/viktor40/HammerBotPython.svg)](http://hits.dwyl.com/viktor40/HammerBotPython)
 
 This repo represents the code for HammerBot that doesn't need to pull data from the Minecraft server. This bot is used on the [HammerSMP Discord Guild](https://discord.gg/QMuwbqa)
 
