@@ -16,8 +16,6 @@ import time
 from discord.ext.commands.context import Context
 from discord.ext.commands.bot import Bot
 
-from utilities.data import discord_letters
-
 
 def format_conversion(args):
     """

@@ -136,7 +136,7 @@ class Hangman:
                                             self.word,
                                             self.hangman,
                                             self.word_completion)
-                    )
+                        )
 
 
 def get_word():

@@ -35,7 +35,6 @@ This file cannot be found on github for security reasons.
 
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
 import os
 
 import bug.versions as mc_version
