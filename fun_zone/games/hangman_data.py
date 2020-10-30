@@ -1,3 +1,10 @@
+"""
+This file contains data for the hangman game.
+    - A list containing the different stages in hangman.
+    - A list containing possible words to guess.
+    - A function to add new words to the list, which checks if a word is already in the list.
+"""
+
 from typing_extensions import Final
 
 stages: Final[list] = [  # final state: head, torso, both arms, and both legs
@@ -715,6 +722,11 @@ new_words = [
 
 ]
 
-for word in new_words:
-    if word in word_list:
-        print(word)
+
+def add_new_words():
+    """
+    Add new words to the list of hangman words. It will first check if the word isn't already in the list.
+    """
+    for word in new_words:
+        if word in word_list:
+            print(word)
