@@ -3,8 +3,6 @@ import chess
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
 
-import fun_zone.games.utils as utils
-
 turn_mapping = {"white": chess.WHITE, "black": chess.BLACK}
 
 

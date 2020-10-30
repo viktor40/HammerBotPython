@@ -155,6 +155,8 @@ class Games(commands.Cog):
         :param size: The size of the board. Here we must be weary not to create boards bigger than the discord
                      character limit.
         """
-        self.minesweeper = Minesweeper()
-        board = self.minesweeper.generate_board(size, difficulty)
+
+        rows, columns = int(size.split('x')[0]), int(size.split('x')[1])
+        self.minesweeper = Minesweeper(difficulty, rows, columns)
+        board = self.minesweeper.generate_board()
         await ctx.send(board)
