@@ -92,7 +92,7 @@ def disable_for_debug(func):
 
     :param func: The function to disable.
     """
-    def wrapper(*args, **kwargs):
+    def wrapper(*args):
         for arg in args:
 
             if isinstance(arg, Context):
