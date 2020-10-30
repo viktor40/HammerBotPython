@@ -147,6 +147,14 @@ class Games(commands.Cog):
 
     @commands.command(name='minesweeper', help=hd.minesweeper_help, usage=hd.minesweeper_usage, pass_context=True)
     async def minesweeper(self, ctx, difficulty='medium', size='10x15'):
+        """
+        A minesweeper game. We initialise a minesweeper class and generate a board. This board gets sent to discord.
+
+        :param ctx: a context variable for the command
+        :param difficulty: The difficulty of the game. Options are easy, medium, hard and extreme.
+        :param size: The size of the board. Here we must be weary not to create boards bigger than the discord
+                     character limit.
+        """
         self.minesweeper = Minesweeper()
         board = self.minesweeper.generate_board(size, difficulty)
         await ctx.send(board)
