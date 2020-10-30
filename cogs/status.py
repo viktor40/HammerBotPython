@@ -25,6 +25,7 @@ class Status(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        print("> Status Cog Initialised")
 
     @commands.Cog.listener()
     async def on_message(self, message):

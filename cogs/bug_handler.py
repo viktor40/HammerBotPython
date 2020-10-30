@@ -11,10 +11,12 @@ class BugHandler(commands.Cog):
         if not self.bot.debug:
             self.fixed_bug_loop.start()
             self.version_update_loop.start()
+        print("> BugHandler Cog Initialised")
 
     @commands.Cog.listener()
     async def on_message(self, message):
         if self.bot.enabled:
+            print(message)
             await mc_bug(message)
 
     # this loop is used to check for new updates on the bug tracker every 60 seconds

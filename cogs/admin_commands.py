@@ -24,6 +24,7 @@ class AdminCommands(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        print("> AdminCommands Cog Initialised")
 
     # A admin only command to mass delete messages in case of a bad discord discussion.
     @commands.command(name='mass_delete', help=hd.mass_delete_help, usage=hd.mass_delete_usage)

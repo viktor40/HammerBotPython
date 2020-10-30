@@ -26,6 +26,7 @@ class Role(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        print("> Role Cog Initialised")
 
     async def valid_argument(self, ctx, action, args):
         if action.lower() not in ['list', 'add', 'remove']:

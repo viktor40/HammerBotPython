@@ -4,7 +4,7 @@ import cogs.help_command.help_data as hd
 import utilities.data as data
 
 
-class Dummy(commands.Cog):
+class DummyCommands(commands.Cog):
     """
     Registering dummy commands so it can be easily implemented to work with other functions like errors and help commands.
     These dummy commands are used in HammerBot Java.
@@ -14,6 +14,7 @@ class Dummy(commands.Cog):
     """
     def __init__(self, bot):
         self.bot = bot
+        print("> DummyCommands Cog Initiated")
 
     @commands.command(name='whitelist', help=hd.whitelist_help, usage=hd.whitelist_usage)
     @commands.has_role(data.admin_role_id)

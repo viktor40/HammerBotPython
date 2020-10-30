@@ -13,6 +13,7 @@ import utilities.data as data
 class Helping(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        print("> Helping Cog Initialised")
 
     @commands.command(name='help', help=hd.help_help, usage=hd.help_usage)
     async def helping(self, ctx, command=''):

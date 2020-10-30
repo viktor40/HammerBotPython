@@ -58,6 +58,7 @@ class TaskCommand(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        print("> TaskCommands Cog Initialised")
 
     # Command to create, add, remove and delete bulletins in the bulletin board.
     @commands.command(name='bulletin', help=hd.bulletin_help, usage=hd.bulletin_usage)
@@ -260,5 +261,5 @@ class Coordinate(ChannelLockedTask):
     def reorganise_embeds(self):
         pass
 
-    def length_handler(self):
+    def on_max_length_reached(self):
         pass

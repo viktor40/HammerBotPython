@@ -20,6 +20,7 @@ class MiscellaneousCommands(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        print("> MiscellaneousCommands Cog Initialised")
 
     # Tell someone to stop being lazy
     @commands.command(name='stop_lazy', help=hd.stop_lazy_help, usage=hd.stop_lazy_usage)

@@ -14,6 +14,7 @@ class JoinLeaveNotifier(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.latest_new_member = None
+        print("> JoinLeaveNotifier Cog Initialised")
 
     @commands.Cog.listener()
     async def on_member_join(self, member):

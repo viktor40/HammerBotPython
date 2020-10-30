@@ -27,6 +27,7 @@ class Voting(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        print("> Voting Cog Initialised")
 
     # Command that will handle voting, see voting.py.
     @commands.command(name='vote', help=hd.vote_help, usage=hd.vote_usage)

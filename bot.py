@@ -45,7 +45,7 @@ import utilities.data as data
 from fun_zone.games.games import Games
 from fun_zone.games.chess import ForbiddenChessMove
 
-from cogs.dummy_commands import Dummy
+from cogs.dummy_commands import DummyCommands
 from cogs.status import Status
 from cogs.join_leave_notifier import JoinLeaveNotifier
 from cogs.admin_commands import AdminCommands
@@ -66,17 +66,18 @@ if not DEBUG:
 else:
     prefix = "="
 
-COGS = [Dummy,
-        Status,
-        JoinLeaveNotifier,
-        Games,
-        AdminCommands,
-        MiscellaneousCommands,
-        Voting,
-        Helping,
-        Role,
-        BugHandler,
-        TaskCommand]
+COGS = [DummyCommands,  # Dummy commands
+        Status,  # Bot status, disable, enable, ping ...
+        JoinLeaveNotifier,  # Tracker for new people that join and immediately leave
+        Games,  # Cog containing the different games implemented in the bot
+        AdminCommands,  # Admin only or admin and dev only commands
+        MiscellaneousCommands,  # Other commands not fit for a separate Cog
+        Voting,  # Voting commands
+        Helping,  # The help command
+        Role,  # Commands to give people roles
+        BugHandler,  # Showing of bugs from Mojang and tracking of fixed bugs and version releases
+        TaskCommand  # Tasks: Coordinates, TO-DO and bulletins
+        ]
 
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None, intents=discord.Intents.all())
 
@@ -87,9 +88,19 @@ bot.enabled = False
 # Print a message if the bot is online and change it's status.
 @bot.event
 async def on_ready():
-    print('Bot connected with prefix: {}'.format(bot.command_prefix))
+    print('----------------------------------------------------------')
+    print('Bot connected with prefix: "{}"'.format(bot.command_prefix))
     if bot.debug:
-        print('Debug mode is enabled.')
+        print('    > Debug mode is enabled.\n')
+
+    print('The bot has connected to the following servers:')
+    guilds = bot.guilds
+    if not guilds:
+        print("    > !! The bot isn't connected to any server. !!")
+
+    for server in guilds:
+        print("    > {}".format(server.name))
+    print('----------------------------------------------------------')
 
     mc_version.get_versions(bot)
     bot.enabled = True
