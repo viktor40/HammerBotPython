@@ -1,3 +1,8 @@
+"""
+This file contains data use for games.
+    - minesweeper_emotes: mappings from numbers to emotes used for the minesweeper game.
+"""
+
 from typing_extensions import Final
 
 minesweeper_emotes = {0: '🟦',
