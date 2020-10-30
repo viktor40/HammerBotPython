@@ -56,9 +56,10 @@ from cogs.help_command.helping import Helping
 from cogs.task_command import TaskCommand
 from cogs.bug_handler import BugHandler
 
-# discord token is stored in a .env file in the same directory as the bot
+# Discord token is stored in a .env file in the same directory as the bot.
 TOKEN = os.getenv('DISCORD_TOKEN')
 
+# Debug mode will disable most functions and most operations in on_message for a smooth testing experience.
 DEBUG = True
 if not DEBUG:
     prefix = "/"
@@ -78,8 +79,11 @@ COGS = [DummyCommands,  # Dummy commands
         TaskCommand  # Tasks: Coordinates, TO-DO and bulletins
         ]
 
+# Setup the bot. Commands are case insensitive. The bot uses all intents.
+# The standard implementation of a help command is disabled. A custom one is used.
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None, intents=discord.Intents.all())
 
+# Add these variables to the global bot scope
 bot.debug = DEBUG
 bot.enabled = False
 
