@@ -57,7 +57,6 @@ from cogs.task_command import TaskCommand
 from cogs.bug_handler import BugHandler
 
 # discord token is stored in a .env file in the same directory as the bot
-load_dotenv()  # load the .env file containing id's that have to be kept secret for security
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 DEBUG = True

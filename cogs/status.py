@@ -2,6 +2,7 @@ from discord.ext import commands
 
 import cogs.help_command.help_data as hd
 import utilities.data as data
+from utilities.utils import disable_for_debug
 
 
 def author_is_admin_or_dev(ctx):
@@ -42,7 +43,7 @@ class Status(commands.Cog):
                 print('Bot enabled!')
 
         await self.bot.process_commands(message)  # allow other commands to run
-
+    
     @commands.command(name='disable', help=hd.disable_help, usage=hd.disable_usage)
     @commands.check(author_is_admin_or_dev)
     async def disable_bot(self, ctx):

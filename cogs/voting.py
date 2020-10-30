@@ -15,6 +15,7 @@ from cogs.task_command import format_conversion
 from utilities.data import vote_role_id, vote_emotes, discord_letters
 import cogs.help_command.help_data as hd
 import utilities.data as data
+from utilities.utils import disable_for_debug
 
 
 class Voting(commands.Cog):
@@ -30,6 +31,7 @@ class Voting(commands.Cog):
         print("> Voting Cog Initialised")
 
     # Command that will handle voting, see voting.py.
+    @disable_for_debug
     @commands.command(name='vote', help=hd.vote_help, usage=hd.vote_usage)
     @commands.has_role(data.member_role_id)
     async def vote(self, ctx, vote_type='', *args):

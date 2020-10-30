@@ -127,15 +127,14 @@ class Task:
 
     def search_history(self, assign_to_self=False, find=False):
         for message in self.channel_history:
-            if message.embeds:
-                if message.embeds[0].title == self.title:
-                    self.exist = True
-                    if assign_to_self:
-                        self.embed = message
-                        return message
+            if message.embeds and message.embeds[0].title == self.title:
+                self.exist = True
+                if assign_to_self:
+                    self.embed = message
+                    return message
 
-                    if find:
-                        return message
+                if find:
+                    return message
 
     def create_task(self):
         self.embed.title = self.title

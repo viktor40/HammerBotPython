@@ -4,6 +4,7 @@ import os
 
 import cogs.help_command.help_data as hd
 import utilities.data as data
+from utilities.utils import disable_for_debug
 
 
 class MiscellaneousCommands(commands.Cog):
@@ -23,6 +24,7 @@ class MiscellaneousCommands(commands.Cog):
         print("> MiscellaneousCommands Cog Initialised")
 
     # Tell someone to stop being lazy
+    @disable_for_debug
     @commands.command(name='stop_lazy', help=hd.stop_lazy_help, usage=hd.stop_lazy_usage)
     @commands.has_role(data.member_role_id)
     async def stop_lazy(self, ctx, mention='jerk'):
@@ -31,6 +33,7 @@ class MiscellaneousCommands(commands.Cog):
         await ctx.send(response)
         await ctx.send(file=discord.File('stop_lazy.png'))
 
+    @disable_for_debug
     @commands.command(name='CMP', help=hd.CMP_help, usage=hd.CMP_usage)
     @commands.has_any_role(data.member_role_id, data.cmp_role_id)
     async def cmp(self, ctx):
@@ -39,6 +42,7 @@ class MiscellaneousCommands(commands.Cog):
         await ctx.author.send(CMP_IP)
         await ctx.send(response)
 
+    @disable_for_debug
     @commands.command(name='count', help=hd.count_help, usage=hd.count_usage)
     async def count(self, ctx, count_type=''):
         if count_type.lower() == 'roles':

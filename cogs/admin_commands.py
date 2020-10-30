@@ -2,6 +2,7 @@ from discord.ext import commands, tasks
 
 import cogs.help_command.help_data as hd
 import utilities.data as data
+from utilities.utils import disable_for_debug
 
 
 def author_is_admin_or_dev(ctx):
@@ -27,6 +28,7 @@ class AdminCommands(commands.Cog):
         print("> AdminCommands Cog Initialised")
 
     # A admin only command to mass delete messages in case of a bad discord discussion.
+    @disable_for_debug
     @commands.command(name='mass_delete', help=hd.mass_delete_help, usage=hd.mass_delete_usage)
     @commands.has_role(data.admin_role_id)
     async def mass_delete(self, ctx, number_of_messages: int):
@@ -39,6 +41,7 @@ class AdminCommands(commands.Cog):
             await ctx.channel.purge(limit=number_of_messages)
 
     # A admin only command to mass delete messages in case of a bad discord discussion.
+    @disable_for_debug
     @commands.command(name='mini_delete', help=hd.mini_delete_help, usage=hd.mini_delete_usage)
     @commands.has_role(data.member_role_id)
     async def mini_delete(self, ctx, number_of_messages: int):
@@ -51,6 +54,7 @@ class AdminCommands(commands.Cog):
             await ctx.channel.purge(limit=number_of_messages)
 
     # This is a command purely for testing purposes during development.
+    @disable_for_debug
     @commands.command(name='testing', help=hd.testing_help, usage=hd.testing_usage)
     @commands.check(author_is_admin_or_dev)
     async def testing(self, ctx, *args):

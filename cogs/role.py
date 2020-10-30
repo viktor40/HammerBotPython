@@ -14,6 +14,7 @@ from utilities.data import role_list, role_ids, hammer_guild
 from utilities.utils import get_server_roles
 import cogs.help_command.help_data as hd
 import utilities.data as data
+from utilities.utils import disable_for_debug
 
 
 class Role(commands.Cog):
@@ -95,6 +96,7 @@ class Role(commands.Cog):
         await ctx.send(response)
 
     # This command will be used so members can give themselves some roles with a command
+    @disable_for_debug
     @commands.command(name='role', help=hd.role_help, usage=hd.role_usage)
     @commands.has_role(data.member_role_id)
     async def role(self, ctx, action, *args):

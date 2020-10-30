@@ -2,6 +2,7 @@ from discord.ext import commands
 
 import cogs.help_command.help_data as hd
 import utilities.data as data
+from utilities.utils import disable_for_debug
 
 
 class DummyCommands(commands.Cog):
@@ -16,19 +17,23 @@ class DummyCommands(commands.Cog):
         self.bot = bot
         print("> DummyCommands Cog Initiated")
 
+    @disable_for_debug
     @commands.command(name='whitelist', help=hd.whitelist_help, usage=hd.whitelist_usage)
     @commands.has_role(data.admin_role_id)
     async def whitelist(self, ctx, *args):
         pass
 
+    @disable_for_debug
     @commands.command(name='online', help=hd.online_help, usage=hd.online_usage)
     async def online(self, ctx, *args):
         pass
 
+    @disable_for_debug
     @commands.command(name='scoreboard', help=hd.scoreboard_help, usage=hd.scoreboard_usage)
     async def scoreboard(self, ctx, *args):
         pass
 
+    @disable_for_debug
     @commands.command(name='uploadFile', help=hd.upload_file_help, usage=hd.upload_file_usage)
     @commands.has_role(data.member_role_id)
     async def upload_file(self, ctx, *args):

@@ -10,6 +10,7 @@ timetest can be used as a decorator to test the speed of a certain method.
 """
 
 import time
+from discord.ext.commands.context import Context
 
 from utilities.data import discord_letters
 
@@ -50,3 +51,20 @@ def time_test(input_func):
         print("Method Name - {0}, Args - {1}, Kwargs - {2}, Execution Time - {3}".format(input_func.__name__, args, kwargs, end_time - start_time))
         return result
     return timed
+
+
+def disable_for_debug(input_func):
+    """
+    A method to disable a function when debug mode is enabled.
+    Whenever a method has this decorator, it will be d
+
+    :param input_func: The function to disable.
+    :return:
+    """
+    def wrapper(*args, **kwargs):
+        for arg in args:
+            if isinstance(arg, Context) and arg.bot.debug:
+                return input_func(*args)
+            else:
+                return
+    return wrapper

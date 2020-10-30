@@ -4,6 +4,7 @@
 
 import discord
 from discord.ext import commands
+from utilities.utils import disable_for_debug
 
 from cogs.help_command.help_data import other_usage, other_help, bug_usage, bug_help
 import cogs.help_command.help_data as hd
@@ -15,6 +16,7 @@ class Helping(commands.Cog):
         self.bot = bot
         print("> Helping Cog Initialised")
 
+    @disable_for_debug
     @commands.command(name='help', help=hd.help_help, usage=hd.help_usage)
     async def helping(self, ctx, command=''):
         try:
