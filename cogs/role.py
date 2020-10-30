@@ -30,6 +30,14 @@ class Role(commands.Cog):
         print("> Role Cog Initialised")
 
     async def valid_argument(self, ctx, action, args):
+        """
+        This will check if the arguments provided are valid
+
+        :param ctx: The context variable of the command.
+        :param action: The action to be performed (can be list, add or remove).
+        :param args: A tuple containing *args
+        :return: A boolean showing whether the test passed or not.
+        """
         if action.lower() not in ['list', 'add', 'remove']:
             response = 'Invalid action.'
             await ctx.send(response)
@@ -43,6 +51,15 @@ class Role(commands.Cog):
         return True
 
     async def user_has_role(self, ctx, action, role):
+        """
+        This method checks whether the user already has a role they're trying to add or doesn't have a role
+        they're trying to remove.
+
+        :param ctx: The context variable of the command.
+        :param action: The action to be performed (can be list, add or remove).
+        :param role: The role that the user is trying to add.
+        :return: A boolean showing whether the test passed or not.
+        """
         has_role = self.bot.get_guild(hammer_guild).get_role(role_ids[role]) in ctx.message.author.roles
         if has_role and action == 'add':
             response = 'I am sorry but you already have this role.'
@@ -58,6 +75,15 @@ class Role(commands.Cog):
             return True
 
     async def role_checker(self, ctx, action, args):
+        """
+        This method will check if the role removal is valid. This means checking if the role exists and checking
+        if the user is allowed to add or remove that role.
+
+        :param ctx: The context variable of the command.
+        :param action: The action to be performed (can be list, add or remove).
+        :param args: A tuple containing *args
+        :return: A boolean showing whether the test passed or not.
+        """
         if not await self.valid_argument(ctx, action, args):
             return False
 
@@ -80,14 +106,26 @@ class Role(commands.Cog):
             return True
 
     async def give_role(self, ctx, args):
+        """
+        This async method will be used to assign a member a the new role, once all checks have passed.
+
+        :param ctx: The context variable of the command.
+        :param args: The context variable of the command.
+        """
         role = ' '.join(args)
-        member = ctx.message.author  # the author of the message, part of the discord.Member class
-        guild_role = self.bot.get_guild(hammer_guild).get_role(role_ids[role])  # the role needed to add
+        member = ctx.message.author
+        guild_role = self.bot.get_guild(hammer_guild).get_role(role_ids[role])
         await member.add_roles(guild_role)
         response = 'You have been successfully given the role `{}`! Congratulations!'.format(role)
         await ctx.send(response)
 
     async def remove_role(self, ctx, args):
+        """
+        This method will remove a role from the user once all checks have passed.
+
+        :param ctx: The context variable of the command.
+        :param args: The context variable of the command.
+        """
         role = ' '.join(args)
         member = ctx.message.author  # the author of the message, part of the discord.Member class
         guild_role = self.bot.get_guild(hammer_guild).get_role(role_ids[role])  # the role needed to add
@@ -95,11 +133,19 @@ class Role(commands.Cog):
         response = 'The role `{}` has successfully been removed! Congratulations!'.format(role)
         await ctx.send(response)
 
-    # This command will be used so members can give themselves some roles with a command
     @disable_for_debug
     @commands.command(name='role', help=hd.role_help, usage=hd.role_usage)
     @commands.has_role(data.member_role_id)
     async def role(self, ctx, action, *args):
+        """
+        This is the main method for the role command. In here we'll check if the request is valid.
+        If so the method will perform the correct action depending on the action passed. It will either list
+        the roles you can add, add a role, or remove a role.
+
+        :param ctx: The context variable of the command.
+        :param action: The action to be performed (can be list, add or remove).
+        :param args: A tuple containing *args
+        """
         if not await self.role_checker(ctx, action, args):
             return
 
