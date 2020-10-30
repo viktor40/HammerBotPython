@@ -40,6 +40,7 @@ import os
 
 import bug.versions as mc_version
 
+from utilities.utils import NotConnectedToAnyServerWarning
 import utilities.data as data
 
 from fun_zone.games.games import Games
@@ -109,6 +110,9 @@ async def on_ready():
     bot.enabled = True
     bot.debug = DEBUG
     await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
+
+    if not guilds:
+        raise NotConnectedToAnyServerWarning
 
 
 @bot.event
