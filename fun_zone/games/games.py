@@ -19,9 +19,10 @@ class Games(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.chess_game = Chess()
-        self.hangman = Hangman()
-        self.minesweeper = Minesweeper()
+
+        self.chess_game = None
+        self.hangman = None
+        self.minesweeper = None
 
     @commands.command(name='chess', help=hd.chess_help, usage=hd.chess_usage, pass_context=True)
     async def chess(self, ctx, action, move='', piece=''):
@@ -109,7 +110,6 @@ class Games(commands.Cog):
         game or checking if the guess was correct. It also checks for duplicate guesses. If the guess was wrong
         it'll send the hangman character art. It will always send how many tries are left
         """
-        print("bruh")
         if action == 'play':
             self.hangman = Hangman()
             message = self.hangman.start()

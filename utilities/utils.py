@@ -84,18 +84,6 @@ def time_test(input_func):
     return timed
 
 
-class ForbiddenChessMove(Exception):
-    """Exception raised when using a forbidden chess move.
-
-    Attributes:
-        message -- explanation of the error
-    """
-
-    def __init__(self, message="This is not a valid chess move!"):
-        self.message = message
-        super().__init__(self.message)
-
-
 def disable_for_debug(func):
     """
     A method to disable a function when debug mode is enabled.
@@ -122,3 +110,15 @@ def disable_for_debug(func):
         print('Not disabling function {}. This method does not have a context'.format(func.__name__))
         return func(*args)
     return wrapper
+
+
+class NotConnectedToAnyServerWarning(Warning):
+    """Warning raised when the bot isn't connected to any server.
+
+    Attributes:
+        message -- explanation of the error
+    """
+
+    def __init__(self, message="!! Warning: The bot failed to connect to any server. !!"):
+        self.message = message
+        super().__init__(self.message)

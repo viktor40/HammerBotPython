@@ -6,8 +6,8 @@ from reportlab.graphics import renderPM
 turn_mapping = {"white": chess.WHITE, "black": chess.BLACK}
 
 
-class ForbiddenChessMove(Exception):
-    """Exception raised when using a forbidden chess move.
+class ForbiddenChessMove(Warning):
+    """Warning raised when using a forbidden chess move.
 
     Attributes:
         message -- explanation of the error
