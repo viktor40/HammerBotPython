@@ -37,7 +37,7 @@ class Chess:
         self.board = chess.Board()
         self.board.turn = chess.WHITE
         self.turn = "white"
-        utils.gen_png_from_svg(self.board)
+        self.gen_png_from_svg()
 
     def move_piece(self, move):
         """
@@ -47,7 +47,7 @@ class Chess:
         chess_move = chess.Move.from_uci(move)
         if chess_move in self.board.legal_moves:
             self.board.push(chess_move)
-            utils.gen_png_from_svg(self.board)
+            self.gen_png_from_svg()
             self.turn = "white" if self.turn == "black" else "black"
             self.board.turn = turn_mapping[self.turn]
 
@@ -86,9 +86,21 @@ class Chess:
 
         if chess_move in self.board.legal_moves:
             self.board.push(chess_move)
-            utils.gen_png_from_svg(self.board)
+            self.gen_png_from_svg()
             self.turn = "white" if self.turn == "black" else "black"
             self.board.turn = turn_mapping[self.turn]
 
         else:
             raise ForbiddenChessMove()
+
+    def gen_png_from_svg(self):
+        """
+        A function used to first generate a SVG image of the chess board. After this the SVG image
+        will be converted to a PNG image.
+        """
+        board_svg = chess.svg.board(board=self.board)
+        output_file = open('board.svg', "w")
+        output_file.write(board_svg)
+        output_file.close()
+        drawing = svg2rlg("board.svg")
+        renderPM.drawToFile(drawing, "board.png", fmt="PNG")
