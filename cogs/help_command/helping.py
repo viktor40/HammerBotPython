@@ -4,6 +4,7 @@
 
 import discord
 from discord.ext import commands
+import time
 from utilities.utils import disable_for_debug
 
 from cogs.help_command.help_data import other_usage, other_help, bug_usage, bug_help
@@ -14,7 +15,9 @@ import utilities.data as data
 class Helping(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        print("> Helping Cog Initialised")
+
+        print("> {} Cog Initialised. Took {} s".format("Helping", time.perf_counter() - bot.start_time))
+        bot.start_time = time.perf_counter()
 
     @disable_for_debug
     @commands.command(name='help', help=hd.help_help, usage=hd.help_usage)

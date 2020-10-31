@@ -36,6 +36,7 @@ This file cannot be found on github for security reasons.
 import discord
 from discord.ext import commands
 import os
+import time
 
 import bug.versions as mc_version
 
@@ -56,6 +57,7 @@ from cogs.help_command.helping import Helping
 from cogs.task_command import TaskCommand
 from cogs.bug_handler import BugHandler
 
+start_time = time.perf_counter()
 # Discord token is stored in a .env file in the same directory as the bot.
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -84,6 +86,7 @@ COGS = [DummyCommands,  # Dummy commands
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None, intents=discord.Intents.all())
 
 # Add these variables to the global bot scope
+bot.start_time = time.perf_counter()
 bot.debug = DEBUG
 bot.enabled = False
 
@@ -91,24 +94,28 @@ bot.enabled = False
 # Print a message if the bot is online and change it's status.
 @bot.event
 async def on_ready():
+    bot.start_time = time.perf_counter()
+    mc_version.get_versions(bot)
+    bot.enabled = True
+    bot.debug = DEBUG
+    await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
+    guilds = bot.guilds
+
     print('----------------------------------------------------------')
     print('Bot connected with prefix: "{}"'.format(bot.command_prefix))
     if bot.debug:
         print('    > Debug mode is enabled.\n')
 
     print('The bot has connected to the following servers:')
-    guilds = bot.guilds
     if not guilds:
         print("    > !! The bot isn't connected to any server. !!")
 
     for server in guilds:
-        print("    > {}".format(server.name))
-    print('----------------------------------------------------------')
+        print('    > {}'.format(server.name))
 
-    mc_version.get_versions(bot)
-    bot.enabled = True
-    bot.debug = DEBUG
-    await bot.change_presence(activity=discord.Game('Technical Minecraft on HammerSMP'))
+    print('\non_ready took {} s'.format(time.perf_counter() - bot.start_time))
+    print('Complete initialisation took {} s'.format(time.perf_counter() - start_time))
+    print('----------------------------------------------------------')
 
     if not guilds:
         raise NotConnectedToAnyServerWarning

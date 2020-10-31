@@ -14,6 +14,7 @@ from discord.ext import commands
 from utilities.utils import format_conversion
 import cogs.help_command.help_data as hd
 import utilities.data as data
+import time
 
 
 async def create_task(task, ctx, action, use=''):
@@ -58,7 +59,8 @@ class TaskCommand(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        print("> TaskCommands Cog Initialised")
+        print('> {} Cog Initialised. Took {} s'.format('TaskCommand', time.perf_counter() - bot.start_time))
+        bot.start_time = time.perf_counter()
 
     # Command to create, add, remove and delete bulletins in the bulletin board.
     @commands.command(name='bulletin', help=hd.bulletin_help, usage=hd.bulletin_usage)

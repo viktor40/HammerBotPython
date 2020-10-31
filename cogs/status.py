@@ -1,4 +1,5 @@
 from discord.ext import commands
+import time
 
 import cogs.help_command.help_data as hd
 import utilities.data as data
@@ -26,7 +27,8 @@ class Status(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        print("> Status Cog Initialised")
+        print('> {} Cog Initialised. Took {} s'.format('Status', time.perf_counter() - bot.start_time))
+        bot.start_time = time.perf_counter()
 
     @commands.Cog.listener()
     async def on_message(self, message):

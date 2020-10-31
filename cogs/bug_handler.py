@@ -1,4 +1,5 @@
 from discord.ext import commands, tasks
+import time
 import bug.fixed as bug_fix
 import bug.versions as mc_version
 from bug.fetcher import mc_bug
@@ -11,7 +12,8 @@ class BugHandler(commands.Cog):
         if not self.bot.debug:
             self.fixed_bug_loop.start()
             self.version_update_loop.start()
-        print("> BugHandler Cog Initialised")
+        print('> {} Cog Initialised. Took {} s'.format('BugHandler', time.perf_counter() - bot.start_time))
+        bot.start_time = time.perf_counter()
 
     @commands.Cog.listener()
     async def on_message(self, message):

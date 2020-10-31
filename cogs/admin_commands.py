@@ -1,4 +1,5 @@
-from discord.ext import commands, tasks
+from discord.ext import commands
+import time
 
 import cogs.help_command.help_data as hd
 import utilities.data as data
@@ -25,7 +26,8 @@ class AdminCommands(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        print("> AdminCommands Cog Initialised")
+        print('> {} Cog Initialised. Took {} s'.format('AdminCommands', time.perf_counter() - bot.start_time))
+        bot.start_time = time.perf_counter()
 
     # A admin only command to mass delete messages in case of a bad discord discussion.
     @disable_for_debug

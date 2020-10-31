@@ -1,4 +1,5 @@
 from discord.ext import commands
+import time
 import utilities.data as data
 
 
@@ -14,7 +15,8 @@ class JoinLeaveNotifier(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.latest_new_member = None
-        print("> JoinLeaveNotifier Cog Initialised")
+        print('> {} Cog Initialised. Took {} s'.format('JoinLeaveNotifier', time.perf_counter() - bot.start_time))
+        bot.start_time = time.perf_counter()
 
     @commands.Cog.listener()
     async def on_member_join(self, member):

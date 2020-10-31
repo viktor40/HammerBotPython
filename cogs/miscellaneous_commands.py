@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import os
+import time
 
 import cogs.help_command.help_data as hd
 import utilities.data as data
@@ -21,7 +22,8 @@ class MiscellaneousCommands(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        print("> MiscellaneousCommands Cog Initialised")
+        print('> {} Cog Initialised. Took {} s'.format('MiscellaneousCommands', time.perf_counter() - bot.start_time))
+        bot.start_time = time.perf_counter()
 
     # Tell someone to stop being lazy
     @disable_for_debug

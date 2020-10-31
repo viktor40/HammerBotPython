@@ -9,6 +9,7 @@ These roles are used for notification and pinging purposes.
 
 import discord
 from discord.ext import commands
+import time
 
 from utilities.data import role_list, role_ids, hammer_guild
 from utilities.utils import get_server_roles
@@ -27,7 +28,8 @@ class Role(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        print("> Role Cog Initialised")
+        print("> {} Cog Initialised. Took {} ss".format('Role', time.perf_counter() - bot.start_time))
+        bot.start_time = time.perf_counter()
 
     async def valid_argument(self, ctx, action, args):
         """

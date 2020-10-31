@@ -10,6 +10,7 @@ it's profile picture as the author icon. The bot will also automatically add vot
 import datetime
 import discord
 from discord.ext import commands
+import time
 
 from cogs.task_command import format_conversion
 from utilities.data import vote_role_id, vote_emotes, discord_letters
@@ -28,7 +29,8 @@ class Voting(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        print("> Voting Cog Initialised")
+        print('> {} Cog Initialised. Took {} s'.format('Voting', time.perf_counter() - bot.start_time))
+        bot.start_time = time.perf_counter()
 
     # Command that will handle voting, see voting.py.
     @disable_for_debug

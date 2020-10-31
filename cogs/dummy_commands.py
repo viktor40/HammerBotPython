@@ -1,4 +1,5 @@
 from discord.ext import commands
+import time
 
 import cogs.help_command.help_data as hd
 import utilities.data as data
@@ -15,7 +16,8 @@ class DummyCommands(commands.Cog):
     """
     def __init__(self, bot):
         self.bot = bot
-        print("> DummyCommands Cog Initiated")
+        print('> {} Cog Initialised. Took {} s'.format('DummyCommands', time.perf_counter() - bot.start_time))
+        bot.start_time = time.perf_counter()
 
     @disable_for_debug
     @commands.command(name='whitelist', help=hd.whitelist_help, usage=hd.whitelist_usage)
