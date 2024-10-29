@@ -9,5 +9,5 @@ pandas~=1.1.3
 python-chess==1.2.0
 python-dotenv==0.14.0
 svglib~=1.0.1
-reportlab~=3.5.47
+reportlab
 discord~=1.0.1
